@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0c0f13">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MudLag">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<link rel="icon" href="data:image/png;base64,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">
+
+<title>MudLag — лаг-тайм, записи и конструкция скважины</title>
+<style>
+:root{
+  --bg:#0c0f13;--panel:#141920;--panel2:#1a2029;--line:#28313c;--line2:#343f4c;
+  --text:#e7eaef;--mute:#8e98a6;--acc:#f5a524;--acc2:#2dd4bf;--bad:#f87171;--ok:#4ade80;
+  --mud:#0f3d3b;--r:10px;--hdr:120px;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 "IBM Plex Sans",system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+.sticky{position:sticky;top:0;padding-top:env(safe-area-inset-top);z-index:20;background:rgba(12,15,19,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.top{display:flex;align-items:center;gap:14px;padding:10px 16px;flex-wrap:wrap}
+.brand{display:flex;align-items:baseline;gap:8px;white-space:nowrap}
+.brand b{font-size:18px;letter-spacing:.3px;color:var(--acc)}
+.brand span{color:var(--mute);font-size:12.5px}
+.kpis{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.kpi{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:4px 10px;width:118px;height:48px;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+.kpi b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:640px){.kpis{display:grid;grid-template-columns:repeat(3,1fr);width:100%}.kpi{width:auto}}
+.kpi small{display:block;color:var(--mute);font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+.kpi b{font-family:var(--mono);font-size:16px;font-weight:600}
+.kpi.hl b{color:var(--acc)}
+.tabs{display:flex;gap:4px;padding:0 12px;overflow-x:auto}
+.tabs button{background:none;border:0;border-bottom:3px solid transparent;padding:10px 14px;color:var(--mute);cursor:pointer;white-space:nowrap;font-weight:500;min-height:44px}
+.tabs button.on{color:var(--text);border-color:var(--acc)}
+main{padding:16px;max-width:1500px;margin:0 auto}
+.tab{display:none}.tab.on{display:block}
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(360px,520px);gap:16px;align-items:start}
+.split.even{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+@media (max-width:1000px){.split,.split.even{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:16px}
+.panel h2{font-size:15px;margin:0 0 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:36px}
+.panel h2 .sp{flex:1}
+.panel h2 small{color:var(--mute);font-weight:400;font-size:12.5px}
+.sketchp{position:sticky;top:calc(var(--hdr) + 12px)}
+@media (max-width:1000px){.sketchp{position:static}}
+.grid{display:grid;gap:10px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:640px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+label.f{display:flex;flex-direction:column;justify-content:space-between;gap:5px;font-size:12.5px;color:var(--mute);min-width:0}
+label.f .lt{display:block;line-height:1.3;min-height:1.3em}
+label.f .lt .u{white-space:nowrap}
+label.f>input,label.f>select,label.f>.btn,label.f>span[style]{flex:none}
+label.f .u{color:#6b7684}
+input,select,textarea{background:#0e1217;border:1px solid var(--line2);border-radius:8px;padding:0 10px;height:42px;width:100%;outline:none;font-size:15px}
+textarea{height:auto;padding:9px 10px}
+select{padding-right:6px}
+input[type=datetime-local]{padding:0 8px}
+input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+input[disabled]{opacity:.75;color:var(--acc2);border-style:dashed}
+input[type=checkbox]{width:20px;height:20px;min-height:0;padding:0;flex:none;accent-color:var(--acc)}
+textarea{resize:vertical;min-height:84px;font-family:var(--mono);font-size:13.5px;line-height:1.5}
+.btn{background:var(--panel2);border:1px solid var(--line2);border-radius:8px;padding:0 14px;height:42px;display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;font-weight:500;white-space:nowrap}
+.btn:hover{border-color:var(--mute)}
+.btn.pri{background:var(--acc);border-color:var(--acc);color:#1a1100}
+.btn.ghost{background:none}
+.btn.sm{height:36px;padding:0 12px;font-size:13px}
+.btn.icon{width:36px;min-width:36px;padding:0}
+.btn.danger{color:var(--bad)}
+.btns{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.card{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:10px;margin-bottom:10px}
+.card .hd{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.card .hd select{flex:1;min-width:130px;height:36px;font-size:14px}
+.card .hd select[data-act]{flex:0 1 170px;min-width:110px}
+.card .grid{align-items:stretch}
+@media (max-width:640px){
+ .card .hd select[data-k]{flex:1 1 calc(100% - 96px);min-width:0;order:1}
+ .card .hd .dot,.card .hd .tag{order:0}
+ .card .hd .btn.danger{order:2}
+ .card .hd select[data-act]{flex:1 1 calc(100% - 96px);min-width:0;max-width:none!important;order:3}
+ .card .hd .btn:not(.danger){order:4}
+}
+.card .hd .tag{font-family:var(--mono);font-size:12px;color:var(--mute)}
+.dot{width:12px;height:12px;border-radius:3px;flex:none;display:inline-block}
+.seg{display:inline-flex;border:1px solid var(--line2);border-radius:8px;overflow:hidden}
+.seg button{background:none;border:0;padding:0 14px;height:34px;cursor:pointer;color:var(--mute);min-width:44px}
+.seg button.on{background:var(--acc);color:#1a1100;font-weight:600}
+.hint{color:var(--mute);font-size:12.5px;margin:6px 0 0}
+.warn{color:var(--bad);font-size:13px;margin:6px 0 0}
+.tblw{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{padding:0 10px;height:42px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap;vertical-align:middle}
+th{color:var(--mute);font-weight:500;font-size:12px;background:var(--panel2);position:sticky;top:0}
+td.l,th.l{text-align:left}
+td.mono,.mono{font-family:var(--mono)}
+tfoot td{font-weight:600;background:var(--panel2)}
+td input{height:34px;padding:0 8px;width:96px;text-align:right;font-family:var(--mono);font-size:13.5px}
+.res{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.res{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))!important}
+.res .c{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:10px 12px;min-height:92px;display:flex;flex-direction:column;gap:2px}
+.res .c small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.res .c b{line-height:1.25}
+.res .c i{margin-top:auto;padding-top:4px;line-height:1.35}
+.res .c small{display:block;color:var(--mute);font-size:12px}
+.res .c b{font-family:var(--mono);font-size:22px;font-weight:600}
+.res .c.hl b{color:var(--acc)}
+.res .c i{font-style:normal;color:var(--mute);font-size:12px;display:block}
+.svgwrap{background:#0a0d11;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.svgwrap svg{display:block;width:100%;height:auto;max-height:calc(100vh - var(--hdr) - 150px)}
+@media (max-width:1000px){.svgwrap svg{max-height:none}}
+.legend{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:8px;font-size:12px;color:var(--mute)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.out{min-height:120px}
+.hist .it{border:1px solid var(--line);background:var(--panel2);border-radius:9px;padding:10px;margin-bottom:8px}
+.hist .meta{display:flex;gap:10px;flex-wrap:wrap;color:var(--mute);font-size:12px;margin-bottom:8px;align-items:center;min-height:36px}
+.hist .meta b{color:var(--text);font-family:var(--mono)}
+.hist .tx{font-family:var(--mono);font-size:13px;white-space:pre-wrap;word-break:break-word}
+.pill{border:1px solid var(--line2);border-radius:99px;padding:1px 8px;font-size:11px}
+.pill.show{color:var(--acc);border-color:var(--acc)}
+.lithrow{display:grid;grid-template-columns:1fr 110px 42px;gap:8px;margin-bottom:8px;align-items:center}
+.lithrow .btn.icon{width:42px;height:42px}
+.sum{font-family:var(--mono);font-size:12.5px}
+.sum.bad{color:var(--bad)}.sum.good{color:var(--ok)}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--acc);color:#1a1100;font-weight:600;padding:10px 18px;border-radius:99px;opacity:0;transition:.25s;pointer-events:none;z-index:50}
+#toast.on{opacity:1;transform:translateX(-50%)}
+details summary{cursor:pointer;color:var(--acc2);font-size:13px;margin:8px 0}
+.preset{display:flex;gap:8px;align-items:center;min-height:56px;padding:6px 0;border-bottom:1px solid var(--line)}
+.preset:last-child{border:0}
+.preset .n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.preset .n small{color:var(--mute);display:block;font-size:11.5px}
+.empty{color:var(--mute);font-size:13px;padding:8px 0}
+.credit{text-align:center;color:var(--mute);font-size:12.5px;padding:8px 16px 28px}
+.credit b{color:var(--text);font-weight:600}
+.hctl{display:flex;gap:8px;align-items:center}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:60;padding:16px}
+.modal.on{display:flex}
+.modal .box{background:var(--panel);border:1px solid var(--line2);border-radius:14px;padding:18px;max-width:380px;width:100%;text-align:center}
+.modal h2{margin:0 0 12px;font-size:17px}
+#qr{display:inline-block;background:#fff;padding:12px;border-radius:10px;min-height:60px}
+#qr img,#qr canvas{display:block}
+.link{word-break:break-all;font-size:12.5px;color:var(--acc2);margin:12px 0;user-select:all}
+.modal .hint{text-align:left}
+.prog{position:relative;height:28px;background:#0e1217;border:1px solid var(--line2);border-radius:8px;overflow:hidden;margin-bottom:10px}
+.prog div{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#14532d,#22c55e)}
+.prog span{position:relative;display:block;text-align:center;line-height:26px;font-family:var(--mono);font-size:12.5px}
+</style>
+</head>
+<body>
+<div class="sticky" id="hdr">
+  <div class="top">
+    <div class="brand"><b>MudLag</b><span>лаг-тайм · записи · конструкция</span></div>
+    <div class="kpis" id="kpis"></div>
+    <div class="hctl"><span class="seg" id="uiSeg" title="Язык интерфейса"><button data-ui="ru">RU</button><button data-ui="en">EN</button></span>
+      <button class="btn sm" data-act="phone">📱 На телефон</button></div>
+  </div>
+  <nav class="tabs" id="tabs">
+    <button data-tab="well" class="on">① Скважина и КНБК</button>
+    <button data-tab="lag">② Насосы и лаг</button>
+    <button data-tab="rec">③ Шоу и шлам</button>
+    <button data-tab="log">④ Журнал</button>
+  </nav>
+</div>
+
+<main>
+<!-- ============ TAB 1: WELL ============ -->
+<section class="tab on" id="tab-well">
+  <div class="split">
+    <div>
+      <div class="panel">
+        <h2>Скважина</h2>
+        <div class="grid g4">
+          <label class="f"><span class="lt">Название скважины</span><input data-bind="wellName" placeholder="Well-1"></label>
+          <label class="f"><span class="lt">Глубина долота, MD <span class="u">ft</span></span><input data-bind="bitDepth" inputmode="decimal"></label>
+          <label class="f"><span class="lt">Диаметр откр. ствола <span class="u">in</span></span><input data-bind="ohDia" inputmode="decimal" placeholder="8-1/2"></label>
+          <label class="f"><span class="lt">Каверзность ОС (запас объёма) <span class="u">%</span></span><input data-bind="washout" inputmode="decimal" placeholder="0"></label>
+        </div>
+        <p class="hint"><b style="color:var(--acc)">Порядок:</b> ① глубина долота и диаметр ствола → ② обсадные колонны → ③ элементы КНБК. Эскиз справа обновляется сразу.</p>
+        <p class="hint">Глубины — по стволу (MD). Дюймы можно вводить дробью: <span class="mono">13-3/8</span>, <span class="mono">8 1/2</span>, десятичные — через точку или запятую.</p>
+      </div>
+
+      <div class="panel">
+        <h2>Прогноз выхода на проектный забой <small>план TD</small></h2>
+        <div class="grid g3">
+          <label class="f"><span class="lt">Проектный забой (план TD), MD <span class="u">ft</span></span><input data-bind="plan.td" inputmode="decimal"></label>
+          <label class="f"><span class="lt">Средняя мех. скорость (ROP) <span class="u">ft/hr</span></span><input data-bind="plan.rop" inputmode="decimal"></label>
+          <label class="f"><span class="lt">Длина свечи / трубы <span class="u">ft</span></span><input data-bind="plan.stand" inputmode="decimal" placeholder="93"></label>
+          <label class="f"><span class="lt">Время на наращивание <span class="u">мин</span></span><input data-bind="plan.conn" inputmode="decimal"></label>
+          <label class="f"><span class="lt">Запас на простои / замеры <span class="u">%</span></span><input data-bind="plan.extra" inputmode="decimal"></label>
+          <label class="f"><span class="lt">Отсчёт от <span class="u"><a href="#" data-act="planNow" style="color:var(--acc2)">сейчас</a></span></span><input data-bind="plan.start" type="datetime-local"></label>
+        </div>
+        <div id="planRes" style="margin-top:12px"></div>
+        <p class="hint">Время = (остаток / ROP + наращивания × мин) × (1 + запас%). Лаг на TD считается по конструкции с удлинённой бурильной колонной при текущей подаче насосов.</p>
+      </div>
+
+      <div class="panel">
+        <h2>Конструкция скважины <small>обсадные колонны и хвостовики</small><span class="sp"></span><button class="btn sm pri" data-act="addCasing">+ Колонна</button></h2>
+        <div id="casingList"></div>
+      </div>
+
+      <div class="panel">
+        <h2>КНБК и бурильная колонна <small>от долота вверх</small><span class="sp"></span><button class="btn sm pri" data-act="addComp">+ Элемент</button></h2>
+        <div id="compList"></div>
+        <p class="hint">Отметьте «до устья» у бурильных труб — их длина досчитается автоматически: глубина долота минус длина остальных элементов.</p>
+        <div id="stringWarn"></div>
+      </div>
+
+      <div class="panel">
+        <h2>Пресеты скважин</h2>
+        <div class="btns" style="margin-bottom:8px">
+          <input id="presetName" placeholder="Имя пресета (по умолчанию — название скважины)" style="flex:1;min-width:180px">
+          <button class="btn pri" data-act="savePreset">Сохранить</button>
+        </div>
+        <div id="presetList"></div>
+        <div class="btns" style="margin-top:10px">
+          <button class="btn sm ghost" data-act="newWell">Новая (пустая) скважина</button>
+          <button class="btn sm ghost" data-act="demo">Загрузить пример</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel sketchp">
+        <h2>Эскиз скважины<span class="sp"></span>
+        </h2>
+        <div class="svgwrap" id="sketch"></div>
+        <div class="legend" id="legend"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TAB 2: LAG ============ -->
+<section class="tab" id="tab-lag">
+  <div class="split even">
+    <div class="panel">
+      <h2>Подача насосов<span class="sp"></span>
+        <span class="seg" id="pumpSeg"><button data-pm="calc">Gal/Stk × SPM</button><button data-pm="direct">GPM вручную</button></span>
+      </h2>
+      <div class="grid g3">
+        <label class="f"><span class="lt">Gal/Stroke <span class="u">gal/stk</span></span><input data-bind="pump.galStk" inputmode="decimal"></label>
+        <label class="f" id="spmBox"><span class="lt">SPM <span class="u">stk/min</span></span><input data-bind="pump.spm" inputmode="decimal"></label>
+        <label class="f"><span class="lt">GPM <span class="u" id="gpmNote">авторасчёт</span></span><input data-bind="pump.gpm" id="gpmInput" inputmode="decimal"></label>
+      </div>
+      <details>
+        <summary>Рассчитать Gal/Stroke триплекс-насоса по втулке и ходу</summary>
+        <div class="grid g4">
+          <label class="f"><span class="lt">Втулка (liner) <span class="u">in</span></span><input id="tpLiner" inputmode="decimal" placeholder="6"></label>
+          <label class="f"><span class="lt">Ход поршня <span class="u">in</span></span><input id="tpStroke" inputmode="decimal" placeholder="12"></label>
+          <label class="f"><span class="lt">КПД <span class="u">%</span></span><input id="tpEff" inputmode="decimal" placeholder="95"></label>
+          <label class="f"><span class="lt">&nbsp;</span><button class="btn" data-act="applyTriplex">Применить</button></label>
+        </div>
+        <p class="hint">Gal/stk = 0.0102 × liner² × stroke × КПД. <span id="tpOut" class="mono"></span></p>
+      </details>
+    </div>
+
+    <div class="panel">
+      <h2>Итоги</h2>
+      <div class="res" id="results"></div>
+      <div id="calcWarn"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Секции затрубья<span class="sp"></span>
+      <span class="seg" id="lagSeg"><button data-lm="auto">Авто из конструкции</button><button data-lm="manual">Вручную</button></span>
+    </h2>
+    <div class="btns" id="manualBtns" style="margin-bottom:10px">
+      <button class="btn sm pri" data-act="addSec">+ Секция</button>
+      <button class="btn sm" data-act="fillFromWell">Заполнить из конструкции</button>
+    </div>
+    <div class="tblw"><table>
+      <thead><tr><th class="l">#</th><th class="l">Интервал / описание</th><th>Скважина ID, in</th><th>Труба OD, in</th><th>Длина, ft</th><th>bbl/ft</th><th>Объём, bbl</th><th>AV, ft/min</th><th>Время, мин</th><th>Ходов</th><th></th></tr></thead>
+      <tbody id="secBody"></tbody>
+      <tfoot id="secFoot"></tfoot>
+    </table></div>
+    <p class="hint">Производительность затрубья = (ID² − OD²) / 1029.4 bbl/ft · Объём = длина × производительность · Лаг = объём × 42 / GPM · Ходов = объём × 42 / Gal/Stk · AV = 24.51 × GPM / (ID² − OD²). В ручном режиме галочка «ОС» применяет к секции запас объёма на каверзность.</p>
+  </div>
+</section>
+
+<!-- ============ TAB 3: RECORD ============ -->
+<section class="tab" id="tab-rec">
+  <div class="split even">
+    <div>
+      <div class="panel">
+        <h2>Запись</h2>
+        <div class="grid g3">
+          <label class="f"><span class="lt">Тип записи</span><select data-bind="rec.type" id="recType"></select></label>
+          <label class="f"><span class="lt">Глубина, MD <span class="u">ft</span></span><input data-bind="rec.depth" inputmode="decimal"></label>
+          <label class="f"><span class="lt">Время <span class="u"><a href="#" data-act="now" style="color:var(--acc2)">сейчас</a></span></span><input data-bind="rec.time" type="datetime-local"></label>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>Газ</h2>
+        <div class="grid g3">
+          <label class="f"><span class="lt">Единицы</span><select data-bind="rec.gasUnit"><option value="units">units</option><option value="ppm">ppm</option></select></label>
+          <label class="f"><span class="lt">Фоновый газ (BG)</span><input data-bind="rec.bg" inputmode="decimal"></label>
+          <label class="f"><span class="lt">Пиковый газ (Peak)</span><input data-bind="rec.peak" inputmode="decimal"></label>
+        </div>
+        <details>
+          <summary>Хроматограф C1–C5, ppm (необязательно)</summary>
+          <div class="grid g3">
+            <label class="f"><span class="lt">C1</span><input data-bind="rec.c1" inputmode="decimal"></label>
+            <label class="f"><span class="lt">C2</span><input data-bind="rec.c2" inputmode="decimal"></label>
+            <label class="f"><span class="lt">C3</span><input data-bind="rec.c3" inputmode="decimal"></label>
+            <label class="f"><span class="lt">C4 (i+n)</span><input data-bind="rec.c4" inputmode="decimal"></label>
+            <label class="f"><span class="lt">C5 (i+n)</span><input data-bind="rec.c5" inputmode="decimal"></label>
+          </div>
+        </details>
+      </div>
+      <div class="panel">
+        <h2>Литология шлама<span class="sp"></span><span class="sum" id="lithSum"></span><button class="btn sm pri" data-act="addLith">+ Порода</button></h2>
+        <div id="lithList"></div>
+        <label class="f"><span class="lt">Описание (цвет, зернистость, окатанность, сортировка, цемент, пористость)</span><textarea data-bind="rec.desc" placeholder="lt gy, f-m gr, sb-rnd, w srt, calc cmt, fr vis por"></textarea></label>
+      </div>
+      <div class="panel">
+        <h2>Флюоресценция и вытяжка</h2>
+        <div class="grid g2">
+          <label class="f"><span class="lt">Флюоресценция, % образца</span><input data-bind="rec.fluorPct" inputmode="decimal"></label>
+          <label class="f"><span class="lt">Цвет флюоресценции</span><select data-bind="rec.fluorColor" id="fluorColor"></select></label>
+          <label class="f"><span class="lt">Тип вытяжки (cut)</span><select data-bind="rec.cut" id="cutType"></select></label>
+          <label class="f"><span class="lt">Цвет вытяжки</span><select data-bind="rec.cutColor" id="cutColor"></select></label>
+        </div>
+        <label class="f" style="margin-top:10px"><span class="lt">Примечание</span><input data-bind="rec.notes" placeholder="напр. oil stain, odor, gas detector alarm…"></label>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel sketchp">
+        <h2>Итоговая строка<span class="sp"></span>
+          <span class="seg langSeg"><button data-lang="ru">RU</button><button data-lang="en">EN</button></span>
+        </h2>
+        <label style="display:flex;gap:8px;align-items:center;margin-bottom:8px;font-size:13.5px"><input type="checkbox" data-bind="rec.includeLag"> добавить лаг (мин / ходы / GPM)</label>
+        <textarea id="outText" class="out" rows="6"></textarea>
+        <p class="hint" id="outHint">Текст можно поправить вручную перед копированием.</p>
+        <div class="btns" style="margin-top:8px">
+          <button class="btn pri" data-act="copyOut">Копировать</button>
+          <button class="btn" data-act="saveRec">В журнал</button>
+          <button class="btn" data-act="copySave">Копировать + в журнал</button>
+          <button class="btn ghost" data-act="clearRec">Очистить форму</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TAB 4: LOG ============ -->
+<section class="tab" id="tab-log">
+  <div class="panel">
+    <h2>Журнал записей<span class="sp"></span>
+      <span class="seg langSeg"><button data-lang="ru">RU</button><button data-lang="en">EN</button></span>
+    </h2>
+    <div class="btns" style="margin-bottom:10px">
+      <input id="histFilter" placeholder="Фильтр: скважина, глубина, текст…" style="flex:1;min-width:180px">
+      <button class="btn" data-act="copyAll">Копировать всё</button>
+      <button class="btn" data-act="copyCsv">Копировать CSV</button>
+      <button class="btn danger" data-act="clearHist">Очистить</button>
+    </div>
+    <div class="hist" id="histList"></div>
+  </div>
+</section>
+</main>
+<footer class="credit">Создано: <b>Максат Тулегенов</b> · © 2026</footer>
+<div class="modal" id="phoneModal" data-act="closeModalBg"><div class="box">
+  <h2>Открыть на телефоне</h2>
+  <div id="qr"></div>
+  <div class="link noi18n" id="appLink">https://1mtulegenov.github.io/mudlag/</div>
+  <div class="btns" style="justify-content:center"><button class="btn pri" data-act="copyLink">Копировать ссылку</button><button class="btn" data-act="closeModal">Закрыть</button></div>
+  <p class="hint">Отсканируйте QR-код камерой телефона, чтобы открыть приложение.</p>
+  <p class="hint">Как приложение: iPhone (Safari) — «Поделиться» → «На экран Домой»; Android (Chrome) — «⋮» → «Добавить на главный экран».</p>
+  <p class="hint" style="text-align:center;margin-top:12px">Создано: <b>Максат Тулегенов</b></p>
+  <p class="hint">Пресеты и журнал хранятся отдельно на каждом устройстве. Для переноса журнала используйте «Копировать CSV».</p>
+</div></div>
+<div id="toast"></div>
+<script>var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],f={},c=function(t,r){o=function(t){for(var r=new Array(t),e=0;e<t;e+=1){r[e]=new Array(t);for(var n=0;n<t;n+=1)r[e][n]=null}return r}(i=4*e+17),l(0,0),l(i-7,0),l(0,i-7),s(),h(),d(t,r),e>=7&&v(t),null==a&&(a=p(e,n,u)),w(a,r)},l=function(t,r){for(var e=-1;e<=7;e+=1)if(!(t+e<=-1||i<=t+e))for(var n=-1;n<=7;n+=1)r+n<=-1||i<=r+n||(o[t+e][r+n]=0<=e&&e<=6&&(0==n||6==n)||0<=n&&n<=6&&(0==e||6==e)||2<=e&&e<=4&&2<=n&&n<=4)},h=function(){for(var t=8;t<i-8;t+=1)null==o[t][6]&&(o[t][6]=t%2==0);for(var r=8;r<i-8;r+=1)null==o[6][r]&&(o[6][r]=r%2==0)},s=function(){for(var t=B.getPatternPosition(e),r=0;r<t.length;r+=1)for(var n=0;n<t.length;n+=1){var i=t[r],a=t[n];if(null==o[i][a])for(var u=-2;u<=2;u+=1)for(var f=-2;f<=2;f+=1)o[i+u][a+f]=-2==u||2==u||-2==f||2==f||0==u&&0==f}},v=function(t){for(var r=B.getBCHTypeNumber(e),n=0;n<18;n+=1){var a=!t&&1==(r>>n&1);o[Math.floor(n/3)][n%3+i-8-3]=a}for(n=0;n<18;n+=1){a=!t&&1==(r>>n&1);o[n%3+i-8-3][Math.floor(n/3)]=a}},d=function(t,r){for(var e=n<<3|r,a=B.getBCHTypeInfo(e),u=0;u<15;u+=1){var f=!t&&1==(a>>u&1);u<6?o[u][8]=f:u<8?o[u+1][8]=f:o[i-15+u][8]=f}for(u=0;u<15;u+=1){f=!t&&1==(a>>u&1);u<8?o[8][i-u-1]=f:u<9?o[8][15-u-1+1]=f:o[8][15-u-1]=f}o[i-8][8]=!t},w=function(t,r){for(var e=-1,n=i-1,a=7,u=0,f=B.getMaskFunction(r),c=i-1;c>0;c-=2)for(6==c&&(c-=1);;){for(var g=0;g<2;g+=1)if(null==o[n][c-g]){var l=!1;u<t.length&&(l=1==(t[u]>>>a&1)),f(n,c-g)&&(l=!l),o[n][c-g]=l,-1==(a-=1)&&(u+=1,a=7)}if((n+=e)<0||i<=n){n-=e,e=-e;break}}},p=function(t,r,e){for(var n=A.getRSBlocks(t,r),o=b(),i=0;i<e.length;i+=1){var a=e[i];o.put(a.getMode(),4),o.put(a.getLength(),B.getLengthInBits(a.getMode(),t)),a.write(o)}var u=0;for(i=0;i<n.length;i+=1)u+=n[i].dataCount;if(o.getLengthInBits()>8*u)throw"code length overflow. ("+o.getLengthInBits()+">"+8*u+")";for(o.getLengthInBits()+4<=8*u&&o.put(0,4);o.getLengthInBits()%8!=0;)o.putBit(!1);for(;!(o.getLengthInBits()>=8*u||(o.put(236,8),o.getLengthInBits()>=8*u));)o.put(17,8);return function(t,r){for(var e=0,n=0,o=0,i=new Array(r.length),a=new Array(r.length),u=0;u<r.length;u+=1){var f=r[u].dataCount,c=r[u].totalCount-f;n=Math.max(n,f),o=Math.max(o,c),i[u]=new Array(f);for(var g=0;g<i[u].length;g+=1)i[u][g]=255&t.getBuffer()[g+e];e+=f;var l=B.getErrorCorrectPolynomial(c),h=k(i[u],l.getLength()-1).mod(l);for(a[u]=new Array(l.getLength()-1),g=0;g<a[u].length;g+=1){var s=g+h.getLength()-a[u].length;a[u][g]=s>=0?h.getAt(s):0}}var v=0;for(g=0;g<r.length;g+=1)v+=r[g].totalCount;var d=new Array(v),w=0;for(g=0;g<n;g+=1)for(u=0;u<r.length;u+=1)g<i[u].length&&(d[w]=i[u][g],w+=1);for(g=0;g<o;g+=1)for(u=0;u<r.length;u+=1)g<a[u].length&&(d[w]=a[u][g],w+=1);return d}(o,n)};f.addData=function(t,r){var e=null;switch(r=r||"Byte"){case"Numeric":e=M(t);break;case"Alphanumeric":e=x(t);break;case"Byte":e=m(t);break;case"Kanji":e=L(t);break;default:throw"mode:"+r}u.push(e),a=null},f.isDark=function(t,r){if(t<0||i<=t||r<0||i<=r)throw t+","+r;return o[t][r]},f.getModuleCount=function(){return i},f.make=function(){if(e<1){for(var t=1;t<40;t++){for(var r=A.getRSBlocks(t,n),o=b(),i=0;i<u.length;i++){var a=u[i];o.put(a.getMode(),4),o.put(a.getLength(),B.getLengthInBits(a.getMode(),t)),a.write(o)}var g=0;for(i=0;i<r.length;i++)g+=r[i].dataCount;if(o.getLengthInBits()<=8*g)break}e=t}c(!1,function(){for(var t=0,r=0,e=0;e<8;e+=1){c(!0,e);var n=B.getLostPoint(f);(0==e||t>n)&&(t=n,r=e)}return r}())},f.createTableTag=function(t,r){t=t||2;var e="";e+='<table style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: "+(r=void 0===r?4*t:r)+"px;",e+='">',e+="<tbody>";for(var n=0;n<f.getModuleCount();n+=1){e+="<tr>";for(var o=0;o<f.getModuleCount();o+=1)e+='<td style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: 0px;",e+=" width: "+t+"px;",e+=" height: "+t+"px;",e+=" background-color: ",e+=f.isDark(n,o)?"#000000":"#ffffff",e+=";",e+='"/>';e+="</tr>"}return e+="</tbody>",e+="</table>"},f.createSvgTag=function(t,r,e,n){var o={};"object"==typeof arguments[0]&&(t=(o=arguments[0]).cellSize,r=o.margin,e=o.alt,n=o.title),t=t||2,r=void 0===r?4*t:r,(e="string"==typeof e?{text:e}:e||{}).text=e.text||null,e.id=e.text?e.id||"qrcode-description":null,(n="string"==typeof n?{text:n}:n||{}).text=n.text||null,n.id=n.text?n.id||"qrcode-title":null;var i,a,u,c,g=f.getModuleCount()*t+2*r,l="";for(c="l"+t+",0 0,"+t+" -"+t+",0 0,-"+t+"z ",l+='<svg version="1.1" xmlns="http://www.w3.org/2000/svg"',l+=o.scalable?"":' width="'+g+'px" height="'+g+'px"',l+=' viewBox="0 0 '+g+" "+g+'" ',l+=' preserveAspectRatio="xMinYMin meet"',l+=n.text||e.text?' role="img" aria-labelledby="'+y([n.id,e.id].join(" ").trim())+'"':"",l+=">",l+=n.text?'<title id="'+y(n.id)+'">'+y(n.text)+"</title>":"",l+=e.text?'<description id="'+y(e.id)+'">'+y(e.text)+"</description>":"",l+='<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>',l+='<path d="',a=0;a<f.getModuleCount();a+=1)for(u=a*t+r,i=0;i<f.getModuleCount();i+=1)f.isDark(a,i)&&(l+="M"+(i*t+r)+","+u+c);return l+='" stroke="transparent" fill="black"/>',l+="</svg>"},f.createDataURL=function(t,r){t=t||2,r=void 0===r?4*t:r;var e=f.getModuleCount()*t+2*r,n=r,o=e-r;return I(e,e,function(r,e){if(n<=r&&r<o&&n<=e&&e<o){var i=Math.floor((r-n)/t),a=Math.floor((e-n)/t);return f.isDark(a,i)?0:1}return 1})},f.createImgTag=function(t,r,e){t=t||2,r=void 0===r?4*t:r;var n=f.getModuleCount()*t+2*r,o="";return o+="<img",o+=' src="',o+=f.createDataURL(t,r),o+='"',o+=' width="',o+=n,o+='"',o+=' height="',o+=n,o+='"',e&&(o+=' alt="',o+=y(e),o+='"'),o+="/>"};var y=function(t){for(var r="",e=0;e<t.length;e+=1){var n=t.charAt(e);switch(n){case"<":r+="&lt;";break;case">":r+="&gt;";break;case"&":r+="&amp;";break;case'"':r+="&quot;";break;default:r+=n}}return r};return f.createASCII=function(t,r){if((t=t||1)<2)return function(t){t=void 0===t?2:t;var r,e,n,o,i,a=1*f.getModuleCount()+2*t,u=t,c=a-t,g={"██":"█","█ ":"▀"," █":"▄","  ":" "},l={"██":"▀","█ ":"▀"," █":" ","  ":" "},h="";for(r=0;r<a;r+=2){for(n=Math.floor((r-u)/1),o=Math.floor((r+1-u)/1),e=0;e<a;e+=1)i="█",u<=e&&e<c&&u<=r&&r<c&&f.isDark(n,Math.floor((e-u)/1))&&(i=" "),u<=e&&e<c&&u<=r+1&&r+1<c&&f.isDark(o,Math.floor((e-u)/1))?i+=" ":i+="█",h+=t<1&&r+1>=c?l[i]:g[i];h+="\n"}return a%2&&t>0?h.substring(0,h.length-a-1)+Array(a+1).join("▀"):h.substring(0,h.length-1)}(r);t-=1,r=void 0===r?2*t:r;var e,n,o,i,a=f.getModuleCount()*t+2*r,u=r,c=a-r,g=Array(t+1).join("██"),l=Array(t+1).join("  "),h="",s="";for(e=0;e<a;e+=1){for(o=Math.floor((e-u)/t),s="",n=0;n<a;n+=1)i=1,u<=n&&n<c&&u<=e&&e<c&&f.isDark(o,Math.floor((n-u)/t))&&(i=0),s+=i?g:l;for(o=0;o<t;o+=1)h+=s+"\n"}return h.substring(0,h.length-1)},f.renderTo2dContext=function(t,r){r=r||2;for(var e=f.getModuleCount(),n=0;n<e;n++)for(var o=0;o<e;o++)t.fillStyle=f.isDark(n,o)?"black":"white",t.fillRect(n*r,o*r,r,r)},f};t.stringToBytes=(t.stringToBytesFuncs={default:function(t){for(var r=[],e=0;e<t.length;e+=1){var n=t.charCodeAt(e);r.push(255&n)}return r}}).default,t.createStringToBytes=function(t,r){var e=function(){for(var e=S(t),n=function(){var t=e.read();if(-1==t)throw"eof";return t},o=0,i={};;){var a=e.read();if(-1==a)break;var u=n(),f=n()<<8|n();i[String.fromCharCode(a<<8|u)]=f,o+=1}if(o!=r)throw o+" != "+r;return i}(),n="?".charCodeAt(0);return function(t){for(var r=[],o=0;o<t.length;o+=1){var i=t.charCodeAt(o);if(i<128)r.push(i);else{var a=e[t.charAt(o)];"number"==typeof a?(255&a)==a?r.push(a):(r.push(a>>>8),r.push(255&a)):r.push(n)}}return r}};var r,e,n,o,i,a=1,u=2,f=4,c=8,g={L:1,M:0,Q:3,H:2},l=0,h=1,s=2,v=3,d=4,w=5,p=6,y=7,B=(r=[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]],e=1335,n=7973,i=function(t){for(var r=0;0!=t;)r+=1,t>>>=1;return r},(o={}).getBCHTypeInfo=function(t){for(var r=t<<10;i(r)-i(e)>=0;)r^=e<<i(r)-i(e);return 21522^(t<<10|r)},o.getBCHTypeNumber=function(t){for(var r=t<<12;i(r)-i(n)>=0;)r^=n<<i(r)-i(n);return t<<12|r},o.getPatternPosition=function(t){return r[t-1]},o.getMaskFunction=function(t){switch(t){case l:return function(t,r){return(t+r)%2==0};case h:return function(t,r){return t%2==0};case s:return function(t,r){return r%3==0};case v:return function(t,r){return(t+r)%3==0};case d:return function(t,r){return(Math.floor(t/2)+Math.floor(r/3))%2==0};case w:return function(t,r){return t*r%2+t*r%3==0};case p:return function(t,r){return(t*r%2+t*r%3)%2==0};case y:return function(t,r){return(t*r%3+(t+r)%2)%2==0};default:throw"bad maskPattern:"+t}},o.getErrorCorrectPolynomial=function(t){for(var r=k([1],0),e=0;e<t;e+=1)r=r.multiply(k([1,C.gexp(e)],0));return r},o.getLengthInBits=function(t,r){if(1<=r&&r<10)switch(t){case a:return 10;case u:return 9;case f:case c:return 8;default:throw"mode:"+t}else if(r<27)switch(t){case a:return 12;case u:return 11;case f:return 16;case c:return 10;default:throw"mode:"+t}else{if(!(r<41))throw"type:"+r;switch(t){case a:return 14;case u:return 13;case f:return 16;case c:return 12;default:throw"mode:"+t}}},o.getLostPoint=function(t){for(var r=t.getModuleCount(),e=0,n=0;n<r;n+=1)for(var o=0;o<r;o+=1){for(var i=0,a=t.isDark(n,o),u=-1;u<=1;u+=1)if(!(n+u<0||r<=n+u))for(var f=-1;f<=1;f+=1)o+f<0||r<=o+f||0==u&&0==f||a==t.isDark(n+u,o+f)&&(i+=1);i>5&&(e+=3+i-5)}for(n=0;n<r-1;n+=1)for(o=0;o<r-1;o+=1){var c=0;t.isDark(n,o)&&(c+=1),t.isDark(n+1,o)&&(c+=1),t.isDark(n,o+1)&&(c+=1),t.isDark(n+1,o+1)&&(c+=1),0!=c&&4!=c||(e+=3)}for(n=0;n<r;n+=1)for(o=0;o<r-6;o+=1)t.isDark(n,o)&&!t.isDark(n,o+1)&&t.isDark(n,o+2)&&t.isDark(n,o+3)&&t.isDark(n,o+4)&&!t.isDark(n,o+5)&&t.isDark(n,o+6)&&(e+=40);for(o=0;o<r;o+=1)for(n=0;n<r-6;n+=1)t.isDark(n,o)&&!t.isDark(n+1,o)&&t.isDark(n+2,o)&&t.isDark(n+3,o)&&t.isDark(n+4,o)&&!t.isDark(n+5,o)&&t.isDark(n+6,o)&&(e+=40);var g=0;for(o=0;o<r;o+=1)for(n=0;n<r;n+=1)t.isDark(n,o)&&(g+=1);return e+=Math.abs(100*g/r/r-50)/5*10},o),C=function(){for(var t=new Array(256),r=new Array(256),e=0;e<8;e+=1)t[e]=1<<e;for(e=8;e<256;e+=1)t[e]=t[e-4]^t[e-5]^t[e-6]^t[e-8];for(e=0;e<255;e+=1)r[t[e]]=e;var n={glog:function(t){if(t<1)throw"glog("+t+")";return r[t]},gexp:function(r){for(;r<0;)r+=255;for(;r>=256;)r-=255;return t[r]}};return n}();function k(t,r){if(void 0===t.length)throw t.length+"/"+r;var e=function(){for(var e=0;e<t.length&&0==t[e];)e+=1;for(var n=new Array(t.length-e+r),o=0;o<t.length-e;o+=1)n[o]=t[o+e];return n}(),n={getAt:function(t){return e[t]},getLength:function(){return e.length},multiply:function(t){for(var r=new Array(n.getLength()+t.getLength()-1),e=0;e<n.getLength();e+=1)for(var o=0;o<t.getLength();o+=1)r[e+o]^=C.gexp(C.glog(n.getAt(e))+C.glog(t.getAt(o)));return k(r,0)},mod:function(t){if(n.getLength()-t.getLength()<0)return n;for(var r=C.glog(n.getAt(0))-C.glog(t.getAt(0)),e=new Array(n.getLength()),o=0;o<n.getLength();o+=1)e[o]=n.getAt(o);for(o=0;o<t.getLength();o+=1)e[o]^=C.gexp(C.glog(t.getAt(o))+r);return k(e,0).mod(t)}};return n}var A=function(){var t=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[2,50,32],[2,50,24],[4,25,9],[1,134,108],[2,67,43],[2,33,15,2,34,16],[2,33,11,2,34,12],[2,86,68],[4,43,27],[4,43,19],[4,43,15],[2,98,78],[4,49,31],[2,32,14,4,33,15],[4,39,13,1,40,14],[2,121,97],[2,60,38,2,61,39],[4,40,18,2,41,19],[4,40,14,2,41,15],[2,146,116],[3,58,36,2,59,37],[4,36,16,4,37,17],[4,36,12,4,37,13],[2,86,68,2,87,69],[4,69,43,1,70,44],[6,43,19,2,44,20],[6,43,15,2,44,16],[4,101,81],[1,80,50,4,81,51],[4,50,22,4,51,23],[3,36,12,8,37,13],[2,116,92,2,117,93],[6,58,36,2,59,37],[4,46,20,6,47,21],[7,42,14,4,43,15],[4,133,107],[8,59,37,1,60,38],[8,44,20,4,45,21],[12,33,11,4,34,12],[3,145,115,1,146,116],[4,64,40,5,65,41],[11,36,16,5,37,17],[11,36,12,5,37,13],[5,109,87,1,110,88],[5,65,41,5,66,42],[5,54,24,7,55,25],[11,36,12,7,37,13],[5,122,98,1,123,99],[7,73,45,3,74,46],[15,43,19,2,44,20],[3,45,15,13,46,16],[1,135,107,5,136,108],[10,74,46,1,75,47],[1,50,22,15,51,23],[2,42,14,17,43,15],[5,150,120,1,151,121],[9,69,43,4,70,44],[17,50,22,1,51,23],[2,42,14,19,43,15],[3,141,113,4,142,114],[3,70,44,11,71,45],[17,47,21,4,48,22],[9,39,13,16,40,14],[3,135,107,5,136,108],[3,67,41,13,68,42],[15,54,24,5,55,25],[15,43,15,10,44,16],[4,144,116,4,145,117],[17,68,42],[17,50,22,6,51,23],[19,46,16,6,47,17],[2,139,111,7,140,112],[17,74,46],[7,54,24,16,55,25],[34,37,13],[4,151,121,5,152,122],[4,75,47,14,76,48],[11,54,24,14,55,25],[16,45,15,14,46,16],[6,147,117,4,148,118],[6,73,45,14,74,46],[11,54,24,16,55,25],[30,46,16,2,47,17],[8,132,106,4,133,107],[8,75,47,13,76,48],[7,54,24,22,55,25],[22,45,15,13,46,16],[10,142,114,2,143,115],[19,74,46,4,75,47],[28,50,22,6,51,23],[33,46,16,4,47,17],[8,152,122,4,153,123],[22,73,45,3,74,46],[8,53,23,26,54,24],[12,45,15,28,46,16],[3,147,117,10,148,118],[3,73,45,23,74,46],[4,54,24,31,55,25],[11,45,15,31,46,16],[7,146,116,7,147,117],[21,73,45,7,74,46],[1,53,23,37,54,24],[19,45,15,26,46,16],[5,145,115,10,146,116],[19,75,47,10,76,48],[15,54,24,25,55,25],[23,45,15,25,46,16],[13,145,115,3,146,116],[2,74,46,29,75,47],[42,54,24,1,55,25],[23,45,15,28,46,16],[17,145,115],[10,74,46,23,75,47],[10,54,24,35,55,25],[19,45,15,35,46,16],[17,145,115,1,146,116],[14,74,46,21,75,47],[29,54,24,19,55,25],[11,45,15,46,46,16],[13,145,115,6,146,116],[14,74,46,23,75,47],[44,54,24,7,55,25],[59,46,16,1,47,17],[12,151,121,7,152,122],[12,75,47,26,76,48],[39,54,24,14,55,25],[22,45,15,41,46,16],[6,151,121,14,152,122],[6,75,47,34,76,48],[46,54,24,10,55,25],[2,45,15,64,46,16],[17,152,122,4,153,123],[29,74,46,14,75,47],[49,54,24,10,55,25],[24,45,15,46,46,16],[4,152,122,18,153,123],[13,74,46,32,75,47],[48,54,24,14,55,25],[42,45,15,32,46,16],[20,147,117,4,148,118],[40,75,47,7,76,48],[43,54,24,22,55,25],[10,45,15,67,46,16],[19,148,118,6,149,119],[18,75,47,31,76,48],[34,54,24,34,55,25],[20,45,15,61,46,16]],r=function(t,r){var e={};return e.totalCount=t,e.dataCount=r,e},e={};return e.getRSBlocks=function(e,n){var o=function(r,e){switch(e){case g.L:return t[4*(r-1)+0];case g.M:return t[4*(r-1)+1];case g.Q:return t[4*(r-1)+2];case g.H:return t[4*(r-1)+3];default:return}}(e,n);if(void 0===o)throw"bad rs block @ typeNumber:"+e+"/errorCorrectionLevel:"+n;for(var i=o.length/3,a=[],u=0;u<i;u+=1)for(var f=o[3*u+0],c=o[3*u+1],l=o[3*u+2],h=0;h<f;h+=1)a.push(r(c,l));return a},e}(),b=function(){var t=[],r=0,e={getBuffer:function(){return t},getAt:function(r){var e=Math.floor(r/8);return 1==(t[e]>>>7-r%8&1)},put:function(t,r){for(var n=0;n<r;n+=1)e.putBit(1==(t>>>r-n-1&1))},getLengthInBits:function(){return r},putBit:function(e){var n=Math.floor(r/8);t.length<=n&&t.push(0),e&&(t[n]|=128>>>r%8),r+=1}};return e},M=function(t){var r=a,e=t,n={getMode:function(){return r},getLength:function(t){return e.length},write:function(t){for(var r=e,n=0;n+2<r.length;)t.put(o(r.substring(n,n+3)),10),n+=3;n<r.length&&(r.length-n==1?t.put(o(r.substring(n,n+1)),4):r.length-n==2&&t.put(o(r.substring(n,n+2)),7))}},o=function(t){for(var r=0,e=0;e<t.length;e+=1)r=10*r+i(t.charAt(e));return r},i=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);throw"illegal char :"+t};return n},x=function(t){var r=u,e=t,n={getMode:function(){return r},getLength:function(t){return e.length},write:function(t){for(var r=e,n=0;n+1<r.length;)t.put(45*o(r.charAt(n))+o(r.charAt(n+1)),11),n+=2;n<r.length&&t.put(o(r.charAt(n)),6)}},o=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);if("A"<=t&&t<="Z")return t.charCodeAt(0)-"A".charCodeAt(0)+10;switch(t){case" ":return 36;case"$":return 37;case"%":return 38;case"*":return 39;case"+":return 40;case"-":return 41;case".":return 42;case"/":return 43;case":":return 44;default:throw"illegal char :"+t}};return n},m=function(r){var e=f,n=t.stringToBytes(r),o={getMode:function(){return e},getLength:function(t){return n.length},write:function(t){for(var r=0;r<n.length;r+=1)t.put(n[r],8)}};return o},L=function(r){var e=c,n=t.stringToBytesFuncs.SJIS;if(!n)throw"sjis not supported.";!function(){var t=n("友");if(2!=t.length||38726!=(t[0]<<8|t[1]))throw"sjis not supported."}();var o=n(r),i={getMode:function(){return e},getLength:function(t){return~~(o.length/2)},write:function(t){for(var r=o,e=0;e+1<r.length;){var n=(255&r[e])<<8|255&r[e+1];if(33088<=n&&n<=40956)n-=33088;else{if(!(57408<=n&&n<=60351))throw"illegal char at "+(e+1)+"/"+n;n-=49472}n=192*(n>>>8&255)+(255&n),t.put(n,13),e+=2}if(e<r.length)throw"illegal char at "+(e+1)}};return i},D=function(){var t=[],r={writeByte:function(r){t.push(255&r)},writeShort:function(t){r.writeByte(t),r.writeByte(t>>>8)},writeBytes:function(t,e,n){e=e||0,n=n||t.length;for(var o=0;o<n;o+=1)r.writeByte(t[o+e])},writeString:function(t){for(var e=0;e<t.length;e+=1)r.writeByte(t.charCodeAt(e))},toByteArray:function(){return t},toString:function(){var r="";r+="[";for(var e=0;e<t.length;e+=1)e>0&&(r+=","),r+=t[e];return r+="]"}};return r},S=function(t){var r=t,e=0,n=0,o=0,i={read:function(){for(;o<8;){if(e>=r.length){if(0==o)return-1;throw"unexpected end of file./"+o}var t=r.charAt(e);if(e+=1,"="==t)return o=0,-1;t.match(/^\s$/)||(n=n<<6|a(t.charCodeAt(0)),o+=6)}var i=n>>>o-8&255;return o-=8,i}},a=function(t){if(65<=t&&t<=90)return t-65;if(97<=t&&t<=122)return t-97+26;if(48<=t&&t<=57)return t-48+52;if(43==t)return 62;if(47==t)return 63;throw"c:"+t};return i},I=function(t,r,e){for(var n=function(t,r){var e=t,n=r,o=new Array(t*r),i={setPixel:function(t,r,n){o[r*e+t]=n},write:function(t){t.writeString("GIF87a"),t.writeShort(e),t.writeShort(n),t.writeByte(128),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(255),t.writeByte(255),t.writeByte(255),t.writeString(","),t.writeShort(0),t.writeShort(0),t.writeShort(e),t.writeShort(n),t.writeByte(0);var r=a(2);t.writeByte(2);for(var o=0;r.length-o>255;)t.writeByte(255),t.writeBytes(r,o,255),o+=255;t.writeByte(r.length-o),t.writeBytes(r,o,r.length-o),t.writeByte(0),t.writeString(";")}},a=function(t){for(var r=1<<t,e=1+(1<<t),n=t+1,i=u(),a=0;a<r;a+=1)i.add(String.fromCharCode(a));i.add(String.fromCharCode(r)),i.add(String.fromCharCode(e));var f,c,g,l=D(),h=(f=l,c=0,g=0,{write:function(t,r){if(t>>>r!=0)throw"length over";for(;c+r>=8;)f.writeByte(255&(t<<c|g)),r-=8-c,t>>>=8-c,g=0,c=0;g|=t<<c,c+=r},flush:function(){c>0&&f.writeByte(g)}});h.write(r,n);var s=0,v=String.fromCharCode(o[s]);for(s+=1;s<o.length;){var d=String.fromCharCode(o[s]);s+=1,i.contains(v+d)?v+=d:(h.write(i.indexOf(v),n),i.size()<4095&&(i.size()==1<<n&&(n+=1),i.add(v+d)),v=d)}return h.write(i.indexOf(v),n),h.write(e,n),h.flush(),l.toByteArray()},u=function(){var t={},r=0,e={add:function(n){if(e.contains(n))throw"dup key:"+n;t[n]=r,r+=1},size:function(){return r},indexOf:function(r){return t[r]},contains:function(r){return void 0!==t[r]}};return e};return i}(t,r),o=0;o<r;o+=1)for(var i=0;i<t;i+=1)n.setPixel(i,o,e(i,o));var a=D();n.write(a);for(var u=function(){var t=0,r=0,e=0,n="",o={},i=function(t){n+=String.fromCharCode(a(63&t))},a=function(t){if(t<0);else{if(t<26)return 65+t;if(t<52)return t-26+97;if(t<62)return t-52+48;if(62==t)return 43;if(63==t)return 47}throw"n:"+t};return o.writeByte=function(n){for(t=t<<8|255&n,r+=8,e+=1;r>=6;)i(t>>>r-6),r-=6},o.flush=function(){if(r>0&&(i(t<<6-r),t=0,r=0),e%3!=0)for(var o=3-e%3,a=0;a<o;a+=1)n+="="},o.toString=function(){return n},o}(),f=a.toByteArray(),c=0;c<f.length;c+=1)u.writeByte(f[c]);return u.flush(),"data:image/gif;base64,"+u};return t}();qrcode.stringToBytesFuncs["UTF-8"]=function(t){return function(t){for(var r=[],e=0;e<t.length;e++){var n=t.charCodeAt(e);n<128?r.push(n):n<2048?r.push(192|n>>6,128|63&n):n<55296||n>=57344?r.push(224|n>>12,128|n>>6&63,128|63&n):(e++,n=65536+((1023&n)<<10|1023&t.charCodeAt(e)),r.push(240|n>>18,128|n>>12&63,128|n>>6&63,128|63&n))}return r}(t)},function(t){"function"==typeof define&&define.amd?define([],t):"object"==typeof exports&&(module.exports=t())}(function(){return qrcode});</script>
+
+<script>
+"use strict";
+/* ---------- storage ---------- */
+const LS={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},
+          set(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}}};
+const K_STATE='mudlag.state.v1',K_PRESETS='mudlag.presets.v1',K_HIST='mudlag.history.v1';
+const uid=()=>Math.random().toString(36).slice(2,9);
+const clone=o=>JSON.parse(JSON.stringify(o));
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ---------- number parsing / formatting ---------- */
+function num(v){
+  if(v==null)return NaN; if(typeof v==='number')return v;
+  let s=String(v).trim().replace(/["”″]/g,'');
+  if(!s)return NaN;
+  if(/^\d{1,3}(,\d{3})+(\.\d+)?$/.test(s)) s=s.replace(/,/g,'');
+  else if(/^\d{1,3}( \d{3})+([.,]\d+)?$/.test(s)) s=s.replace(/ /g,'');
+  s=s.replace(',','.');
+  let m=s.match(/^(\d+(?:\.\d+)?)[\s-]+(\d+)\/(\d+)$/); if(m)return +m[1]+(+m[2])/(+m[3]);
+  m=s.match(/^(\d+)\/(\d+)$/); if(m)return (+m[1])/(+m[2]);
+  const f=parseFloat(s); return isFinite(f)?f:NaN;
+}
+const ok=x=>typeof x==='number'&&isFinite(x);
+const isEN=()=>S.ui==='en', loc=()=>isEN()?'en-US':'ru-RU';
+function fmt(x,dec=1,lang){ if(!ok(x))return '—'; return x.toLocaleString((lang||S.ui)==='en'?'en-US':'ru-RU',{maximumFractionDigits:dec,minimumFractionDigits:0}); }
+function fmtF(x,dec){ if(!ok(x))return '—'; return x.toLocaleString(loc(),{maximumFractionDigits:dec,minimumFractionDigits:dec}); }
+function fmtIn(x){ if(!ok(x)||x<=0)return '—'; const w=Math.floor(x),fr=x-w,e=Math.round(fr*8);
+  if(Math.abs(fr*8-e)<0.03){ if(e===0)return String(w); if(e===8)return String(w+1); let n=e,d=8; while(n%2===0){n/=2;d/=2;} return (w?w+'-':'')+n+'/'+d; }
+  return (+x.toFixed(3)).toString(); }
+function mmss(min){ if(!ok(min))return '—'; const t=Math.round(min*60); const h=Math.floor(t/3600),m=Math.floor(t%3600/60),s=t%60; return (h?h+':'+String(m).padStart(2,'0'):m)+':'+String(s).padStart(2,'0'); }
+
+/* ---------- catalogs ---------- */
+const CASING_KIND={conductor:['Направление','Conductor'],surface:['Кондуктор','Surface'],intermediate:['Промежуточная','Intermediate'],production:['Эксплуатационная','Production'],liner:['Хвостовик','Liner']};
+const CASING_SIZES=[['20" 94#',20,19.124],['16" 65#',16,15.25],['13-3/8" 54.5#',13.375,12.615],['13-3/8" 68#',13.375,12.415],['10-3/4" 45.5#',10.75,9.95],['9-5/8" 36#',9.625,8.921],['9-5/8" 40#',9.625,8.835],['9-5/8" 47#',9.625,8.681],['7-5/8" 29.7#',7.625,6.875],['7" 23#',7,6.366],['7" 26#',7,6.276],['7" 29#',7,6.184],['5-1/2" 17#',5.5,4.892],['5-1/2" 20#',5.5,4.778],['4-1/2" 11.6#',4.5,4.0]];
+const COMP={bit:{ru:'Долото',en:'Bit',c:'#f5a524',s:'Долото'},motor:{ru:'ВЗД (мотор)',en:'Mud motor',c:'#ea580c',s:'ВЗД'},rss:{ru:'РУС (RSS)',en:'RSS',c:'#b45309',s:'РУС'},
+  mwd:{ru:'MWD / LWD',en:'MWD/LWD',c:'#8b5cf6',s:'MWD/LWD'},nmdc:{ru:'НУБТ (NMDC)',en:'NMDC',c:'#0ea5e9',s:'НУБТ'},stab:{ru:'Калибратор / стабилизатор',en:'Stabilizer',c:'#22c55e',s:'Калибратор'},
+  dc:{ru:'УБТ (DC)',en:'Drill collar',c:'#64748b',s:'УБТ'},jar:{ru:'Ясс',en:'Jar',c:'#e11d48',s:'Ясс'},hwdp:{ru:'ТБТ (HWDP)',en:'HWDP',c:'#94a3b8',s:'ТБТ (HWDP)'},
+  dp:{ru:'Бурильные трубы (DP)',en:'Drill pipe',c:'#cbd5e1',s:'Бур. трубы'},other:{ru:'Другое',en:'Other',c:'#a3a3a3',s:'Другое'}};
+const PIPE_SIZES=[['DP 5" 19.5#',5,4.276],['DP 4-1/2" 16.6#',4.5,3.826],['DP 4" 14#',4,3.34],['DP 5-1/2" 21.9#',5.5,4.778],['DP 3-1/2" 13.3#',3.5,2.764],['HWDP 5"',5,3],['HWDP 4-1/2"',4.5,2.75],['DC 8"',8,2.8125],['DC 6-1/2"',6.5,2.8125],['DC 4-3/4"',4.75,2.25]];
+const LITH=[['ss','песчаник','SS'],['sh','глина','SH'],['clyst','аргиллит','CLYST'],['sltst','алевролит','SLTST'],['ls','известняк','LS'],['dol','доломит','DOL'],['mrl','мергель','MRL'],['anhy','ангидрит','ANHY'],['salt','соль','SALT'],['coal','уголь','COAL'],['cht','кремень','CHT'],['cmt','цемент','CMT'],['other','прочее','OTHER']];
+const COLORS=[['none','нет','none'],['dull_yellow','тускло-жёлтая','dull yellow'],['yellow','жёлтая','yellow'],['bright_yellow','ярко-жёлтая','bright yellow'],['gold','золотистая','gold'],['yellow_white','жёлто-белая','yellow-white'],['white','белая','white'],['blue_white','голубовато-белая','blue-white'],['milky','молочно-белая','milky white'],['orange','оранжевая','orange'],['green','зеленоватая','greenish']];
+const CUTS=[['none','нет','none','нет'],['instant','мгновенная (instant)','instant','мгновенная'],['streaming','струйчатая (streaming)','streaming','струйчатая'],['slow','медленная (slow)','slow','медленная'],['crush','при раздавливании (crush)','crush','при раздавливании']];
+const REC_TYPES=[['show','Шоу (газопроявление)','SHOW','ШОУ','Show (gas show)'],['sample','Описание шлама','SAMPLE','ШЛАМ','Cuttings description'],['conn','Газ наращивания','CONN GAS','ГАЗ НАРАЩ.','Connection gas'],['trip','Газ после СПО','TRIP GAS','ГАЗ ПОСЛЕ СПО','Trip gas'],['bg','Фоновый газ','BG GAS','ФОН. ГАЗ','Background gas']];
+const rtName=r=>isEN()?r[4]:r[1], ckName=k=>CASING_KIND[k][isEN()?1:0], cName=t=>COMP[t][isEN()?'en':'ru'], cShort=t=>isEN()?COMP[t].en:COMP[t].s;
+
+/* ---------- state ---------- */
+function blankRec(){return {type:'show',depth:'',time:'',gasUnit:'units',bg:'',peak:'',c1:'',c2:'',c3:'',c4:'',c5:'',lith:[{id:uid(),t:'ss',p:''}],desc:'',fluorPct:'',fluorColor:'none',cut:'none',cutColor:'none',notes:'',includeLag:true};}
+function demoWell(){return {
+  wellName:'Well-1',bitDepth:'12500',ohDia:'8-1/2',washout:'10',
+  casings:[{id:uid(),kind:'conductor',od:'20',idd:'19.124',top:'0',shoe:'120'},
+           {id:uid(),kind:'surface',od:'13-3/8',idd:'12.615',top:'0',shoe:'2500'},
+           {id:uid(),kind:'intermediate',od:'9-5/8',idd:'8.835',top:'0',shoe:'9500'}],
+  string:[{id:uid(),type:'bit',od:'8-1/2',idd:'0',len:'1',auto:false},
+          {id:uid(),type:'motor',od:'6-3/4',idd:'2',len:'28',auto:false},
+          {id:uid(),type:'mwd',od:'6-3/4',idd:'3.25',len:'60',auto:false},
+          {id:uid(),type:'nmdc',od:'6-1/2',idd:'2.8125',len:'30',auto:false},
+          {id:uid(),type:'dc',od:'6-1/2',idd:'2.8125',len:'270',auto:false},
+          {id:uid(),type:'jar',od:'6-1/2',idd:'2.75',len:'32',auto:false},
+          {id:uid(),type:'hwdp',od:'5',idd:'3',len:'930',auto:false},
+          {id:uid(),type:'dp',od:'5',idd:'4.276',len:'',auto:true}],
+  pump:{mode:'calc',galStk:'4.2',spm:'100',gpm:''},
+  lag:{mode:'auto',manual:[]},
+  plan:{td:'13500',rop:'120',stand:'93',conn:'6',extra:'10',start:''}
+};}
+function blankWell(){return {wellName:'',bitDepth:'',ohDia:'',washout:'',casings:[],string:[{id:uid(),type:'bit',od:'',idd:'0',len:'1',auto:false},{id:uid(),type:'dp',od:'5',idd:'4.276',len:'',auto:true}],pump:{mode:'calc',galStk:'',spm:'',gpm:''},lag:{mode:'auto',manual:[]},plan:{td:'',rop:'',stand:'93',conn:'6',extra:'0',start:''}};}
+const WELL_KEYS=['wellName','bitDepth','ohDia','washout','casings','string','pump','lag','plan'];
+let S=LS.get(K_STATE,null);
+if(!S||!S.casings){S=Object.assign(demoWell(),{rec:blankRec(),lang:'ru',focus:true});}
+S.rec=Object.assign(blankRec(),S.rec||{}); if(!S.lang)S.lang='ru'; if(!S.ui)S.ui='ru'; if(!S.plan)S.plan={td:'',rop:'',stand:'93',conn:'6',extra:'0',start:''}; if(S.focus==null)S.focus=true;
+let outDirty=false;
+let saveT=null; function save(){clearTimeout(saveT);saveT=setTimeout(()=>LS.set(K_STATE,S),250);}
+
+function getPath(p){return p.split('.').reduce((o,k)=>o==null?o:o[k],S);}
+function setPath(p,v){const a=p.split('.');let o=S;for(let i=0;i<a.length-1;i++)o=o[a[i]];o[a[a.length-1]]=v;}
+
+/* ---------- compute ---------- */
+function compute(bdOv){
+  const bd=bdOv!=null?bdOv:(num(S.bitDepth)>0?num(S.bitDepth):0), ohD=num(S.ohDia)||0, wo=num(S.washout)||0;
+  const cas=S.casings.map(c=>({ref:c,kind:c.kind,od:num(c.od)||0,id:num(c.idd)||0,top:num(c.top)||0,shoe:num(c.shoe)||0})).filter(c=>c.shoe>c.top&&c.id>0);
+  const comps=S.string.map(c=>({ref:c,type:c.type,auto:!!c.auto,od:num(c.od)||0,id:num(c.idd)||0,L:num(c.len)||0}));
+  const ai=comps.findIndex(c=>c.auto);
+  const fixed=comps.reduce((s,c,i)=>i===ai?s:s+c.L,0);
+  if(ai>=0)comps[ai].L=Math.max(0,bd-fixed);
+  let b=bd; comps.forEach(c=>{c.bottom=b;c.top=b-c.L;b=c.top;});
+  const stringLen=comps.reduce((s,c)=>s+c.L,0);
+  const holeAt=d=>{let best=null;cas.forEach(c=>{if(d>=c.top&&d<c.shoe&&(!best||c.id<best.id))best=c;});return best?{id:best.id,kind:'cased',c:best}:{id:ohD,kind:'oh',c:null};};
+  const pipeAt=d=>comps.find(c=>d>=c.top&&d<c.bottom)||null;
+  const bps=new Set([0,bd]);
+  cas.forEach(c=>[c.top,c.shoe].forEach(x=>{if(x>0&&x<bd)bps.add(x);}));
+  comps.forEach(c=>[c.top,c.bottom].forEach(x=>{if(x>0&&x<bd)bps.add(x);}));
+  const pts=[...bps].sort((x,y)=>x-y), auto=[];
+  for(let i=0;i<pts.length-1;i++){
+    const a=pts[i],z=pts[i+1]; if(z-a<1e-6)continue;
+    const m=(a+z)/2,h=holeAt(m),p=pipeAt(m),od=p?p.od:0;
+    const key=h.kind+'|'+h.id+'|'+(h.c?h.c.ref.id:'')+'|'+od;
+    const last=auto[auto.length-1], pn=p?cName(p.type):'без трубы';
+    if(last&&last.key===key){last.bottom=z;if(!last.pipes.includes(pn))last.pipes.push(pn);}
+    else auto.push({key,top:a,bottom:z,id:h.id,od,kind:h.kind,c:h.c,pipes:[pn]});
+  }
+  auto.forEach(s=>{s.len=s.bottom-s.top;s.label=(s.kind==='oh'?'ОС':fmtIn(s.c.od)+'" '+ckName(s.c.kind))+' × '+s.pipes.join(', ');});
+  let secs;
+  if(S.lag.mode==='manual'&&bdOv==null) secs=S.lag.manual.map((r,i)=>({ref:r,id:num(r.idd)||0,od:num(r.od)||0,len:num(r.len)||0,kind:r.oh?'oh':'manual',label:'Секция '+(i+1)}));
+  else secs=auto.map(s=>Object.assign({},s));
+  const warns=[];
+  secs.forEach((s,i)=>{
+    const d2=s.id*s.id-s.od*s.od;
+    s.cap=d2>0?d2/1029.4:0; if(s.kind==='oh'&&wo)s.cap*=1+wo/100;
+    s.vol=s.cap*s.len; s.d2=d2;
+    if(s.id>0&&d2<0)warns.push(`Секция ${i+1}: OD трубы ≥ ID скважины — объём принят равным 0.`);
+    if(s.kind==='oh'&&S.lag.mode==='auto'&&!(ohD>0))warns.push('Не задан диаметр открытого ствола.');
+  });
+  const vol=secs.reduce((t,s)=>t+s.vol,0);
+  let strVol=0; comps.forEach(c=>{const t=Math.max(c.top,0);if(c.bottom>t)strVol+=(c.bottom-t)*c.id*c.id/1029.4;});
+  const gs=num(S.pump.galStk), spmIn=num(S.pump.spm);
+  const gpm=S.pump.mode==='direct'?num(S.pump.gpm):(ok(gs)&&ok(spmIn)?gs*spmIn:NaN);
+  const spm=S.pump.mode==='direct'?(gs>0&&ok(gpm)?gpm/gs:NaN):spmIn;
+  const tmin=v=>gpm>0?v*42/gpm:null, tstk=v=>gs>0?v*42/gs:null;
+  secs.forEach(s=>{s.min=tmin(s.vol);s.stk=tstk(s.vol);s.av=(gpm>0&&s.d2>0)?24.51*gpm/s.d2:null;});
+  if(S.lag.mode==='auto'&&stringLen>bd+0.5&&bd>0)warns.push('Длина колонны больше глубины долота — проверьте длины элементов.');
+  if(!(gpm>0))warns.push('Подача насосов (GPM) не задана или равна 0 — время лага не рассчитывается.');
+  return {bd,ohD,wo,cas,comps,auto,secs,vol,strVol,gs,gpm,spm,
+    lagMin:tmin(vol),lagStk:tstk(vol),s2bMin:tmin(strVol),s2bStk:tstk(strVol),
+    cycMin:tmin(vol+strVol),cycStk:tstk(vol+strVol),warns:[...new Set(warns)],stringLen,fixedLen:fixed};
+}
+
+/* ---------- rendering: lists ---------- */
+function fld(lbl,unit,key,val,extra=''){return `<label class="f"><span class="lt">${lbl} <span class="u">${unit}</span></span><input data-k="${key}" value="${esc(val)}" inputmode="decimal" ${extra}></label>`;}
+function renderCasings(){
+  const el=$('#casingList');
+  if(!S.casings.length){el.innerHTML='<div class="empty">Колонн нет — весь ствол считается открытым.</div>';return;}
+  el.innerHTML=S.casings.map(c=>`<div class="card" data-list="casings" data-id="${c.id}">
+    <div class="hd"><select data-k="kind">${Object.entries(CASING_KIND).map(([k,v])=>`<option value="${k}" ${k===c.kind?'selected':''}>${isEN()?v[1]:v[0]+' · '+v[1]}</option>`).join('')}</select>
+      <select data-act="casSize"><option value="">Типоразмер…</option>${CASING_SIZES.map((s,i)=>`<option value="${i}">${s[0]} (ID ${s[2]})</option>`).join('')}</select>
+      <button class="btn icon sm danger" data-act="del" title="Удалить">✕</button></div>
+    <div class="grid g4">${fld('OD','in','od',c.od)}${fld('ID','in','idd',c.idd)}${fld('Верх','ft','top',c.top)}${fld('Башмак','ft','shoe',c.shoe)}</div></div>`).join('');
+}
+function renderComps(){
+  const el=$('#compList'); const n=S.string.length;
+  el.innerHTML=S.string.map((c,i)=>`<div class="card" data-list="string" data-id="${c.id}">
+    <div class="hd"><span class="dot" style="background:${COMP[c.type].c}"></span><span class="tag">${i+1}</span>
+      <select data-k="type">${Object.entries(COMP).map(([k,v])=>`<option value="${k}" ${k===c.type?'selected':''}>${cName(k)}</option>`).join('')}</select>
+      <select data-act="pipeSize" style="max-width:150px"><option value="">Размер…</option>${PIPE_SIZES.map((s,j)=>`<option value="${j}">${s[0]}</option>`).join('')}</select>
+      <button class="btn icon sm" data-act="up" ${i===0?'disabled':''} title="Ниже (к долоту)">↓</button>
+      <button class="btn icon sm" data-act="down" ${i===n-1?'disabled':''} title="Выше (к устью)">↑</button>
+      <button class="btn icon sm danger" data-act="del" title="Удалить">✕</button></div>
+    <div class="grid g4">${fld('OD','in','od',c.od)}${fld('ID','in','idd',c.idd)}
+      ${c.auto?`<label class="f"><span class="lt">Длина <span class="u">ft · авто</span></span><input id="al-${c.id}" disabled></label>`:fld('Длина','ft','len',c.len)}
+      <label class="f"><span class="lt">До устья</span><span style="display:flex;align-items:center;min-height:42px"><input type="checkbox" data-k="auto" ${c.auto?'checked':''}></span></label></div></div>`).join('');
+}
+function renderManual(){
+  const show=S.lag.mode==='manual';
+  $('#manualBtns').style.display=show?'flex':'none';
+}
+function renderLith(){
+  $('#lithList').innerHTML=S.rec.lith.map(l=>`<div class="lithrow" data-list="lith" data-id="${l.id}">
+    <select data-k="t">${LITH.map(x=>`<option value="${x[0]}" ${x[0]===l.t?'selected':''}>${isEN()?x[2]:x[1]+' · '+x[2]}</option>`).join('')}</select>
+    <input data-k="p" value="${esc(l.p)}" inputmode="decimal" placeholder="%">
+    <button class="btn icon sm danger" data-act="del">✕</button></div>`).join('')||'<div class="empty">Добавьте породу.</div>';
+}
+function renderPresets(){
+  const P=LS.get(K_PRESETS,[]);
+  $('#presetList').innerHTML=P.length?P.map((p,i)=>`<div class="preset" data-pi="${i}"><div class="n"><span class="noi18n">${esc(p.name)}</span><small><span class="noi18n">${esc(p.data.wellName||'')}</span> · долото ${fmt(num(p.data.bitDepth),0)} ft · ${new Date(p.ts).toLocaleString(loc())}</small></div>
+    <button class="btn sm" data-act="loadPreset">Загрузить</button><button class="btn sm danger" data-act="delPreset">✕</button></div>`).join(''):'<div class="empty">Пресетов пока нет. Сохраните текущую скважину — конструкцию, КНБК, насосы и секции.</div>';
+}
+function fillSelects(){
+  $('#recType').innerHTML=REC_TYPES.map(r=>`<option value="${r[0]}">${rtName(r)}</option>`).join('');
+  const co=COLORS.map(c=>`<option value="${c[0]}">${isEN()?c[2]:c[1]+' · '+c[2]}</option>`).join('');
+  $('#fluorColor').innerHTML=co; $('#cutColor').innerHTML=co;
+  $('#cutType').innerHTML=CUTS.map(c=>`<option value="${c[0]}">${isEN()?c[2]:c[1]}</option>`).join('');
+}
+function syncBinds(){ $$('[data-bind]').forEach(el=>{const v=getPath(el.dataset.bind); if(el.type==='checkbox')el.checked=!!v; else el.value=v??'';}); }
+function syncSegs(){
+  $$('#pumpSeg button').forEach(b=>b.classList.toggle('on',b.dataset.pm===S.pump.mode));
+  $$('#lagSeg button').forEach(b=>b.classList.toggle('on',b.dataset.lm===S.lag.mode));
+  $$('.langSeg button').forEach(b=>b.classList.toggle('on',b.dataset.lang===S.lang));
+  const direct=S.pump.mode==='direct';
+  $('#gpmInput').disabled=!direct; $('#spmBox').querySelector('input').disabled=direct;
+  $('#gpmNote').textContent=direct?'ввод':'= Gal/Stk × SPM';
+}
+function renderAll(){renderCasings();renderComps();renderManual();renderLith();renderPresets();syncBinds();syncSegs();renderHistory();recompute();}
+
+/* ---------- recompute & outputs ---------- */
+let M=null;
+function recompute(){
+  M=compute();
+  M.comps.forEach(c=>{if(c.auto){const e=document.getElementById('al-'+c.ref.id);if(e)e.value=fmt(c.L,1);}});
+  if(S.pump.mode==='calc'){const e=$('#gpmInput'); if(document.activeElement!==e)e.value=ok(M.gpm)?+M.gpm.toFixed(2):'';}
+  else {const e=$('#spmBox input'); if(document.activeElement!==e)e.value=ok(M.spm)?+M.spm.toFixed(1):'';}
+  renderPlan(); renderKPIs(); renderResults(); renderSecTable(); drawSketch(); renderStringWarn();
+  if(!outDirty)$('#outText').value=genText(S.rec,snapshot(),S.lang);
+  renderLithSum();
+  save();
+}
+function eta(){ if(!ok(M.lagMin))return '—'; const d=new Date(Date.now()+M.lagMin*60000); return d.toLocaleTimeString(loc(),{hour:'2-digit',minute:'2-digit'}); }
+function renderKPIs(){
+  $('#kpis').innerHTML=[
+    ['GPM',fmt(M.gpm,1)],['Затрубье, bbl',fmt(M.vol,1)],['Лаг, мин',ok(M.lagMin)?fmtF(M.lagMin,1):'—',1],['Ходов',ok(M.lagStk)?fmt(Math.round(M.lagStk),0):'—',1],['Забой→устье',eta()],['Выход на TD',M.plan&&M.plan.eta?M.plan.eta.toLocaleString(loc(),{weekday:'short',hour:'2-digit',minute:'2-digit'}):(M.plan&&M.plan.done?'✓':'—'),1]
+  ].map(k=>`<div class="kpi ${k[2]?'hl':''}"><small>${k[0]}</small><b>${k[1]}</b></div>`).join('');
+}
+function renderResults(){
+  const c=(l,v,sub,hl)=>`<div class="c ${hl?'hl':''}"><small>${l}</small><b>${v}</b>${sub?`<i>${sub}</i>`:''}</div>`;
+  $('#results').innerHTML=
+    c('Объём затрубья',fmtF(M.vol,1),'bbl · '+fmt(M.vol*42,0)+' gal')+
+    c('Время лага',ok(M.lagMin)?fmtF(M.lagMin,1):'—','мин · '+mmss(M.lagMin),1)+
+    c('Ходов (лаг)',ok(M.lagStk)?fmt(Math.round(M.lagStk),0):'—','stk · bottoms up',1)+
+    c('Подача',fmt(M.gpm,1),'gpm · '+fmt(M.spm,1)+' spm')+
+    c('Внутри колонны',fmtF(M.strVol,1),'bbl · устье→долото')+
+    c('Устье → долото',ok(M.s2bMin)?fmtF(M.s2bMin,1):'—','мин · '+(ok(M.s2bStk)?fmt(Math.round(M.s2bStk),0):'—')+' stk')+
+    c('Полный цикл',ok(M.cycMin)?fmtF(M.cycMin,1):'—','мин · '+(ok(M.cycStk)?fmt(Math.round(M.cycStk),0):'—')+' stk')+
+    c('Шлам с забоя на устье',eta(),'если начать циркуляцию сейчас');
+  $('#calcWarn').innerHTML=M.warns.map(w=>`<p class="warn">⚠ ${esc(w)}</p>`).join('');
+}
+function renderStringWarn(){
+  const w=[]; if(M.bd>0&&M.stringLen>M.bd+0.5)w.push('Сумма длин элементов больше глубины долота.');
+  if(!S.string.some(c=>c.auto))w.push('Ни один элемент не отмечен «до устья» — колонна может не доходить до поверхности.');
+  $('#stringWarn').innerHTML=w.map(x=>`<p class="warn">⚠ ${x}</p>`).join('');
+}
+let manualRendered=false;
+function renderSecTable(){
+  const manual=S.lag.mode==='manual', body=$('#secBody');
+  const cells=(s,i)=>`<td class="mono" data-c="cap">${fmtF(s.cap,4)}</td><td class="mono" data-c="vol">${fmtF(s.vol,2)}</td><td class="mono" data-c="av">${s.av!=null?fmt(s.av,0):'—'}</td><td class="mono" data-c="min">${s.min!=null?fmtF(s.min,2):'—'}</td><td class="mono" data-c="stk">${s.stk!=null?fmt(Math.round(s.stk),0):'—'}</td>`;
+  if(manual){
+    const need=S.lag.manual.map(r=>r.id).join(',');
+    if(body.dataset.rows!==need||body.dataset.mode!=='manual'){
+      body.innerHTML=S.lag.manual.length?M.secs.map((s,i)=>`<tr data-list="manual" data-id="${s.ref.id}"><td class="l">${i+1}</td><td class="l"><label style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-k="oh" ${s.ref.oh?'checked':''}> ОС${M.wo?' +'+fmt(M.wo,1)+'%':''}</label></td>
+        <td><input data-k="idd" value="${esc(s.ref.idd)}" inputmode="decimal"></td><td><input data-k="od" value="${esc(s.ref.od)}" inputmode="decimal"></td><td><input data-k="len" value="${esc(s.ref.len)}" inputmode="decimal"></td>
+        ${cells(s,i)}<td><button class="btn icon sm danger" data-act="del">✕</button></td></tr>`).join(''):'<tr><td colspan="11" class="l empty">Добавьте секции или заполните из конструкции.</td></tr>';
+      body.dataset.rows=need; body.dataset.mode='manual';
+    } else {
+      M.secs.forEach(s=>{const tr=body.querySelector(`tr[data-id="${s.ref.id}"]`); if(!tr)return;
+        tr.querySelector('[data-c=cap]').textContent=fmtF(s.cap,4); tr.querySelector('[data-c=vol]').textContent=fmtF(s.vol,2);
+        tr.querySelector('[data-c=av]').textContent=s.av!=null?fmt(s.av,0):'—'; tr.querySelector('[data-c=min]').textContent=s.min!=null?fmtF(s.min,2):'—';
+        tr.querySelector('[data-c=stk]').textContent=s.stk!=null?fmt(Math.round(s.stk),0):'—';});
+    }
+  } else {
+    body.dataset.mode='auto'; body.dataset.rows='';
+    body.innerHTML=M.secs.length?M.secs.map((s,i)=>`<tr><td class="l">${i+1}</td><td class="l">${fmt(s.top,0)}–${fmt(s.bottom,0)} ft · ${esc(s.label)}${s.kind==='oh'&&M.wo?` <span class="pill">+${fmt(M.wo,1)}%</span>`:''}</td>
+      <td class="mono">${fmtIn(s.id)}</td><td class="mono">${s.od?fmtIn(s.od):'—'}</td><td class="mono">${fmt(s.len,1)}</td>${cells(s,i)}<td></td></tr>`).join(''):'<tr><td colspan="11" class="l empty">Задайте глубину долота и конструкцию на первой вкладке.</td></tr>';
+  }
+  const L=M.secs.reduce((t,s)=>t+s.len,0);
+  $('#secFoot').innerHTML=`<tr><td class="l" colspan="4">Итого</td><td class="mono">${fmt(L,1)}</td><td></td><td class="mono">${fmtF(M.vol,2)}</td><td></td><td class="mono">${ok(M.lagMin)?fmtF(M.lagMin,2):'—'}</td><td class="mono">${ok(M.lagStk)?fmt(Math.round(M.lagStk),0):'—'}</td><td></td></tr>`;
+}
+
+/* ---------- sketch ---------- */
+function niceStep(range,n){ if(!(range>0))return 1; const raw=range/n, p=Math.pow(10,Math.floor(Math.log10(raw))), f=raw/p; return (f<1.5?1:f<3?2:f<7?5:10)*p; }
+function resolveLabels(labs,gap,minY,maxY){
+  labs.sort((a,b)=>a.y-b.y);
+  for(let i=0;i<labs.length;i++)labs[i].ly=Math.max(labs[i].y,i?labs[i-1].ly+gap:minY);
+  for(let i=labs.length-1;i>=0;i--){const lim=i===labs.length-1?maxY:labs[i+1].ly-gap; if(labs[i].ly>lim)labs[i].ly=lim;}
+  return labs;
+}
+function drawSketch(){
+  const W=580,H=860,top=82,bot=H-40,cx=150,ax=46,lx=262;
+  const bd=M.bd, td=num(S.plan.td), el=$('#sketch');
+  if(!(bd>0)){el.innerHTML=`<svg viewBox="0 0 ${W} 260"><text x="${W/2}" y="130" fill="#9aa4b2" font-size="15" text-anchor="middle">Укажите глубину долота — эскиз появится здесь</text></svg>`;$('#legend').innerHTML='';return;}
+  const D=Math.max(bd,td>bd?td:0);
+  const radii=[M.ohD/2,...M.cas.map(c=>c.od/2),...M.comps.map(c=>c.od/2)].filter(x=>x>0);
+  const maxR=Math.max(1,...radii)*1.2, k=(cx-ax-16)/maxR, X=r=>cx+r*k;
+  const Y=d=>top+Math.max(0,Math.min(D,d))/D*(bot-top);
+  const MUD='#1d6f8a', STEEL='#e2e8f0', OHC='#e0a84a', o=[];
+  o.push(`<defs>
+   <pattern id="fm" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="#2a2119"/><circle cx="3" cy="3" r="1" fill="#4a3a28"/><circle cx="9" cy="9" r=".9" fill="#43352a"/></pattern>
+   <pattern id="cm" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="#5b6068"/><line x1="0" y1="0" x2="0" y2="6" stroke="#80868f" stroke-width="2"/></pattern></defs>`);
+  o.push(`<rect x="${X(-maxR)}" y="${top}" width="${2*maxR*k}" height="${Y(D)-top+8}" rx="3" fill="url(#fm)"/>`);
+  // cement
+  [...M.cas].sort((a,b)=>b.od-a.od).forEach(c=>{
+    let outer=null; M.cas.forEach(o2=>{if(o2!==c&&o2.id>c.od&&o2.top<=c.shoe-1&&o2.shoe>=c.shoe-1&&(!outer||o2.id<outer))outer=o2.id;});
+    const hr=Math.max((outer||Math.max(c.od+2.5,M.ohD>c.od?M.ohD:0))/2,c.od/2+0.6), w=(hr-c.od/2)*k, y0=Y(c.top), h=Y(c.shoe)-y0;
+    o.push(`<rect x="${X(-hr)}" y="${y0}" width="${w}" height="${h}" fill="url(#cm)"/><rect x="${X(c.od/2)}" y="${y0}" width="${w}" height="${h}" fill="url(#cm)"/>`);
+  });
+  // mud
+  M.auto.forEach(s=>{const r=s.kind==='oh'?M.ohD/2:s.id/2; if(r>0)o.push(`<rect x="${X(-r)}" y="${Y(s.top)}" width="${2*r*k}" height="${Math.max(.5,Y(s.bottom)-Y(s.top))}" fill="${MUD}"/>`);});
+  // open hole
+  const deep=M.cas.reduce((m,c)=>Math.max(m,c.shoe),0);
+  if(M.ohD>0&&deep<bd){
+    const r=M.ohD/2,y0=Y(deep),y1=Y(bd);
+    [-1,1].forEach(sg=>{let p=`M${X(sg*r)} ${y0}`; for(let y=y0;y<=y1;y+=5)p+=` L${(X(sg*r)+sg*Math.sin(y/4)*1.6).toFixed(1)} ${y.toFixed(1)}`; o.push(`<path d="${p}" stroke="${OHC}" stroke-width="2" fill="none"/>`);});
+    o.push(`<line x1="${X(-r)}" x2="${X(r)}" y1="${y1}" y2="${y1}" stroke="${OHC}" stroke-width="2"/>`);
+  }
+  // planned hole
+  if(td>bd&&M.ohD>0){const r=M.ohD/2;o.push(`<rect x="${X(-r)}" y="${Y(bd)}" width="${2*r*k}" height="${Y(td)-Y(bd)}" fill="none" stroke="${OHC}" stroke-width="1.5" stroke-dasharray="5 4" opacity=".8"/>
+    <line x1="${X(-maxR)}" x2="${X(maxR)}" y1="${Y(td)}" y2="${Y(td)}" stroke="#4ade80" stroke-width="1.5" stroke-dasharray="6 4"/>`);}
+  // casings
+  M.cas.forEach(c=>{const y0=Y(c.top),y1=Y(c.shoe),w=Math.max(3,(c.od-c.id)/2*k);
+    o.push(`<rect x="${X(-c.od/2)}" y="${y0}" width="${w}" height="${y1-y0}" fill="${STEEL}"/><rect x="${X(c.od/2)-w}" y="${y0}" width="${w}" height="${y1-y0}" fill="${STEEL}"/>`);
+    o.push(`<polygon points="${X(-c.od/2)},${y1} ${X(-c.od/2)-8},${y1} ${X(-c.od/2)},${y1-10}" fill="${STEEL}"/><polygon points="${X(c.od/2)},${y1} ${X(c.od/2)+8},${y1} ${X(c.od/2)},${y1-10}" fill="${STEEL}"/>`);});
+  // drill string (hollow: coloured walls, mud inside)
+  M.comps.forEach(c=>{ if(c.bottom<=0||c.L<=0||!(c.od>0))return; const t=Math.max(0,c.top),y0=Y(t),y1=Y(c.bottom),h=Math.max(1,y1-y0),col=COMP[c.type].c;
+    if(c.type==='bit'){const hb=Math.max(8,h),yt=y1-hb;o.push(`<polygon points="${X(-c.od/2)},${yt} ${X(c.od/2)},${yt} ${X(c.od*.3)},${y1} ${X(-c.od*.3)},${y1}" fill="${col}"/>`);return;}
+    o.push(`<rect x="${X(-c.od/2)}" y="${y0}" width="${c.od*k}" height="${h}" fill="${col}"/>`);
+    if(c.id>0)o.push(`<rect x="${X(-c.id/2)}" y="${y0}" width="${c.id*k}" height="${h}" fill="${MUD}" opacity=".9"/>`);
+  });
+  // surface + rig
+  o.push(`<line x1="16" x2="${lx+120}" y1="${top}" y2="${top}" stroke="#8a7350" stroke-width="2"/>`);
+  o.push(`<path d="M${cx-24} ${top} L${cx} ${top-34} L${cx+24} ${top} M${cx-16} ${top-11} L${cx+16} ${top-11} M${cx-9} ${top-22} L${cx+9} ${top-22}" stroke="#9aa4b2" stroke-width="1.3" fill="none"/>`);
+  o.push(`<text class="noi18n" x="16" y="20" fill="#f1f4f8" font-size="15" font-weight="700">${esc(S.wellName||'Скважина')}</text><text x="16" y="36" fill="#9aa4b2" font-size="11">долото ${fmt(bd,0)} ft${td>0?` · план TD ${fmt(td,0)} ft`:''}</text>`);
+  // depth axis
+  const st=niceStep(D,8); o.push(`<line x1="${ax}" x2="${ax}" y1="${top}" y2="${Y(D)}" stroke="#3b4552"/>`);
+  for(let d=0;d<=D+1e-6;d+=st){const y=Y(d);o.push(`<line x1="${ax-4}" x2="${ax}" y1="${y}" y2="${y}" stroke="#6b7684"/><line x1="${ax}" x2="${X(-maxR)}" y1="${y}" y2="${y}" stroke="#ffffff" opacity=".05"/><text x="${ax-6}" y="${y+3.5}" fill="#9aa4b2" font-size="10" text-anchor="end" font-family="JetBrains Mono,monospace">${fmt(d,0,'en')}</text>`);}
+  o.push(`<text x="${ax}" y="${bot+24}" fill="#6b7684" font-size="10" text-anchor="middle">ft MD</text>`);
+  // labels (right column)
+  const labs=[];
+  M.cas.forEach(c=>labs.push({y:Y(c.shoe),ax:X(c.od/2)+8,ay:Y(c.shoe),col:STEEL,t:`${fmtIn(c.od)}″ ${ckName(c.kind)}`,s:`башмак ${fmt(c.shoe,0)} ft · ID ${fmtIn(c.id)}″`}));
+  if(M.ohD>0&&deep<bd){const ym=(Y(deep)+Y(bd))/2;labs.push({y:ym,ax:X(M.ohD/2)+2,ay:ym,col:OHC,t:`Открытый ствол ${fmtIn(M.ohD)}″`,s:`${fmt(deep,0)}–${fmt(bd,0)} ft${M.wo?' · +'+fmt(M.wo,1)+'%':''}`});}
+  labs.push({y:Y(bd),ax:X(M.ohD/2||1)+2,ay:Y(bd),col:'#f5a524',t:'Долото / забой',s:`${fmt(bd,0)} ft`});
+  if(td>bd)labs.push({y:Y(td),ax:X(maxR),ay:Y(td),col:'#4ade80',t:'План TD',s:`${fmt(td,0)} ft · осталось ${fmt(td-bd,0)} ft`});
+  const rd=num(S.rec.depth);
+  if(ok(rd)&&rd>0&&rd<=D){const y=Y(rd);o.push(`<line x1="${X(-maxR)}" x2="${X(maxR)}" y1="${y}" y2="${y}" stroke="#f87171" stroke-width="1.5" stroke-dasharray="5 3"/>`);
+    labs.push({y,ax:X(maxR),ay:y,col:'#f87171',t:`★ ${rtName(REC_TYPES.find(r=>r[0]===S.rec.type)||REC_TYPES[0])}`,s:`${fmt(rd,0)} ft`});}
+  resolveLabels(labs,28,top+12,bot-8).forEach(l=>o.push(`<polyline points="${l.ax},${l.ay} ${lx-10},${l.ly} ${lx-3},${l.ly}" fill="none" stroke="${l.col}" stroke-width="1" opacity=".75"/>
+    <text x="${lx}" y="${l.ly}" fill="${l.col}" font-size="12" font-weight="600">${esc(l.t)}</text><text x="${lx}" y="${l.ly+13}" fill="#9aa4b2" font-size="10.5">${esc(l.s)}</text>`));
+  // BHA zoom strip
+  const bha=M.comps.filter(c=>!c.auto&&c.L>0&&c.bottom>0);
+  if(bha.length){
+    const sx=440, yS=top+34, yE=bot-26, avail=yE-yS, n=bha.length, minH=Math.min(30,avail/n), sum=bha.reduce((t,c)=>t+c.L,0), wsum=bha.reduce((t,c)=>t+Math.sqrt(c.L),0);
+    const maxOD=Math.max(...bha.map(c=>c.od),1);
+    o.push(`<rect x="${sx-34}" y="${top+4}" width="${W-sx+30}" height="${bot-top}" rx="8" fill="#ffffff" opacity=".03"/>`);
+    o.push(`<text x="${sx-24}" y="${top+22}" fill="#f1f4f8" font-size="12" font-weight="700">КНБК крупно</text>`);
+    const bTop=Math.max(0,bha[bha.length-1].top);
+    o.push(`<path d="M${X(maxR)+2} ${Y(bTop)} L${sx-26} ${yS} M${X(maxR)+2} ${Y(bd)} L${sx-26} ${yE}" stroke="#f5a524" stroke-dasharray="3 4" opacity=".5" fill="none"/>`);
+    o.push(`<rect x="${X(-maxR)}" y="${Y(bTop)-2}" width="${2*maxR*k}" height="${Y(bd)-Y(bTop)+4}" fill="none" stroke="#f5a524" stroke-dasharray="3 3" opacity=".7"/>`);
+    let y=yS;
+    [...bha].reverse().forEach(c=>{
+      const h=minH+(Math.sqrt(c.L)/wsum)*(avail-minH*n), w=12+c.od/maxOD*22, col=COMP[c.type].c;
+      if(c.type==='bit')o.push(`<polygon points="${sx-w/2},${y+1} ${sx+w/2},${y+1} ${sx+w*.3},${y+h-1} ${sx-w*.3},${y+h-1}" fill="${col}"/>`);
+      else o.push(`<rect x="${sx-w/2}" y="${y+1}" width="${w}" height="${h-2}" rx="2" fill="${col}"/>`);
+      o.push(`<text x="${sx+22}" y="${y+h/2-1}" fill="#f1f4f8" font-size="11.5" font-weight="600">${esc(cShort(c.type))}</text><text x="${sx+22}" y="${y+h/2+11}" fill="#9aa4b2" font-size="10" font-family="JetBrains Mono,monospace">${fmtIn(c.od)}″·${fmt(c.L,0)}ft</text>`);
+      y+=h;
+    });
+    o.push(`<text x="${sx-24}" y="${bot-8}" fill="#9aa4b2" font-size="10.5">Σ ${fmt(sum,0)} ft</text>`);
+  }
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans,system-ui,sans-serif">${o.join('')}</svg>`;
+  $('#legend').innerHTML=`<span><i class="dot" style="background:${STEEL}"></i>обсадная колонна</span><span><i class="dot" style="background:#6b7078"></i>цемент (условно)</span><span><i class="dot" style="background:${MUD}"></i>раствор</span><span><i class="dot" style="background:${OHC}"></i>открытый ствол</span>${td>bd?'<span><i class="dot" style="background:#4ade80"></i>план TD</span>':''}<span><i class="dot" style="background:#f87171"></i>глубина записи</span>`;
+}
+
+/* ---------- plan to TD ---------- */
+function planCalc(){
+  const td=num(S.plan.td); if(!(td>0)||!M)return null;
+  const bd=M.bd, rem=Math.max(0,td-bd), rop=num(S.plan.rop), st=num(S.plan.stand), cm=num(S.plan.conn)||0, ex=num(S.plan.extra)||0;
+  const drillH=rop>0?rem/rop:null, nConn=st>0?Math.floor(rem/st):0, connH=nConn*cm/60;
+  const totH=drillH!=null?(drillH+connH)*(1+ex/100):null;
+  const st0=S.plan.start?new Date(S.plan.start):new Date();
+  const eta=totH!=null?new Date(st0.getTime()+totH*3600e3):null;
+  const MT=compute(td), lagTD=MT.lagMin;
+  const surf=eta&&lagTD!=null?new Date(eta.getTime()+lagTD*60000):null;
+  return {td,bd,rem,rop,drillH,nConn,connH,totH,eta,lagTD,lagStkTD:MT.lagStk,volTD:MT.vol,surf,pct:Math.min(100,bd/td*100),eff:totH>0?rem/totH:null,done:rem<=0};
+}
+const fdt=d=>d?d.toLocaleString(loc(),{weekday:'short',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
+function hm(h){if(!ok(h))return '—';const t=Math.round(h*60);const d=Math.floor(t/1440),hh=Math.floor(t%1440/60),mm=t%60;return (d?d+' сут ':'')+hh+' ч '+String(mm).padStart(2,'0')+' мин';}
+function renderPlan(){
+  const P=planCalc(), el=$('#planRes'); M.plan=P;
+  if(!P){el.innerHTML='<div class="empty">Введите проектный забой и среднюю механическую скорость (ROP).</div>';return;}
+  if(P.done){el.innerHTML=`<p class="hint" style="color:var(--ok)">✓ Проектный забой достигнут (долото ${fmt(P.bd,0)} ft ≥ TD ${fmt(P.td,0)} ft).</p>`;return;}
+  const c=(l,v,sub,hl)=>`<div class="c ${hl?'hl':''}"><small>${l}</small><b>${v}</b>${sub?`<i>${sub}</i>`:''}</div>`;
+  el.innerHTML=`<div class="prog"><div style="width:${P.pct.toFixed(1)}%"></div><span>${fmt(P.bd,0)} / ${fmt(P.td,0)} ft · ${fmt(P.pct,1)}%</span></div>
+   <div class="res">${c('Осталось пробурить',fmt(P.rem,0),'ft')}
+   ${c('Выход на TD',P.eta?P.eta.toLocaleTimeString(loc(),{hour:'2-digit',minute:'2-digit'}):'—',fdt(P.eta),1)}
+   ${c('Всего времени',ok(P.totH)?fmt(P.totH,1):'—','ч · '+hm(P.totH),1)}
+   ${c('Чистое бурение',ok(P.drillH)?fmt(P.drillH,1):'—','ч при ROP '+fmt(P.rop,0)+' ft/hr')}
+   ${c('Наращивания','≈ '+fmt(P.nConn,0),fmt(P.connH,1)+' ч')}
+   ${c('Лаг на TD',P.lagTD!=null?fmtF(P.lagTD,1):'—','мин · '+(P.lagStkTD!=null?fmt(Math.round(P.lagStkTD),0):'—')+' stk · '+fmt(P.volTD,0)+' bbl')}
+   ${c('Шлам с TD на устье',P.surf?P.surf.toLocaleTimeString(loc(),{hour:'2-digit',minute:'2-digit'}):'—',fdt(P.surf))}
+   ${c('Эффективная скорость',ok(P.eff)?fmt(P.eff,0):'—','ft/hr с наращиваниями')}</div>`;
+}
+
+/* ---------- record text ---------- */
+function snapshot(){return {well:S.wellName||'',gpm:M?M.gpm:NaN,lagMin:M?M.lagMin:null,lagStk:M?M.lagStk:null,vol:M?M.vol:NaN};}
+function fmtTime(t,en){ const d=t?new Date(t):new Date(); if(isNaN(d))return t; const p=n=>String(n).padStart(2,'0');
+  return en?`${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`:`${p(d.getDate())}.${p(d.getMonth()+1)}.${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}`; }
+function genText(r,snap,lang){
+  const en=lang==='en', L=[], F=(x,d)=>fmt(x,d,lang);
+  const rt=REC_TYPES.find(x=>x[0]===r.type)||REC_TYPES[0];
+  L.push(`[${fmtTime(r.time,en)}] ${en?rt[2]:rt[3]}${snap.well?' · '+snap.well:''}`);
+  const d=num(r.depth); if(ok(d))L.push(en?`${F(d,0)}' MD`:`${F(d,0)} ft MD`);
+  const u=r.gasUnit==='ppm'?'ppm':'units', bg=num(r.bg), pk=num(r.peak), g=[];
+  if(ok(bg))g.push((en?'BG ':'фон ')+F(bg,1)+' '+u);
+  if(ok(pk))g.push((en?'Peak ':'пик ')+F(pk,1)+' '+u);
+  if(ok(bg)&&ok(pk)&&bg>0)g.push(en?`${F(pk/bg,1)}× BG`:`×${F(pk/bg,1)} к фону`);
+  if(g.length)L.push((en?'Gas: ':'Газ: ')+g.join(', '));
+  const ch=['c1','c2','c3','c4','c5'].map(k=>[k.toUpperCase(),num(r[k])]).filter(x=>ok(x[1]));
+  if(ch.length)L.push(ch.map(x=>x[0]+' '+F(x[1],0)).join(' ')+' ppm');
+  const li=r.lith.filter(l=>l.t).map(l=>{const x=LITH.find(z=>z[0]===l.t)||LITH[0],p=num(l.p);return (ok(p)?F(p,0)+'% ':'')+(en?x[2]:x[1]);});
+  if(li.length||r.desc.trim())L.push((en?'Lith: ':'Литология: ')+li.join(', ')+(r.desc.trim()?(li.length?'; ':'')+r.desc.trim().replace(/\s+/g,' '):''));
+  const fp=num(r.fluorPct), fc=COLORS.find(c=>c[0]===r.fluorColor)||COLORS[0];
+  if(r.fluorColor==='none'&&!(fp>0))L.push(en?'Fluor: none':'Флюоресценция: нет');
+  else L.push(en?`Fluor: ${ok(fp)?F(fp,0)+'% ':''}${r.fluorColor!=='none'?fc[2]:''}`.trim():`Флюоресценция: ${ok(fp)?F(fp,0)+'%':''}${ok(fp)&&r.fluorColor!=='none'?', ':''}${r.fluorColor!=='none'?fc[1]:''}`);
+  const ct=CUTS.find(c=>c[0]===r.cut)||CUTS[0], cc=COLORS.find(c=>c[0]===r.cutColor)||COLORS[0];
+  if(r.cut==='none')L.push(en?'Cut: none':'Вытяжка: нет');
+  else L.push(en?`Cut: ${ct[2]}${r.cutColor!=='none'?', '+cc[2]:''}`:`Вытяжка: ${ct[3]}${r.cutColor!=='none'?', '+cc[1]:''}`);
+  if(r.notes.trim())L.push(r.notes.trim());
+  if(r.includeLag&&snap.lagMin!=null)L.push(en?`Lag ${fmt(snap.lagMin,1,'en')} min / ${snap.lagStk!=null?fmt(Math.round(snap.lagStk),0,'en'):'—'} stk @ ${fmt(snap.gpm,0,'en')} gpm`
+                                             :`Лаг ${fmt(snap.lagMin,1,'ru')} мин / ${snap.lagStk!=null?fmt(Math.round(snap.lagStk),0,'ru'):'—'} ход. @ ${fmt(snap.gpm,0,'ru')} gpm`);
+  return L.join(' | ');
+}
+function renderLithSum(){ const s=S.rec.lith.reduce((t,l)=>t+(num(l.p)||0),0), e=$('#lithSum'); e.textContent=s?`Σ ${fmt(s,0)}%`:''; e.className='sum '+(s===100?'good':s?'bad':''); }
+
+/* ---------- history ---------- */
+function histText(h,lang){ if(h.edited&&h.edited[lang])return h.edited[lang]; return genText(h.r,h.snap,lang); }
+function renderHistory(){
+  const H=LS.get(K_HIST,[]), q=($('#histFilter').value||'').toLowerCase();
+  const list=H.filter(h=>!q||(histText(h,S.lang)+' '+h.snap.well).toLowerCase().includes(q));
+  $('#histList').innerHTML=list.length?list.map(h=>{const rt=REC_TYPES.find(x=>x[0]===h.r.type)||REC_TYPES[0];
+    return `<div class="it" data-hid="${h.id}"><div class="meta"><span class="pill ${h.r.type==='show'?'show':''}">${rtName(rt)}</span><b>${fmt(num(h.r.depth),0)} ft</b><span class="noi18n">${esc(h.snap.well||'—')}</span><span>${new Date(h.ts).toLocaleString(loc())}</span><span style="flex:1"></span>
+      <button class="btn sm" data-act="hCopy">Копировать</button><button class="btn sm" data-act="hLoad">В форму</button><button class="btn sm danger" data-act="hDel">✕</button></div>
+      <div class="tx noi18n">${esc(histText(h,S.lang))}</div></div>`;}).join(''):`<div class="empty">${H.length?'Ничего не найдено.':'Журнал пуст. Записи появятся после «В журнал» на вкладке «Шоу и шлам».'}</div>`;
+}
+function saveRecord(){
+  const H=LS.get(K_HIST,[]); const r=clone(S.rec); if(!r.time){const d=new Date();d.setSeconds(0,0);r.time=new Date(d-d.getTimezoneOffset()*60000).toISOString().slice(0,16);}
+  const h={id:uid(),ts:Date.now(),r,snap:snapshot()};
+  if(outDirty){h.edited={};h.edited[S.lang]=$('#outText').value;}
+  H.unshift(h); if(!LS.set(K_HIST,H.slice(0,2000)))toast('Хранилище браузера недоступно — запись не сохранена'); else toast('Сохранено в журнал');
+  renderHistory();
+}
+function csv(){
+  const H=LS.get(K_HIST,[]), q=v=>`"${String(v??'').replace(/"/g,'""')}"`;
+  const head=['time','well','type','depth_ft','gas_unit','bg','peak','c1','c2','c3','c4','c5','lithology','description','fluor_pct','fluor_color','cut','cut_color','notes','lag_min','lag_stk','gpm','text'];
+  const rows=H.map(h=>{const r=h.r;return [fmtTime(r.time,true),h.snap.well,r.type,r.depth,r.gasUnit,r.bg,r.peak,r.c1,r.c2,r.c3,r.c4,r.c5,
+    r.lith.map(l=>(l.p?l.p+'% ':'')+(LITH.find(z=>z[0]===l.t)||LITH[0])[2]).join(', '),r.desc,r.fluorPct,r.fluorColor,r.cut,r.cutColor,r.notes,
+    h.snap.lagMin!=null?h.snap.lagMin.toFixed(2):'',h.snap.lagStk!=null?Math.round(h.snap.lagStk):'',ok(h.snap.gpm)?h.snap.gpm.toFixed(1):'',histText(h,S.lang)].map(q).join(',');});
+  return [head.join(','),...rows].join('\n');
+}
+
+/* ---------- utils ---------- */
+let toastT; function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),1800);}
+async function copyText(t){ try{await navigator.clipboard.writeText(t);toast('Скопировано в буфер');return true;}catch(e){
+  const ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;opacity:0;top:0';document.body.appendChild(ta);ta.select();let r=false;try{r=document.execCommand('copy');}catch(_){} ta.remove();
+  toast(r?'Скопировано в буфер':'Не удалось скопировать — выделите текст вручную');return r;} }
+const armed=new Map();
+function confirm2(btn,key,label){ if(armed.get(key)){armed.delete(key);return true;} armed.set(key,true); const old=btn.textContent; btn.textContent=label||'Точно?'; setTimeout(()=>{armed.delete(key);if(btn.isConnected)btn.textContent=old;},3000); return false; }
+function findItem(listName,id){ const arr=listName==='casings'?S.casings:listName==='string'?S.string:listName==='lith'?S.rec.lith:S.lag.manual; return {arr,i:arr.findIndex(x=>x.id===id)}; }
+function setHdr(){document.documentElement.style.setProperty('--hdr',$('#hdr').offsetHeight+'px');}
+
+/* ---------- events ---------- */
+document.addEventListener('input',e=>{
+  const t=e.target;
+  if(t.id==='histFilter'){renderHistory();return;}
+  if(t.id==='outText'){outDirty=true;$('#outHint').textContent='Текст изменён вручную — правка формы перезапишет его.';return;}
+  if(['tpLiner','tpStroke','tpEff'].includes(t.id)){const g=triplex();$('#tpOut').textContent=ok(g)?'→ '+g.toFixed(3)+' gal/stk':'';return;}
+  if(t.dataset.bind){ setPath(t.dataset.bind,t.type==='checkbox'?t.checked:t.value); if(t.dataset.bind.startsWith('rec.')){outDirty=false;$('#outHint').textContent='Текст можно поправить вручную перед копированием.';} recompute(); return; }
+  const row=t.closest('[data-list]');
+  if(row&&t.dataset.k){ const {arr,i}=findItem(row.dataset.list,row.dataset.id); if(i<0)return;
+    if(t.dataset.k==='auto'){ arr.forEach(x=>x.auto=false); arr[i].auto=t.checked; renderComps(); }
+    else { arr[i][t.dataset.k]=t.type==='checkbox'?t.checked:t.value; if(t.dataset.k==='type'){renderComps();} }
+    if(row.dataset.list==='lith'){outDirty=false;}
+    recompute(); }
+});
+document.addEventListener('change',e=>{
+  const t=e.target;
+  if(t.dataset.act==='casSize'&&t.value!==''){const s=CASING_SIZES[+t.value],row=t.closest('[data-list]'),{arr,i}=findItem('casings',row.dataset.id);arr[i].od=fmtIn(s[1]);arr[i].idd=String(s[2]);renderCasings();recompute();}
+  if(t.dataset.act==='pipeSize'&&t.value!==''){const s=PIPE_SIZES[+t.value],row=t.closest('[data-list]'),{arr,i}=findItem('string',row.dataset.id);arr[i].od=fmtIn(s[1]);arr[i].idd=String(s[2]);
+    if(s[0].startsWith('DP'))arr[i].type='dp'; else if(s[0].startsWith('HWDP'))arr[i].type='hwdp'; else if(s[0].startsWith('DC'))arr[i].type='dc'; renderComps();recompute();}
+});
+function triplex(){const D=num($('#tpLiner').value),Lh=num($('#tpStroke').value),ef=ok(num($('#tpEff').value))?num($('#tpEff').value):95;return ok(D)&&ok(Lh)?0.0102*D*D*Lh*ef/100:NaN;}
+document.addEventListener('click',async e=>{
+  const tb=e.target.closest('#tabs button'); if(tb){$$('#tabs button').forEach(b=>b.classList.toggle('on',b===tb));$$('.tab').forEach(s=>s.classList.toggle('on',s.id==='tab-'+tb.dataset.tab));try{history.replaceState(null,'','#'+tb.dataset.tab)}catch(_){} return;}
+  const pb=e.target.closest('[data-pm]'); if(pb){ if(pb.dataset.pm==='direct'&&ok(M.gpm))S.pump.gpm=String(+M.gpm.toFixed(2)); S.pump.mode=pb.dataset.pm; syncBinds(); syncSegs(); recompute(); return;}
+  const lb=e.target.closest('[data-lm]'); if(lb){S.lag.mode=lb.dataset.lm;renderManual();syncSegs();recompute();return;}
+  const ub=e.target.closest('[data-ui]'); if(ub){S.ui=ub.dataset.ui; S.lang=S.ui; outDirty=false; applyUI(); setHdr(); save(); return;}
+  const lg=e.target.closest('[data-lang]'); if(lg){S.lang=lg.dataset.lang;outDirty=false;syncSegs();renderHistory();recompute();return;}
+  const b=e.target.closest('[data-act]'); if(!b||b.tagName==='SELECT')return;
+  const a=b.dataset.act;
+  if(a==='phone'){openPhone();return;}
+  if(a==='closeModal'||(a==='closeModalBg'&&e.target===b)){$('#phoneModal').classList.remove('on');return;}
+  if(a==='closeModalBg')return;
+  if(a==='copyLink'){const ok2=await copyText($('#appLink').textContent.trim()); if(ok2)toast('Ссылка скопирована'); return;}
+  if(a==='planNow'){e.preventDefault();S.plan.start='';syncBinds();recompute();toast('Отсчёт от текущего времени');return;}
+  if(a==='now'){e.preventDefault();const d=new Date();d.setSeconds(0,0);S.rec.time=new Date(d-d.getTimezoneOffset()*60000).toISOString().slice(0,16);syncBinds();outDirty=false;recompute();return;}
+  if(a==='addCasing'){const last=S.casings[S.casings.length-1];S.casings.push({id:uid(),kind:S.casings.length?'intermediate':'surface',od:'',idd:'',top:'0',shoe:''});renderCasings();recompute();return;}
+  if(a==='addComp'){const ai=S.string.findIndex(c=>c.auto);const n={id:uid(),type:'dc',od:'',idd:'',len:'',auto:false};if(ai>=0)S.string.splice(ai,0,n);else S.string.push(n);renderComps();recompute();return;}
+  if(a==='addLith'){S.rec.lith.push({id:uid(),t:'sh',p:''});renderLith();recompute();return;}
+  if(a==='addSec'){S.lag.manual.push({id:uid(),idd:'',od:'',len:''});recompute();return;}
+  if(a==='fillFromWell'){S.lag.mode='auto';const A=compute();S.lag.manual=A.auto.map(s=>({id:uid(),idd:String(+s.id.toFixed(3)),od:String(+s.od.toFixed(3)),len:String(+s.len.toFixed(1)),oh:s.kind==='oh'}));S.lag.mode='manual';renderManual();syncSegs();recompute();toast('Секции скопированы — можно править');return;}
+  if(a==='applyTriplex'){const g=triplex();if(ok(g)){S.pump.galStk=String(+g.toFixed(3));syncBinds();recompute();toast('Gal/Stroke = '+g.toFixed(3));}else toast('Введите втулку и ход');return;}
+  const row=b.closest('[data-list]');
+  if(row&&['del','up','down'].includes(a)){const {arr,i}=findItem(row.dataset.list,row.dataset.id);if(i<0)return;
+    if(a==='del')arr.splice(i,1); else {const j=a==='up'?i-1:i+1; if(j<0||j>=arr.length)return; [arr[i],arr[j]]=[arr[j],arr[i]];}
+    if(row.dataset.list==='casings')renderCasings(); else if(row.dataset.list==='string')renderComps(); else if(row.dataset.list==='lith')renderLith();
+    recompute(); return;}
+  if(a==='savePreset'){const name=($('#presetName').value||S.wellName||'Без имени').trim();const P=LS.get(K_PRESETS,[]);const data={};WELL_KEYS.forEach(k=>data[k]=clone(S[k]));
+    const ix=P.findIndex(p=>p.name===name); const item={name,ts:Date.now(),data}; if(ix>=0)P[ix]=item; else P.unshift(item);
+    toast(LS.set(K_PRESETS,P)?(ix>=0?'Пресет обновлён':'Пресет сохранён'):'Хранилище браузера недоступно'); $('#presetName').value=''; renderPresets(); return;}
+  if(a==='loadPreset'){const P=LS.get(K_PRESETS,[]),p=P[+b.closest('[data-pi]').dataset.pi]; if(!p)return; WELL_KEYS.forEach(k=>{if(p.data[k]!==undefined)S[k]=clone(p.data[k]);}); if(!S.plan)S.plan=blankWell().plan; renderAll(); toast('Загружено: '+p.name); return;}
+  if(a==='delPreset'){if(!confirm2(b,'dp'+b.closest('[data-pi]').dataset.pi,'Удалить?'))return;const P=LS.get(K_PRESETS,[]);P.splice(+b.closest('[data-pi]').dataset.pi,1);LS.set(K_PRESETS,P);renderPresets();return;}
+  if(a==='newWell'){if(!confirm2(b,'nw','Очистить текущую?'))return;Object.assign(S,blankWell());renderAll();return;}
+  if(a==='demo'){if(!confirm2(b,'demo','Заменить текущую?'))return;Object.assign(S,demoWell());renderAll();return;}
+  if(a==='copyOut'){copyText($('#outText').value);return;}
+  if(a==='saveRec'){saveRecord();return;}
+  if(a==='copySave'){await copyText($('#outText').value);saveRecord();return;}
+  if(a==='clearRec'){const keep={gasUnit:S.rec.gasUnit,includeLag:S.rec.includeLag,type:S.rec.type};S.rec=Object.assign(blankRec(),keep);outDirty=false;renderLith();syncBinds();recompute();return;}
+  const it=b.closest('[data-hid]');
+  if(it){const H=LS.get(K_HIST,[]),i=H.findIndex(h=>h.id===it.dataset.hid); if(i<0)return;
+    if(a==='hCopy')copyText(histText(H[i],S.lang));
+    if(a==='hLoad'){S.rec=Object.assign(blankRec(),clone(H[i].r));outDirty=false;renderLith();syncBinds();recompute();$('#tabs [data-tab=rec]').click();toast('Запись загружена в форму');}
+    if(a==='hDel'){if(!confirm2(b,'hd'+H[i].id,'Удалить?'))return;H.splice(i,1);LS.set(K_HIST,H);renderHistory();}
+    return;}
+  if(a==='copyAll'){const H=LS.get(K_HIST,[]);if(!H.length){toast('Журнал пуст');return;}copyText([...H].reverse().map(h=>histText(h,S.lang)).join('\n'));return;}
+  if(a==='copyCsv'){if(!LS.get(K_HIST,[]).length){toast('Журнал пуст');return;}copyText(csv());return;}
+  if(a==='clearHist'){if(!confirm2(b,'ch','Точно очистить всё?'))return;LS.set(K_HIST,[]);renderHistory();toast('Журнал очищен');return;}
+});
+
+/* ---------- i18n ---------- */
+const EN_DICT={
+"Отметьте «до устья» у бурильных труб — их длина досчитается автоматически: глубина долота минус длина остальных элементов.":"Tick “To surface” on the drill pipe — its length is calculated automatically: bit depth minus all other components.",
+"Пресетов пока нет. Сохраните текущую скважину — конструкцию, КНБК, насосы и секции.":"No presets yet. Save the current well — casing, BHA, pumps and sections.",
+"Ни один элемент не отмечен «до устья» — колонна может не доходить до поверхности.":"No component is marked “To surface” — the string may not reach surface.",
+"В ручном режиме галочка «ОС» применяет к секции запас объёма на каверзность.":"In manual mode the “OH” checkbox applies the washout excess to that section.",
+"Описание (цвет, зернистость, окатанность, сортировка, цемент, пористость)":"Description (color, grain size, rounding, sorting, cement, porosity)",
+"Журнал пуст. Записи появятся после «В журнал» на вкладке «Шоу и шлам».":"Log is empty. Entries appear after “Save to log” on the “Shows & cuttings” tab.",
+"Длина колонны больше глубины долота — проверьте длины элементов.":"String length exceeds bit depth — check component lengths.",
+"Время = (остаток / ROP + наращивания × мин) × (1 + запас%). Лаг на TD считается по конструкции с удлинённой бурильной колонной при текущей подаче насосов.":"Time = (remaining / ROP + connections × min) × (1 + buffer %). Lag at TD uses the well construction with the drill string extended, at the current pump rate.",
+"Введите проектный забой и среднюю механическую скорость":"Enter the planned TD and the average rate of penetration",
+"Задайте глубину долота и конструкцию на первой вкладке.":"Set bit depth and well construction on the first tab.",
+"не задана или равна 0 — время лага не рассчитывается.":"is not set or zero — lag time cannot be calculated.",
+"Текст изменён вручную — правка формы перезапишет его.":"Text edited manually — changing the form will overwrite it.",
+"Хранилище браузера недоступно — запись не сохранена":"Browser storage unavailable — entry not saved",
+"Текст можно поправить вручную перед копированием.":"You can edit the text before copying.",
+"Не удалось скопировать — выделите текст вручную":"Copy failed — select the text manually",
+"элементы КНБК. Эскиз справа обновляется сразу.":"BHA components. The sketch on the right updates instantly.",
+"глубина долота и диаметр ствола":"bit depth and hole size",
+"Имя пресета (по умолчанию — название скважины)":"Preset name (defaults to well name)",
+"Добавьте секции или заполните из конструкции.":"Add sections or fill them from the well construction.",
+"Укажите глубину долота — эскиз появится здесь":"Enter bit depth — the sketch will appear here",
+"Колонн нет — весь ствол считается открытым.":"No casing — the whole hole is treated as open hole.",
+"Сумма длин элементов больше глубины долота.":"Total component length exceeds bit depth.",
+"Глубины — по стволу (MD). Дюймы можно вводить дробью:":"Depths are measured depth (MD). Inches can be entered as fractions:",
+"десятичные — через точку или запятую.":"decimals with a point or a comma.",
+"Прогноз выхода на проектный забой":"Forecast to planned TD",
+"Проектный забой (план TD), MD":"Planned total depth (TD), MD",
+"Секции скопированы — можно править":"Sections copied — now editable",
+"Проектный забой достигнут (долото":"Planned TD reached (bit",
+"Не задан диаметр открытого ствола.":"Open-hole diameter is not set.",
+"OD трубы ≥ ID скважины — объём принят равным 0.":"pipe OD ≥ hole ID — volume set to 0.",
+"Производительность затрубья":"Annular capacity",
+"Объём = длина × производительность":"Volume = length × capacity",
+"Лаг = объём × 42 /":"Lag = volume × 42 /",
+"Ходов = объём × 42 /":"Strokes = volume × 42 /",
+"триплекс-насоса по втулке и ходу":"for a triplex pump from liner and stroke",
+"Фильтр: скважина, глубина, текст…":"Filter: well, depth, text…",
+"лаг-тайм · записи · конструкция":"lag time · log entries · well sketch",
+"Каверзность ОС (запас объёма)":"OH washout (volume excess)",
+"Хранилище браузера недоступно":"Browser storage unavailable",
+"обсадные колонны и хвостовики":"casing strings and liners",
+"если начать циркуляцию сейчас":"if circulating from now",
+"добавить лаг (мин / ходы /":"add lag (min / strokes /",
+"Запас на простои / замеры":"Buffer for downtime / surveys",
+"Отсчёт от текущего времени":"Counting from current time",
+"КНБК и бурильная колонна":"BHA and drill string",
+"Калибратор / стабилизатор":"Stabilizer",
+"Запись загружена в форму":"Entry loaded into the form",
+"Заполнить из конструкции":"Fill from well construction",
+"Флюоресценция, % образца":"Fluorescence, % of sample",
+"Средняя мех. скорость (ROP)":"Average rate of penetration (ROP)",
+"Новая (пустая) скважина":"New (blank) well",
+"Флюоресценция и вытяжка":"Fluorescence and cut",
+"Копировать + в журнал":"Copy + save to log",
+"Конструкция скважины":"Well construction",
+"Диаметр откр. ствола":"Open-hole diameter",
+"Время на наращивание":"Connection time",
+"Шлам с забоя на устье":"Bottoms-up arrival",
+"Длина свечи / трубы":"Stand / joint length",
+"Эффективная скорость":"Effective ROP",
+"Шоу (газопроявление)":"Show (gas show)",
+"Введите втулку и ход":"Enter liner and stroke",
+"Точно очистить всё?":"Clear everything?",
+"Интервал / описание":"Interval / description",
+"Авто из конструкции":"Auto from well",
+"Скопировано в буфер":"Copied to clipboard",
+"мгновенная (instant)":"instant","струйчатая (streaming)":"streaming","медленная (slow)":"slow","при раздавливании (crush)":"crush",
+"Осталось пробурить":"Remaining to drill","Цвет флюоресценции":"Fluorescence color","Сохранено в журнал":"Saved to log",
+"Ничего не найдено.":"Nothing found.","Заменить текущую?":"Replace current?","Название скважины":"Well name","Очистить текущую?":"Clear current?",
+"Бурильные трубы":"Drill pipe","Глубина долота":"Bit depth","Загрузить пример":"Load example","обсадная колонна":"casing",
+"Добавьте породу.":"Add a rock type.","цемент (условно)":"cement (schematic)","Эксплуатационная":"Production","Итоговая строка":"Log line",
+"от долота вверх":"from bit upward","Газ наращивания":"Connection gas","Пресеты скважин":"Well presets","Ниже (к долоту)":"Down (toward bit)",
+"с наращиваниями":"incl. connections","Секции затрубья":"Annular sections","Пресет обновлён":"Preset updated","Открытый ствол":"Open hole",
+"Пресет сохранён":"Preset saved","Литология шлама":"Cuttings lithology","Скважина и КНБК":"Well & BHA","Очистить форму":"Clear form",
+"Журнал записей":"Log entries","Объём затрубья":"Annular volume","Чистое бурение":"On-bottom drilling","Выше (к устью)":"Up (toward surface)",
+"Долото / забой":"Bit / bottom","Копировать всё":"Copy all","Копировать CSV":"Copy CSV","Внутри колонны":"Inside string","Подача насосов":"Pump output",
+"Эскиз скважины":"Well sketch","глубина записи":"entry depth","необязательно":"optional","открытый ствол":"open hole",
+"Описание шлама":"Cuttings description","Журнал очищен":"Log cleared","Всего времени":"Total time","Тип вытяжки (cut)":"Cut type","Тип вытяжки":"Cut type",
+"Фоновый газ":"Background gas","Газ после СПО":"Trip gas","Пиковый газ (Peak)":"Peak gas","Пиковый газ":"Peak gas","Промежуточная":"Intermediate",
+"Хроматограф":"Chromatograph","Насосы и лаг":"Pumps & lag","Цвет вытяжки":"Cut color","Загружено:":"Loaded:","Полный цикл":"Full circulation",
+"Наращивания":"Connections","Направление":"Conductor","Журнал пуст":"Log is empty","КНБК крупно":"BHA close-up","Ход поршня":"Stroke length",
+"ВЗД (мотор)":"Mud motor","Ходов (лаг)":"Strokes (lag)","Тип записи":"Entry type","авторасчёт":"auto","Затрубье":"Annulus",
+"Время лага":"Lag time","Калибратор":"Stabilizer","Типоразмер":"Size","Примечание":"Note","Шоу и шлам":"Shows & cuttings",
+"Отсчёт от":"Start from","Бур. трубы":"Drill pipe","Скважина ID":"Hole ID","Труба OD":"Pipe OD","Скважина":"Well","Глубина":"Depth",
+"без трубы":"no pipe","Кондуктор":"Surface","осталось":"remaining","Загрузить":"Load","Без имени":"Untitled","Выход на":"Reach",
+"Хвостовик":"Liner","Применить":"Apply","Сохранить":"Save","Втулка (liner)":"Liner","Лаг, мин":"Lag, min","Удалить?":"Delete?",
+"В журнал":"Save to log","До устья":"To surface","на устье":"at surface","Очистить":"Clear","вручную":"manual","В форму":"To form",
+"Объём":"Volume","Секция":"Section","Элемент":"Component","Колонна":"Casing","Шлам с":"Cuttings from","долото":"bit","Лаг на":"Lag at",
+"башмак":"shoe","Удалить":"Delete","Длина":"Length","раствор":"mud","Вручную":"Manual","Единицы":"Units","Время":"Time","Другое":"Other",
+"Труба":"Pipe","Запись":"Entry","Башмак":"Shoe","Долото":"Bit","Устье":"Surface","Точно?":"Sure?","Журнал":"Log","Ходов":"Strokes",
+"Подача":"Flow rate","Порода":"Rock","сейчас":"now","Размер":"Size","цемент":"cement","устье":"surface","Итого":"Total","план":"plan",
+"План":"Plan","Забой":"Bottom","Итоги":"Results","ввод":"input","Верх":"Top","сут":"d","авто":"auto","мин":"min","ч при":"h at","ч":"h",
+"ОС":"OH","НУБТ":"NMDC","УБТ":"DC","ТБТ":"HWDP","РУС":"RSS","ВЗД":"Motor","Ясс":"Jar","КНБК":"BHA","нет":"none","Порядок:":"Steps:",
+"обсадные колонны":"casing strings","Рассчитать":"Calculate","КПД":"Efficiency","напр.":"e.g.","Копировать":"Copy","к долоту":"toward bit",
+"Язык интерфейса":"Interface language","На телефон":"On phone","Открыть на телефоне":"Open on your phone","Копировать ссылку":"Copy link","Закрыть":"Close",
+"Ссылка скопирована":"Link copied","Создано:":"Created by","Газ":"Gas","Максат Тулегенов":"Maxat Tulegenov",
+"Отсканируйте QR-код камерой телефона, чтобы открыть приложение.":"Scan the QR code with your phone camera to open the app.",
+"Как приложение: iPhone (Safari) — «Поделиться» → «На экран Домой»; Android (Chrome) — «⋮» → «Добавить на главный экран».":"To use it like an app: iPhone (Safari) — Share → Add to Home Screen; Android (Chrome) — ⋮ → Add to Home screen.",
+"Пресеты и журнал хранятся отдельно на каждом устройстве. Для переноса журнала используйте «Копировать CSV».":"Presets and the log are stored separately on each device. Use “Copy CSV” to move the log.",
+"QR-код недоступен — используйте ссылку ниже.":"QR code unavailable — use the link below.",
+"MudLag — лаг-тайм, записи и конструкция скважины":"MudLag — lag time, log entries and well sketch"
+};
+const I18N_KEYS=Object.keys(EN_DICT).sort((a,b)=>b.length-a.length);
+const I18N_RE=new RegExp('(?<![А-Яа-яЁё])(?:'+I18N_KEYS.map(k=>k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')(?![А-Яа-яЁё])','gu');
+const tr=str=>str.replace(I18N_RE,m=>EN_DICT[m]);
+function i18nNode(n){
+  if(n.nodeType===3){const p=n.parentElement; if(!p||p.closest('.noi18n,script,style,textarea'))return; if(n.__ru==null)n.__ru=n.nodeValue; const v=isEN()?tr(n.__ru):n.__ru; if(n.nodeValue!==v)n.nodeValue=v; return;}
+  if(n.nodeType!==1||n.matches('.noi18n,script,style,textarea'))return;
+  ['placeholder','title'].forEach(a=>{if(n.hasAttribute(a)){n.__ra=n.__ra||{}; if(n.__ra[a]==null)n.__ra[a]=n.getAttribute(a); n.setAttribute(a,isEN()?tr(n.__ra[a]):n.__ra[a]);}});
+  n.childNodes.forEach(i18nNode);
+}
+new MutationObserver(ms=>{if(!isEN())return; ms.forEach(m=>m.addedNodes.forEach(i18nNode));}).observe(document.body,{childList:true,subtree:true});
+const RU_TITLE=document.title;
+function applyUI(){ document.documentElement.lang=S.ui; document.title=isEN()?tr(RU_TITLE):RU_TITLE; $$('#uiSeg button').forEach(b=>b.classList.toggle('on',b.dataset.ui===S.ui)); fillSelects(); renderAll(); i18nNode(document.body); }
+let qrMade=false;
+function openPhone(){ $('#phoneModal').classList.add('on'); if(!qrMade){ try{ const q=qrcode(0,'M'); q.addData($('#appLink').textContent.trim()); q.make(); $('#qr').innerHTML=q.createSvgTag({cellSize:5,margin:0,scalable:true}); $('#qr svg').setAttribute('width','200'); $('#qr svg').setAttribute('height','200'); qrMade=true; }catch(e){ $('#qr').outerHTML='<p class="hint">QR-код недоступен — используйте ссылку ниже.</p>'; qrMade=true; } } }
+
+/* ---------- init ---------- */
+applyUI(); setHdr();
+window.addEventListener('resize',setHdr);
+setInterval(()=>{if(M){renderPlan();renderKPIs();}},30000);
+const h0=(location.hash||'').slice(1); if(['well','lag','rec','log'].includes(h0))$(`#tabs [data-tab=${h0}]`).click();
+</script>
+<script>
+if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
+</script>
+</body>
+</html>
