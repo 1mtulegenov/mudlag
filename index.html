@@ -182,6 +182,16 @@ details summary{cursor:pointer;color:var(--acc2);font-size:13px;margin:8px 0}
 .tb3d .rng input{width:120px;height:auto;padding:0;border:0;background:none;accent-color:var(--acc)}
 .btn.on{background:var(--acc);border-color:var(--acc);color:#1a1100}
 @media (max-width:640px){.hud3d{font-size:11px;padding:7px 9px}.hud3d b{font-size:12.5px}}
+.ddgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+@media (max-width:900px){.ddgrid{grid-template-columns:1fr}}
+.ddc{background:#0a0d11;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.ddh{padding:8px 12px;font-weight:600;font-size:13.5px;border-bottom:1px solid var(--line);display:flex;gap:8px;align-items:baseline}
+.ddh small{color:var(--mute);font-weight:400;font-family:var(--mono);font-size:11.5px}
+.ddw{position:relative;height:440px}
+.ddw canvas{width:100%;height:100%;display:block;cursor:crosshair}
+.ddtip{position:absolute;pointer-events:none;background:rgba(20,25,32,.96);border:1px solid var(--line2);border-radius:8px;padding:6px 9px;font:11.5px/1.5 var(--mono);display:none;white-space:pre;color:var(--text)}
+.res .c.ok2 b{color:var(--ok)}.res .c.bad2 b{color:var(--bad)}
+#survBody tr.ptb td{color:var(--acc);font-style:italic}
 </style>
 </head>
 <body>
@@ -416,6 +426,23 @@ details summary{cursor:pointer;color:var(--acc2);font-size:13px;margin:8px 0}
         <div id="survMsg"></div>
       </div>
       <div class="panel">
+        <h2>Плановая траектория<span class="sp"></span><button class="btn sm danger" data-act="planClear">Очистить</button></h2>
+        <label class="btn" style="width:100%;cursor:pointer">Загрузить план (CSV / TXT / LAS)<input type="file" id="planFile" accept=".csv,.txt,.las,.dat,.tsv,.prn,text/plain,text/csv" hidden></label>
+        <p class="hint">План от DD-компании в том же формате (MD, Inc, Azi). Будет показан на разрезе, плане и в 3D, и посчитано отклонение от плана.</p>
+        <div id="planMsg"></div>
+      </div>
+      <div class="panel">
+        <h2>Окно цели и проекция</h2>
+        <div class="grid g3">
+          <label class="f"><span class="lt">TVD цели <span class="u">ft</span></span><input data-bind="tgt.tvd" inputmode="decimal" placeholder="напр. 11610"></label>
+          <label class="f"><span class="lt">Окно вверх <span class="u">ft</span></span><input data-bind="tgt.up" inputmode="decimal"></label>
+          <label class="f"><span class="lt">Окно вниз <span class="u">ft</span></span><input data-bind="tgt.down" inputmode="decimal"></label>
+          <label class="f"><span class="lt">Наклон пласта <span class="u">° (+ глубже)</span></span><input data-bind="tgt.dip" inputmode="decimal"></label>
+          <label class="f"><span class="lt">TVD цели задан на VS <span class="u">ft</span></span><input data-bind="tgt.vs" inputmode="decimal"></label>
+          <label class="f"><span class="lt">Проекция на долото</span><select data-bind="ptbMode"><option value="trend">По тренду (BUR/TR)</option><option value="tangent">По касательной</option></select></label>
+        </div>
+      </div>
+      <div class="panel">
         <h2>Сводка</h2>
         <div class="res" id="survStats"></div>
         <div class="grid g2" style="margin-top:12px">
@@ -430,7 +457,7 @@ details summary{cursor:pointer;color:var(--acc2);font-size:13px;margin:8px 0}
       </div>
     </div>
     <div class="c3d-main">
-      <div class="panel sketchp">
+      <div class="panel">
         <h2>3D траектория<span class="sp"></span>
           <span class="seg" id="viewSeg"><button data-view="3d">3D</button><button data-view="plan">План</button><button data-view="vs">Разрез</button></span>
           <select id="colorMode" style="width:auto;height:34px;font-size:13px"><option value="tvd">Цвет: TVD</option><option value="dls">Цвет: DLS</option><option value="inc">Цвет: зенит</option></select>
@@ -448,6 +475,14 @@ details summary{cursor:pointer;color:var(--acc2);font-size:13px;margin:8px 0}
         </div>
         <p class="hint">Левая кнопка / один палец — вращение, колесо / два пальца — масштаб, правая кнопка / Shift / два пальца — сдвиг. Двойной щелчок — вписать в экран. Толщина труб условно увеличена.</p>
       </div>
+      <div class="panel">
+        <h2>DD-панель<span class="sp"></span><small>как в отчётах DD/MWD</small></h2>
+        <div class="res" id="ddCards"></div>
+        <div class="ddgrid">
+          <div class="ddc"><div class="ddh">Вертикальный разрез <small id="vsTitle"></small></div><div class="ddw"><canvas id="cvVS"></canvas><div class="ddtip"></div></div></div>
+          <div class="ddc"><div class="ddh">План (вид сверху)</div><div class="ddw"><canvas id="cvPV"></canvas><div class="ddtip"></div></div></div>
+        </div>
+</div>
     </div>
   </div>
 </section>
@@ -541,11 +576,11 @@ function demoWell(){return {
   plan:{td:'13500',rop:'120',stand:'93',conn:'6',extra:'10',start:''},
   survey:{name:'Пример',rows:demoSurvey(),vsAz:''}
 };}
-function blankWell(){return {wellName:'',bitDepth:'',ohDia:'',washout:'',casings:[],string:[{id:uid(),type:'bit',od:'',idd:'0',len:'1',auto:false},{id:uid(),type:'dp',od:'5',idd:'4.276',len:'',auto:true}],pump:{mode:'calc',galStk:'',spm:'',gpm:''},lag:{mode:'auto',manual:[]},plan:{td:'',rop:'',stand:'93',conn:'6',extra:'0',start:''},survey:{name:'',rows:[],vsAz:''}};}
-const WELL_KEYS=['wellName','bitDepth','ohDia','washout','casings','string','pump','lag','plan','survey'];
+function blankWell(){return {wellName:'',bitDepth:'',ohDia:'',washout:'',casings:[],string:[{id:uid(),type:'bit',od:'',idd:'0',len:'1',auto:false},{id:uid(),type:'dp',od:'5',idd:'4.276',len:'',auto:true}],pump:{mode:'calc',galStk:'',spm:'',gpm:''},lag:{mode:'auto',manual:[]},plan:{td:'',rop:'',stand:'93',conn:'6',extra:'0',start:''},survey:{name:'',rows:[],vsAz:''},wplan:{name:'',rows:[]},tgt:{tvd:'',up:'10',down:'10',dip:'0',vs:'0'},ptbMode:'trend'};}
+const WELL_KEYS=['wellName','bitDepth','ohDia','washout','casings','string','pump','lag','plan','survey','wplan','tgt','ptbMode'];
 let S=LS.get(K_STATE,null);
 if(!S||!S.casings){S=Object.assign(demoWell(),{rec:blankRec(),lang:'ru',focus:true});}
-S.rec=Object.assign(blankRec(),S.rec||{}); if(!S.lang)S.lang='ru'; if(!S.ui)S.ui='ru'; if(!S.survey)S.survey={name:'',rows:[],vsAz:''}; if(!S.plan)S.plan={td:'',rop:'',stand:'93',conn:'6',extra:'0',start:''}; if(S.focus==null)S.focus=true;
+S.rec=Object.assign(blankRec(),S.rec||{}); if(!S.lang)S.lang='ru'; if(!S.ui)S.ui='ru'; if(!S.wplan)S.wplan={name:'',rows:[]}; if(!S.tgt)S.tgt={tvd:'',up:'10',down:'10',dip:'0',vs:'0'}; if(!S.ptbMode)S.ptbMode='trend'; if(!S.survey)S.survey={name:'',rows:[],vsAz:''}; if(!S.plan)S.plan={td:'',rop:'',stand:'93',conn:'6',extra:'0',start:''}; if(S.focus==null)S.focus=true;
 let outDirty=false;
 let saveT=null; function save(){clearTimeout(saveT);saveT=setTimeout(()=>LS.set(K_STATE,S),250);}
 
@@ -663,6 +698,7 @@ let M=null;
 function recompute(){
   M=compute();
   SURV=(S.survey&&S.survey.rows&&S.survey.rows.length>1)?surveyCalc(S.survey.rows,S.survey.vsAz):null;
+  PLAN=(S.wplan&&S.wplan.rows&&S.wplan.rows.length>1)?surveyCalc(S.wplan.rows,SURV?SURV.vsAz:S.survey.vsAz):null;
   M.comps.forEach(c=>{if(c.auto){const e=document.getElementById('al-'+c.ref.id);if(e)e.value=fmt(c.L,1);}});
   if(S.pump.mode==='calc'){const e=$('#gpmInput'); if(document.activeElement!==e)e.value=ok(M.gpm)?+M.gpm.toFixed(2):'';}
   else {const e=$('#spmBox input'); if(document.activeElement!==e)e.value=ok(M.spm)?+M.spm.toFixed(1):'';}
@@ -945,6 +981,7 @@ document.addEventListener('click',async e=>{
   if(a==='phone'){openPhone();return;}
   if(a==='survDemo'){S.survey={name:'Пример',rows:demoSurvey(),vsAz:''};survMsg('ok','Загружен пример: '+S.survey.rows.length+' замеров');syncBinds();setView('3d');recompute();return;}
   if(a==='survClear'){if(!S.survey.rows.length)return;if(!confirm2(b,'sc','Удалить?'))return;S.survey={name:'',rows:[],vsAz:''};survMsg('','');syncBinds();recompute();toast('Инклинометрия очищена');return;}
+  if(a==='planClear'){if(!S.wplan.rows.length)return;if(!confirm2(b,'pc','Удалить?'))return;S.wplan={name:'',rows:[]};$('#planMsg').innerHTML='';survKey='';recompute();toast('План очищен');return;}
   if(a==='survPaste'){loadSurveyText($('#survPaste').value,'вставка');return;}
   if(a==='survCopy'){if(!SURV){toast('Нет данных');return;}copyText(['MD,Inc,Azi,TVD,NS,EW,VS,DLS',...SURV.pts.map(p=>[p.md,p.inc,p.azi,p.tvd,p.n,p.e,p.vs,p.dls].map(v=>+v.toFixed(2)).join(','))].join('\n'));return;}
   if(a==='zin'){if(G.ok)glDolly(0.75);else{V.zoom=Math.min(40,V.zoom*1.25);sched3();}return;}
@@ -970,7 +1007,7 @@ document.addEventListener('click',async e=>{
   if(a==='savePreset'){const name=($('#presetName').value||S.wellName||'Без имени').trim();const P=LS.get(K_PRESETS,[]);const data={};WELL_KEYS.forEach(k=>data[k]=clone(S[k]));
     const ix=P.findIndex(p=>p.name===name); const item={name,ts:Date.now(),data}; if(ix>=0)P[ix]=item; else P.unshift(item);
     toast(LS.set(K_PRESETS,P)?(ix>=0?'Пресет обновлён':'Пресет сохранён'):'Хранилище браузера недоступно'); $('#presetName').value=''; renderPresets(); return;}
-  if(a==='loadPreset'){const P=LS.get(K_PRESETS,[]),p=P[+b.closest('[data-pi]').dataset.pi]; if(!p)return; WELL_KEYS.forEach(k=>{if(p.data[k]!==undefined)S[k]=clone(p.data[k]);}); if(!S.plan)S.plan=blankWell().plan; if(!S.survey)S.survey=blankWell().survey; renderAll(); toast('Загружено: '+p.name); return;}
+  if(a==='loadPreset'){const P=LS.get(K_PRESETS,[]),p=P[+b.closest('[data-pi]').dataset.pi]; if(!p)return; WELL_KEYS.forEach(k=>{if(p.data[k]!==undefined)S[k]=clone(p.data[k]);}); if(!S.plan)S.plan=blankWell().plan; if(!S.survey)S.survey=blankWell().survey; if(!S.wplan)S.wplan={name:'',rows:[]}; if(!S.tgt)S.tgt={tvd:'',up:'10',down:'10',dip:'0',vs:'0'}; if(!S.ptbMode)S.ptbMode='trend'; renderAll(); toast('Загружено: '+p.name); return;}
   if(a==='delPreset'){if(!confirm2(b,'dp'+b.closest('[data-pi]').dataset.pi,'Удалить?'))return;const P=LS.get(K_PRESETS,[]);P.splice(+b.closest('[data-pi]').dataset.pi,1);LS.set(K_PRESETS,P);renderPresets();return;}
   if(a==='newWell'){if(!confirm2(b,'nw','Очистить текущую?'))return;Object.assign(S,blankWell());renderAll();return;}
   if(a==='demo'){if(!confirm2(b,'demo','Заменить текущую?'))return;Object.assign(S,demoWell());renderAll();return;}
@@ -992,7 +1029,7 @@ document.addEventListener('click',async e=>{
 
 /* ---------- survey & 3D ---------- */
 const RAD=Math.PI/180;
-let SURV=null, survKey='', scr3=[], raf3=0;
+let SURV=null, PLAN=null, survKey='', scr3=[], raf3=0;
 const V={view:'3d',yaw:-0.7,pitch:0.42,zoom:1,panX:0,panY:0,color:'tvd',thick:1,layers:{cas:true,oh:true,bha:true,lbl:true}};
 const Lb=t=>isEN()?tr(t):t;
 function surveyCalc(rows,vsIn){
@@ -1012,14 +1049,44 @@ function surveyCalc(rows,vsIn){
   const maxInc=pts.reduce((m,p)=>Math.max(m,p.inc),0), mD=pts.reduce((m,p)=>p.dls>m.dls?p:m,pts[0]);
   return {pts,clos,cAz,vsAz,maxInc,maxDls:mD.dls,maxDlsMd:mD.md,last};
 }
-function survAt(md){
-  if(!SURV||!ok(md))return null; const P=SURV.pts, L=P[P.length-1];
+function mcStep(a,b){
+  const I1=a.inc*RAD,I2=b.inc*RAD,A1=a.azi*RAD,A2=b.azi*RAD,dm=b.md-a.md;
+  let c=Math.cos(I2-I1)-Math.sin(I1)*Math.sin(I2)*(1-Math.cos(A2-A1)); c=Math.max(-1,Math.min(1,c));
+  const dl=Math.acos(c), rf=dl>1e-9?2/dl*Math.tan(dl/2):1;
+  return {md:b.md,inc:b.inc,azi:b.azi,tvd:a.tvd+dm/2*(Math.cos(I1)+Math.cos(I2))*rf,
+    n:a.n+dm/2*(Math.sin(I1)*Math.cos(A1)+Math.sin(I2)*Math.cos(A2))*rf,
+    e:a.e+dm/2*(Math.sin(I1)*Math.sin(A1)+Math.sin(I2)*Math.sin(A2))*rf, dls:dm>0?dl/RAD*100/dm:0};
+}
+function trendRates(D){ const P=D.pts,L=P[P.length-1]; let k=P.length-2; while(k>0&&L.md-P[k].md<1)k--; const Q=P[Math.max(0,k)],dm=L.md-Q.md;
+  if(!(dm>=1))return {bur:0,tr:0}; return {bur:(L.inc-Q.inc)/dm*100,tr:(((L.azi-Q.azi)%360+540)%360-180)/dm*100}; }
+function survAtD(D,md,mode){
+  if(!D||!ok(md))return null; const P=D.pts, L=P[P.length-1], vs=q=>{q.vs=q.n*Math.cos(D.vsAz*RAD)+q.e*Math.sin(D.vsAz*RAD);return q;};
   if(md<=P[0].md)return Object.assign({},P[0],{md});
-  if(md>=L.md){const d=md-L.md,I=L.inc*RAD,A=L.azi*RAD;return {md,inc:L.inc,azi:L.azi,tvd:L.tvd+d*Math.cos(I),n:L.n+d*Math.sin(I)*Math.cos(A),e:L.e+d*Math.sin(I)*Math.sin(A),extra:d>0};}
+  if(md>L.md){ let base=L;
+    const bitMd=M&&M.bd>L.md?M.bd:0;
+    if(mode==='trend'&&bitMd){ const lim=Math.min(md,bitMd),d=lim-L.md,r=trendRates(D);
+      const inc=Math.max(0,Math.min(180,L.inc+r.bur*d/100)), azi=((L.azi+r.tr*d/100)%360+360)%360;
+      base=mcStep(L,{md:lim,inc,azi}); if(md<=lim)return vs(Object.assign(base,{extra:true})); }
+    return vs(Object.assign(mcStep(base,{md,inc:base.inc,azi:base.azi}),{extra:true}));
+  }
   let lo=0,hi=P.length-1; while(hi-lo>1){const m=(lo+hi)>>1; if(P[m].md<=md)lo=m; else hi=m;}
   const a=P[lo],b=P[hi],t=(md-a.md)/((b.md-a.md)||1),f=k=>a[k]+(b[k]-a[k])*t;
-  return {md,inc:f('inc'),azi:b.azi,tvd:f('tvd'),n:f('n'),e:f('e')};
+  return {md,inc:f('inc'),azi:b.azi,tvd:f('tvd'),n:f('n'),e:f('e'),vs:f('vs'),dls:b.dls};
 }
+function survAt(md){ return survAtD(SURV,md,S.ptbMode||'trend'); }
+function planAt(md){ return survAtD(PLAN,md,'tangent'); }
+function tgtAt(vs){ const t=num(S.tgt.tvd); if(!ok(t))return null; const dip=num(S.tgt.dip)||0, ref=num(S.tgt.vs)||0; return t+(vs-ref)*Math.tan(dip*RAD); }
+function toPlan(p){
+  if(!PLAN||!p)return null; const P=PLAN.pts, d2=q=>(q.n-p.n)**2+(q.e-p.e)**2+(q.tvd-p.tvd)**2;
+  let bi=0,bd=1e30; P.forEach((q,i)=>{const d=d2(q); if(d<bd){bd=d;bi=i;}});
+  let best=P[bi]; const a=P[Math.max(0,bi-1)].md, b=bi===P.length-1?P[bi].md+Math.max(500,p.md-P[bi].md+200):P[bi+1].md;
+  for(let k=0;k<=60;k++){const q=planAt(a+(b-a)*k/60),d=d2(q); if(d<bd){bd=d;best=q;}}
+  const I=best.inc*RAD,A=best.azi*RAD,t=[Math.sin(I)*Math.cos(A),Math.sin(I)*Math.sin(A),Math.cos(I)],ut=-t[2];
+  let hs=[-ut*t[0],-ut*t[1],-1-ut*t[2]]; const hl=Math.hypot(...hs)||1; hs=hs.map(x=>x/hl);
+  const r=[-Math.sin(A),Math.cos(A),0], dv=[p.n-best.n,p.e-best.e,p.tvd-best.tvd], dot=(x,y)=>x[0]*y[0]+x[1]*y[1]+x[2]*y[2];
+  return {d3:Math.sqrt(bd),ab:dot(dv,hs),rl:dot(dv,r),plan:best};
+}
+
 function parseSurvey(text,meters){
   const lines=String(text||'').split(/\r?\n/), n2=t=>{const v=parseFloat(String(t??'').trim().replace(',','.'));return isFinite(v)?v:NaN;};
   const hsplit=l=>(l.includes(';')?l.split(';'):l.includes('\t')?l.split('\t'):l.includes(',')?l.split(','):l.trim().split(/\s+/)).map(x=>x.trim());
@@ -1061,7 +1128,7 @@ function loadSurveyText(text,name){
 }
 function readSurveyFile(f){ if(!f)return; const fr=new FileReader(); fr.onload=()=>loadSurveyText(fr.result,f.name); fr.onerror=()=>survMsg('bad','⚠ Не удалось прочитать файл'); fr.readAsText(f); }
 function renderSurvey(){
-  const key=SURV?[S.survey.rows.length,S.survey.name,SURV.vsAz.toFixed(3),S.ui,M.bd].join('|'):'none|'+S.ui;
+  const key=SURV?[S.survey.rows.length,S.survey.name,SURV.vsAz.toFixed(3),S.ui,M.bd,S.ptbMode,S.wplan.rows.length,JSON.stringify(S.tgt)].join('|'):'none|'+S.ui;
   if(key===survKey)return; survKey=key;
   if(!SURV){$('#survStats').innerHTML='<div class="empty">Нет данных. Загрузите файл или нажмите «Пример».</div>';$('#survBody').innerHTML='';return;}
   const c=(l,v,sub,hl)=>`<div class="c ${hl?'hl':''}"><small>${l}</small><b>${v}</b>${sub?`<i>${sub}</i>`:''}</div>`, L=SURV.last, bit=M.bd>0?survAt(M.bd):null;
@@ -1073,13 +1140,15 @@ function renderSurvey(){
     c('Азимут VS',fmt(SURV.vsAz,2)+'°',ok(num(S.survey.vsAz))?'задан вручную':'авто = азимут смещения')+
     (bit?c('Долото по инклинометрии',fmt(bit.tvd,0),'ft TVD при '+fmt(M.bd,0)+' ft MD'+(bit.extra?' (экстраполяция)':''),1):'');
   const f=(x,d)=>fmt(x,d);
-  $('#survBody').innerHTML=SURV.pts.map(p=>`<tr><td class="mono">${f(p.md,1)}</td><td class="mono">${f(p.inc,2)}</td><td class="mono">${f(p.azi,2)}</td><td class="mono">${f(p.tvd,1)}</td><td class="mono">${f(p.n,1)}</td><td class="mono">${f(p.e,1)}</td><td class="mono">${f(p.vs,1)}</td><td class="mono">${f(p.dls,2)}</td></tr>`).join('');
+  const row=(p,cls,lab)=>`<tr class="${cls||''}"><td class="mono">${lab?lab+' ':''}${f(p.md,1)}</td><td class="mono">${f(p.inc,2)}</td><td class="mono">${f(p.azi,2)}</td><td class="mono">${f(p.tvd,1)}</td><td class="mono">${f(p.n,1)}</td><td class="mono">${f(p.e,1)}</td><td class="mono">${f(p.vs,1)}</td><td class="mono">${f(p.dls,2)}</td></tr>`;
+  $('#survBody').innerHTML=SURV.pts.map(p=>row(p)).join('')+(bit&&bit.extra?row(bit,'ptb','PTB'):'');
+  renderDDCards();
 }
 function setView(v){ if(G.ok){glView(v);return;} V.view=v; V.zoom=1; V.panX=0; V.panY=0;
   if(v==='plan'){V.yaw=0;V.pitch=Math.PI/2;} else if(v==='vs'){V.yaw=((SURV?SURV.vsAz:90)-90)*RAD;V.pitch=0;} else {V.yaw=-0.7;V.pitch=0.42;}
   $$('#viewSeg button').forEach(b=>b.classList.toggle('on',b.dataset.view===v)); sched3(); }
 const rAF=window.requestAnimationFrame?window.requestAnimationFrame.bind(window):(f=>setTimeout(f,16));
-function sched3(){ if(G.ok){ glBuild(); glStart(); return; } if(raf3)return; raf3=rAF(()=>{raf3=0;draw3D();}); }
+function sched3(){ schedDD(); if(G.ok){ glBuild(); glStart(); return; } if(raf3)return; raf3=rAF(()=>{raf3=0;draw3D();}); }
 function grad(t){const st=[[45,212,191],[59,130,246],[168,85,247],[245,165,36]];t=Math.max(0,Math.min(1,t||0));const x=t*(st.length-1),i=Math.min(st.length-2,Math.floor(x)),f=x-i,a=st[i],b=st[i+1];return `rgb(${a.map((v,k)=>Math.round(v+(b[k]-v)*f)).join(',')})`;}
 function draw3D(){
   const cv=$('#cv3d'); if(!cv||!cv.offsetParent)return;
@@ -1173,6 +1242,115 @@ function init3D(){
 }
 
 
+
+/* ---------- DD panel ---------- */
+function loadPlanText(text,name){
+  try{ const r=parseSurvey(text,$('#survMeters').checked); S.wplan={name,rows:r.rows};
+    $('#planMsg').innerHTML=`<p class="ok" style="color:var(--ok);font-size:13px;margin-top:8px">${esc(`Загружен план: ${name} · ${r.rows.length} точек`)}</p>`; survKey=''; recompute(); toast('План загружен'); }
+  catch(err){ $('#planMsg').innerHTML=`<p style="color:var(--bad);font-size:13px;margin-top:8px">⚠ ${esc(err.message)}</p>`; }
+}
+function abTxt(v){ return ok(v)?`${fmt(Math.abs(v),1)}' ${v>=0?'выше':'ниже'}`:'—'; }
+function rlTxt(v){ return ok(v)?`${fmt(Math.abs(v),1)}' ${v>=0?'правее':'левее'}`:'—'; }
+function renderDDCards(){
+  const el=$('#ddCards'); if(!SURV){el.innerHTML='';return;}
+  const c=(l,v,sub,cls)=>`<div class="c ${cls||''}"><small>${l}</small><b>${v}</b>${sub?`<i>${sub}</i>`:''}</div>`, L=SURV.last, bit=M.bd>L.md?survAt(M.bd):null, r=trendRates(SURV);
+  let h=c('Последний замер',fmt(L.md,0)+"'",`Inc ${fmt(L.inc,2)}° · Azi ${fmt(L.azi,2)}°<br>TVD ${fmt(L.tvd,1)} · VS ${fmt(L.vs,1)}`);
+  if(bit)h+=c('Проекция на долото (PTB)',fmt(bit.md,0)+"'",`Inc ${fmt(bit.inc,2)}° · Azi ${fmt(bit.azi,2)}°<br>TVD ${fmt(bit.tvd,1)} · VS ${fmt(bit.vs,1)}<br>${S.ptbMode==='trend'?`BUR ${fmt(r.bur,2)} · TR ${fmt(r.tr,2)} °/100`:'по касательной'}`,'hl');
+  if(PLAN){ const a=toPlan(L); h+=c('До плана · последний замер',fmt(a.d3,1)+"'",`${abTxt(a.ab)} · ${rlTxt(a.rl)}<br>план: Inc ${fmt(a.plan.inc,1)}° · Azi ${fmt(a.plan.azi,1)}°`,a.d3<=10?'ok2':a.d3>25?'bad2':'');
+    if(bit){ const b=toPlan(bit); h+=c('До плана · на долоте',fmt(b.d3,1)+"'",`${abTxt(b.ab)} · ${rlTxt(b.rl)}`,b.d3<=10?'ok2':b.d3>25?'bad2':''); } }
+  const tp=bit||L, tt=tgtAt(tp.vs);
+  if(ok(tt)){ const up=num(S.tgt.up)||0,dn=num(S.tgt.down)||0,top=tt-up,bot=tt+dn, inW=tp.tvd>=top&&tp.tvd<=bot, d=tp.tvd-tt;
+    h+=c(bit?'Долото и окно цели':'Последний замер и окно цели',inW?'✓ в окне':(tp.tvd<top?'▲ выше окна':'▼ ниже окна'),`${fmt(Math.abs(d),1)}' ${d<=0?'выше':'ниже'} цели (TVD цели ${fmt(tt,1)})<br>окно ${fmt(top,1)}–${fmt(bot,1)}`,inW?'ok2':'bad2'); }
+  el.innerHTML=h;
+}
+let rafDD=0; function schedDD(){ if(rafDD)return; rafDD=rAF(()=>{rafDD=0;drawDD('VS');drawDD('PV');}); }
+const DDH={};
+function drawDD(kind){
+  const cv=$('#cv'+kind); if(!cv||!cv.offsetParent)return;
+  const W=cv.clientWidth,H=cv.clientHeight,dpr=window.devicePixelRatio||1;
+  if(cv.width!==Math.round(W*dpr)||cv.height!==Math.round(H*dpr)){cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);}
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0); g.clearRect(0,0,W,H);
+  const FONT='"IBM Plex Sans",system-ui,sans-serif',MONO='"JetBrains Mono",ui-monospace,monospace';
+  if(!SURV){g.fillStyle='#8e98a6';g.font='14px '+FONT;g.textAlign='center';g.fillText(Lb('Нет данных. Загрузите файл или нажмите «Пример».'),W/2,H/2);DDH[kind]=null;return;}
+  const isVS=kind==='VS', X=p=>isVS?p.vs:p.e, Yv=p=>isVS?p.tvd:p.n;
+  const A=SURV.pts, bd=M.bd, td=num(S.plan.td), L=SURV.last;
+  const bit=bd>L.md?survAt(bd):null, tdp=td>Math.max(bd,L.md)?survAt(td):null;
+  const PL=PLAN?PLAN.pts:[];
+  const all=[...A,...PL,...(bit?[bit]:[]),...(tdp?[tdp]:[]),{vs:0,tvd:0,n:0,e:0}];
+  let x0=Math.min(...all.map(X)),x1=Math.max(...all.map(X)),y0=Math.min(...all.map(Yv)),y1=Math.max(...all.map(Yv));
+  const tt0=ok(num(S.tgt.tvd));
+  if(isVS&&tt0){const a=tgtAt(x0),b=tgtAt(x1),up=num(S.tgt.up)||0,dn=num(S.tgt.down)||0;y0=Math.min(y0,a-up,b-up);y1=Math.max(y1,a+dn,b+dn);}
+  const m={l:64,r:16,t:16,b:38}, pw=W-m.l-m.r, ph=H-m.t-m.b;
+  let sx=pw/Math.max(x1-x0,1), sy=ph/Math.max(y1-y0,1);
+  if(!isVS){const s=Math.min(sx,sy);sx=sy=s;}
+  sx*=0.92; sy*=0.92;
+  const cx=(x0+x1)/2, cy=(y0+y1)/2;
+  const px=v=>m.l+pw/2+(v-cx)*sx, py=isVS?(v=>m.t+ph/2+(v-cy)*sy):(v=>m.t+ph/2-(v-cy)*sy);
+  // grid
+  const xr0=cx-pw/2/sx,xr1=cx+pw/2/sx, yr0=isVS?cy-ph/2/sy:cy-ph/2/sy, yr1=cy+ph/2/sy;
+  const gx=niceStep(xr1-xr0,7), gy=niceStep(yr1-yr0,7);
+  g.save(); g.beginPath(); g.rect(m.l,m.t,pw,ph); g.clip();
+  g.fillStyle='#0c1016'; g.fillRect(m.l,m.t,pw,ph);
+  g.lineWidth=1;
+  for(let v=Math.ceil(xr0/(gx/5))*(gx/5);v<=xr1;v+=gx/5){const X0=Math.round(px(v))+.5;g.strokeStyle=Math.abs(v/gx-Math.round(v/gx))<1e-6?'rgba(255,255,255,.12)':'rgba(255,255,255,.04)';g.beginPath();g.moveTo(X0,m.t);g.lineTo(X0,m.t+ph);g.stroke();}
+  for(let v=Math.ceil(yr0/(gy/5))*(gy/5);v<=yr1;v+=gy/5){const Y0=Math.round(py(v))+.5;g.strokeStyle=Math.abs(v/gy-Math.round(v/gy))<1e-6?'rgba(255,255,255,.12)':'rgba(255,255,255,.04)';g.beginPath();g.moveTo(m.l,Y0);g.lineTo(m.l+pw,Y0);g.stroke();}
+  const poly=(pts,col,w,dash)=>{if(pts.length<2)return;g.beginPath();pts.forEach((p,i)=>{const a=px(X(p)),b=py(Yv(p));i?g.lineTo(a,b):g.moveTo(a,b);});g.strokeStyle=col;g.lineWidth=w;g.setLineDash(dash||[]);g.lineJoin='round';g.stroke();g.setLineDash([]);};
+  // target window
+  if(isVS&&tt0){const up=num(S.tgt.up)||0,dn=num(S.tgt.down)||0,xa=xr0,xb=xr1;
+    g.beginPath();g.moveTo(px(xa),py(tgtAt(xa)-up));g.lineTo(px(xb),py(tgtAt(xb)-up));g.lineTo(px(xb),py(tgtAt(xb)+dn));g.lineTo(px(xa),py(tgtAt(xa)+dn));g.closePath();g.fillStyle='rgba(74,222,128,.12)';g.fill();
+    [[-up,[5,4]],[dn,[5,4]],[0,[]]].forEach(([o,d])=>{g.beginPath();g.moveTo(px(xa),py(tgtAt(xa)+o));g.lineTo(px(xb),py(tgtAt(xb)+o));g.strokeStyle=o?'rgba(74,222,128,.55)':'rgba(74,222,128,.9)';g.lineWidth=o?1:1.4;g.setLineDash(d);g.stroke();g.setLineDash([]);});}
+  // closure line in plan view
+  if(!isVS){const q=bit||L; g.beginPath();g.moveTo(px(0),py(0));g.lineTo(px(q.e),py(q.n));g.strokeStyle='rgba(255,255,255,.25)';g.setLineDash([3,4]);g.lineWidth=1;g.stroke();g.setLineDash([]);}
+  // plan, actual, PTB, TD
+  if(PL.length)poly(PL,'#f472b6',2,[8,5]);
+  poly(A,'#38bdf8',2.6);
+  g.fillStyle='#38bdf8'; A.forEach(p=>{g.beginPath();g.arc(px(X(p)),py(Yv(p)),1.7,0,7);g.fill();});
+  if(bit){poly([L,bit],'#f5a524',2.4,[5,4]);}
+  if(tdp){poly([bit||L,tdp],'#4ade80',2,[2,5]);}
+  g.restore();
+  // markers & labels
+  const lab=(x,y,t,col,al,dy)=>{g.font='600 11.5px '+FONT; if(!al&&x+g.measureText(t).width>W-6){x=Math.min(x,W-6);al='right';x-=16;} g.textAlign=al||'left';g.lineWidth=3.5;g.strokeStyle='rgba(10,13,17,.95)';g.strokeText(t,x,y+(dy||0));g.fillStyle=col;g.fillText(t,x,y+(dy||0));};
+  const inBox=(x,y)=>x>=m.l&&x<=m.l+pw&&y>=m.t&&y<=m.t+ph;
+  // MD ticks
+  const ms=niceStep(L.md,8); g.font='10px '+MONO;
+  let lpx=-99,lpy=-99; for(let d=ms;d<L.md;d+=ms){const p=survAt(d),x=px(X(p)),y=py(Yv(p)); if(!inBox(x,y)||Math.hypot(x-lpx,y-lpy)<34)continue; lpx=x;lpy=y; g.fillStyle='#38bdf8';g.fillRect(x-1.5,y-1.5,3,3); g.fillStyle='#6f8aa3';g.textAlign='left';g.fillText(fmt(d,0)+"'",x+5,y+(isVS?-4:-4));}
+  // casing shoes
+  M.cas.forEach(c=>{const p=survAt(c.shoe); if(!p)return; const x=px(X(p)),y=py(Yv(p)); if(!inBox(x,y))return; g.beginPath();g.moveTo(x,y);g.lineTo(x-7,y);g.lineTo(x,y-9);g.closePath();g.fillStyle='#e2e8f0';g.fill(); if(isVS)lab(x+8,y+4,`${fmtIn(c.od)}″ @ ${fmt(c.shoe,0)}'`,'#cfd6e0');});
+  // KOP/landing
+  {let li=A.findIndex(p=>p.inc>=86); if(li>0){let k=li; while(k>0&&A[k-1].inc<A[k].inc+0.3&&A[k-1].inc>2.5)k--; [[A[Math.max(0,k-1)],'KOP'],[A[li],Lb('Посадка')]].forEach(([p,t])=>{const x=px(X(p)),y=py(Yv(p)); if(!inBox(x,y))return; g.save();g.translate(x,y);g.rotate(Math.PI/4);g.fillStyle='#38bdf8';g.fillRect(-4,-4,8,8);g.restore(); lab(x+9,y+14,`${t} ${fmt(p.md,0)}'`,'#7dd3fc');});}}
+  if(bit){const x=px(X(bit)),y=py(Yv(bit)); g.beginPath();g.arc(x,y,5,0,7);g.fillStyle='#f5a524';g.fill(); lab(x+8,y-8,`PTB ${fmt(bit.md,0)}'`,'#f5a524');}
+  if(tdp){const x=px(X(tdp)),y=py(Yv(tdp)); g.beginPath();g.arc(x,y,5,0,7);g.fillStyle='#4ade80';g.fill(); lab(x+8,y+16,`${Lb('План TD')} ${fmt(td,0)}'`,'#4ade80');}
+  if(!isVS){const x=px(0),y=py(0); g.fillStyle='#fff';g.fillRect(x-4,y-4,8,8); lab(x+8,y+14,Lb('Устье'),'#e7eaef'); const q=bit||L; lab(px(q.e/2)+6,py(q.n/2),`Closure ${fmt(SURV.clos,0)}' @ ${fmt(SURV.cAz,1)}°`,'#9aa4b2');}
+  // axes
+  g.strokeStyle='rgba(255,255,255,.25)';g.lineWidth=1;g.strokeRect(m.l+.5,m.t+.5,pw,ph);
+  g.font='10px '+MONO;g.fillStyle='#8e98a6';
+  const z=v=>Math.abs(v)<1e-6?0:v; g.textAlign='center'; for(let v=Math.ceil(xr0/gx)*gx;v<=xr1;v+=gx)g.fillText(fmt(z(v),0),px(v),m.t+ph+14);
+  g.textAlign='right'; for(let v=Math.ceil(yr0/gy)*gy;v<=yr1;v+=gy){const y=py(v); if(y>m.t+4&&y<m.t+ph-2)g.fillText(fmt(z(v),0),m.l-6,y+3);}
+  g.font='600 11px '+FONT;g.fillStyle='#b4bfcd';g.textAlign='center';
+  g.fillText(isVS?`VS, ft (az ${fmt(SURV.vsAz,2)}°)`:'E(+) / W(−), ft',m.l+pw/2,H-6);
+  g.save();g.translate(13,m.t+ph/2);g.rotate(-Math.PI/2);g.fillText(isVS?'TVD, ft':'N(+) / S(−), ft',0,0);g.restore();
+  // legend
+  const items=[['#38bdf8',Lb('Факт'),[]],...(PL.length?[['#f472b6',Lb('План'),[8,5]]]:[]),...(bit?[['#f5a524','PTB',[5,4]]]:[]),...(isVS&&tt0?[['#4ade80',Lb('Окно цели'),[]]]:[])];
+  g.font='11px '+FONT; let lx=m.l+pw-10, ly=m.t+16; g.textAlign='right';
+  items.forEach(([c,t,d])=>{g.fillStyle='#cfd6e0';g.fillText(t,lx-30,ly+4);g.beginPath();g.moveTo(lx-24,ly);g.lineTo(lx,ly);g.strokeStyle=c;g.lineWidth=2.4;g.setLineDash(d);g.stroke();g.setLineDash([]);ly+=16;});
+  if(isVS)$('#vsTitle').textContent=`az ${fmt(SURV.vsAz,2)}°`;
+  DDH[kind]={pts:A.map(p=>({p,x:px(X(p)),y:py(Yv(p))})).concat(bit?[{p:bit,x:px(X(bit)),y:py(Yv(bit)),ptb:true}]:[])};
+}
+function ddHover(kind,e){
+  const cv=$('#cv'+kind),tip=cv.parentElement.querySelector('.ddtip'),H=DDH[kind]; if(!H){tip.style.display='none';return;}
+  const r=cv.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top; let best=null,bd=14;
+  H.pts.forEach(o=>{const d=Math.hypot(o.x-x,o.y-y); if(d<bd){bd=d;best=o;}});
+  if(!best){tip.style.display='none';return;}
+  const p=best.p; let t=`${best.ptb?'PTB  ':'MD   '}${fmt(p.md,1)} ft\nInc  ${fmt(p.inc,2)}°   Azi ${fmt(p.azi,2)}°\nTVD  ${fmt(p.tvd,1)}   VS ${fmt(p.vs,1)}\nN/S  ${fmt(p.n,1)}   E/W ${fmt(p.e,1)}\nDLS  ${fmt(p.dls,2)}°/100`;
+  if(PLAN){const a=toPlan(p); t+=`\n${Lb('До плана')} ${fmt(a.d3,1)}' · ${abTxt(a.ab)} · ${rlTxt(a.rl)}`;}
+  tip.textContent=t; tip.style.display='block'; const tw=tip.offsetWidth,th=tip.offsetHeight;
+  tip.style.left=Math.min(r.width-tw-6,x+14)+'px'; tip.style.top=Math.max(6,Math.min(r.height-th-6,y-th-10))+'px';
+}
+function initDD(){
+  ['VS','PV'].forEach(k=>{const cv=$('#cv'+k); cv.addEventListener('pointermove',e=>ddHover(k,e)); cv.addEventListener('pointerleave',()=>{cv.parentElement.querySelector('.ddtip').style.display='none';}); try{new ResizeObserver(schedDD).observe(cv.parentElement);}catch(_){} });
+  $('#planFile').addEventListener('change',e=>{const f=e.target.files[0]; if(f){const fr=new FileReader(); fr.onload=()=>loadPlanText(fr.result,f.name); fr.readAsText(f);} e.target.value='';});
+}
+
 /* ---------- WebGL 3D scene (Three.js) ---------- */
 const G={ok:false};
 function posAt(md){ if(SURV)return survAt(md); return {md,tvd:md,n:0,e:0,inc:0,azi:0}; }
@@ -1249,7 +1427,7 @@ function glHover(e){
 }
 function glBuild(force){
   if(!G.ok||!M)return;
-  const key=JSON.stringify([S.survey.rows.length,S.survey.rows[S.survey.rows.length-1]||0,S.survey.name,S.survey.vsAz,S.casings,S.ohDia,S.washout,S.bitDepth,S.string,S.plan,S.rec.depth,S.rec.type,V.color,V.thick,V.layers.cas,V.layers.oh,V.layers.bha,S.ui,S.wellName,M.plan&&M.plan.eta?Math.round(M.plan.eta/60000):0]);
+  const key=JSON.stringify([S.survey.rows.length,S.survey.rows[S.survey.rows.length-1]||0,S.survey.name,S.survey.vsAz,S.casings,S.ohDia,S.washout,S.bitDepth,S.string,S.plan,S.rec.depth,S.rec.type,V.color,V.thick,V.layers.cas,V.layers.oh,V.layers.bha,S.ui,S.wellName,S.wplan.rows.length,S.wplan.name,S.tgt,S.ptbMode,M.plan&&M.plan.eta?Math.round(M.plan.eta/60000):0]);
   if(!force&&key===G.key)return; G.key=key;
   G.root.traverse(o=>{ if(o.geometry)o.geometry.dispose(); if(o.material)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose()); });
   G.root.clear(); G.labels=[]; G.lbl.innerHTML=''; G.pts=[];
@@ -1313,6 +1491,19 @@ function glBuild(force){
     sp.position.copy(W3(p)); G.root.add(sp);
     const eta=M.plan&&M.plan.eta?' · '+M.plan.eta.toLocaleString(loc(),{weekday:'short',hour:'2-digit',minute:'2-digit'}):'';
     addLabel(W3(p),`План TD ${fmt(td,0)}' MD`,`${fmt(p.tvd,0)}' TVD · осталось ${fmt(td-bd,0)} ft${eta}`,'#4ade80'); }
+  // well plan (ghost) + target window curtain
+  if(PLAN){ const PL=PLAN.pts,pe=PL[PL.length-1].md,n=Math.min(500,Math.max(20,Math.ceil(pe/25))),P3=[]; for(let i=0;i<=n;i++)P3.push(W3(planAt(pe*i/n)));
+    G.root.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(P3,false,'centripetal'),Math.min(800,n*2),pathR*0.7,10,false),std(0xf472b6,{emissive:0x5b1640,emissiveIntensity:0.5,transparent:true,opacity:0.55,depthWrite:false})));
+    addLabel(W3(PL[PL.length-1]),`План ${fmt(pe,0)}' MD`,`${fmt(PL[PL.length-1].tvd,0)}' TVD`,'#f472b6'); }
+  if(ok(num(S.tgt.tvd))&&(PLAN||SURV)){ const src=PLAN||SURV; const at=src===PLAN?planAt:posAt, PS=src?src.pts:[]; let li=PS.findIndex(p=>p.inc>=80);
+    const a=li>=0?PS[li].md:(SURV?SURV.last.md*0.8:bd*0.8), b=Math.max(bd,td>0?td:0,PS.length?PS[PS.length-1].md:0);
+    if(b>a+10){ const up=num(S.tgt.up)||0,dn=num(S.tgt.down)||0,n=120,pos=[],idx=[];
+      for(let i=0;i<=n;i++){const q=at(a+(b-a)*i/n),t=tgtAt(q.vs); pos.push(q.e,-(t-up),-q.n, q.e,-(t+dn),-q.n); if(i<n){const k=i*2; idx.push(k,k+1,k+2,k+1,k+3,k+2);}}
+      const geo=new THREE.BufferGeometry(); geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3)); geo.setIndex(idx); geo.computeVertexNormals();
+      G.root.add(new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color:0x4ade80,transparent:true,opacity:0.16,side:THREE.DoubleSide,depthWrite:false})));
+      const ln=(o,op)=>{const pts=[];for(let i=0;i<=n;i++){const q=at(a+(b-a)*i/n);pts.push(new THREE.Vector3(q.e,-(tgtAt(q.vs)+o),-q.n));} G.root.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:0x4ade80,transparent:true,opacity:op})));};
+      ln(0,0.95); ln(-up,0.5); ln(dn,0.5);
+      const q=at(b); addLabel(new THREE.Vector3(q.e,-tgtAt(q.vs),-q.n),`Окно цели ${fmt(tgtAt(q.vs),0)}' TVD`,`+${fmt(up,0)} / −${fmt(dn,0)} ft`,'#4ade80'); } }
   // KOP / landing
   if(SURV){ const P=SURV.pts; let li=P.findIndex(p=>p.inc>=86);
     if(li>0){ let k=li; while(k>0&&P[k-1].inc<P[k].inc+0.3&&P[k-1].inc>2.5)k--; const kop=P[Math.max(0,k-1)];
@@ -1430,7 +1621,15 @@ const EN_DICT={
 "ОС":"OH","НУБТ":"NMDC","УБТ":"DC","ТБТ":"HWDP","РУС":"RSS","ВЗД":"Motor","Ясс":"Jar","КНБК":"BHA","нет":"none","Порядок:":"Steps:",
 "обсадные колонны":"casing strings","Рассчитать":"Calculate","КПД":"Efficiency","напр.":"e.g.","Копировать":"Copy","к долоту":"toward bit",
 "Язык интерфейса":"Interface language","На телефон":"On phone","Открыть на телефоне":"Open on your phone","Копировать ссылку":"Copy link","Закрыть":"Close",
-"Ссылка скопирована":"Link copied","Колонны":"Casing","Подписи":"Labels","Толщина":"Thickness","Автовращение":"Auto-rotate","Вписать":"Fit",
+"Ссылка скопирована":"Link copied","Плановая траектория":"Well plan","Загрузить план (CSV / TXT / LAS)":"Upload plan (CSV / TXT / LAS)",
+"План от DD-компании в том же формате (MD, Inc, Azi). Будет показан на разрезе, плане и в 3D, и посчитано отклонение от плана.":"Directional plan in the same format (MD, Inc, Azi). It is shown on the section, plan and 3D views, and distance to plan is calculated.",
+"Окно цели и проекция":"Target window & projection","TVD цели":"Target TVD","Окно вверх":"Window up","Окно вниз":"Window down","Наклон пласта":"Formation dip","глубже":"deeper",
+"TVD цели задан на VS":"Target TVD defined at VS","Проекция на долото":"Projection to bit","По тренду (BUR/TR)":"By trend (BUR/TR)","По касательной":"Tangent","по касательной":"tangent",
+"DD-панель":"DD panel","как в отчётах DD/MWD":"as in DD/MWD reports","Вертикальный разрез":"Vertical section","План (вид сверху)":"Plan view",
+"Проекция на долото (PTB)":"Projection to bit (PTB)","До плана · последний замер":"Distance to plan · last survey","До плана · на долоте":"Distance to plan · at bit","До плана":"To plan",
+"Долото и окно цели":"Bit vs target window","Последний замер и окно цели":"Last survey vs target window","в окне":"in window","выше окна":"above window","ниже окна":"below window",
+"выше":"above","ниже":"below","правее":"right","левее":"left","цели":"target","окно":"window","план:":"plan:","Факт":"Actual","Окно цели":"Target window","Посадка":"Landing",
+"Загружен план:":"Plan loaded:","точек":"points","План загружен":"Plan loaded","План очищен":"Plan cleared","напр.":"e.g.","Колонны":"Casing","Подписи":"Labels","Толщина":"Thickness","Автовращение":"Auto-rotate","Вписать":"Fit",
 "Левая кнопка / один палец — вращение, колесо / два пальца — масштаб, правая кнопка / Shift / два пальца — сдвиг. Двойной щелчок — вписать в экран. Толщина труб условно увеличена.":"Left button / one finger — rotate, wheel / two fingers — zoom, right button / Shift / two fingers — pan. Double-click fits the view. Pipe thickness is exaggerated for visibility.",
 "Посадка в горизонт":"Landing point","Смещение:":"Closure:","Осталось:":"Remaining:","Долото:":"Bit:","План TD:":"Plan TD:",
 "Без инклинометрии — ствол показан вертикальным":"No survey — the hole is shown as vertical","Забой→устье":"Bottoms up","3D траектория":"3D trajectory","Инклинометрия":"Directional survey","Пример":"Example","Загрузить файл (CSV / TXT / LAS)":"Upload file (CSV / TXT / LAS)",
@@ -1467,7 +1666,7 @@ let qrMade=false;
 function openPhone(){ $('#phoneModal').classList.add('on'); if(!qrMade){ try{ const q=qrcode(0,'M'); q.addData($('#appLink').textContent.trim()); q.make(); $('#qr').innerHTML=q.createSvgTag({cellSize:5,margin:0,scalable:true}); $('#qr svg').setAttribute('width','200'); $('#qr svg').setAttribute('height','200'); qrMade=true; }catch(e){ $('#qr').outerHTML='<p class="hint">QR-код недоступен — используйте ссылку ниже.</p>'; qrMade=true; } } }
 
 /* ---------- init ---------- */
-init3D(); initGL(); applyUI(); setHdr();
+init3D(); initDD(); initGL(); applyUI(); setHdr();
 window.addEventListener('resize',setHdr);
 setInterval(()=>{if(M){renderPlan();renderKPIs();}},30000);
 const h0=(location.hash||'').slice(1); if(['well','lag','rec','log','3d'].includes(h0))$(`#tabs [data-tab="${h0}"]`).click();
