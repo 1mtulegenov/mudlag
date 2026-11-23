@@ -440,6 +440,15 @@ body.fslock{overflow:hidden}
         <div id="planMsg"></div>
       </div>
       <div class="panel">
+        <h2>Соседние скважины<span class="sp"></span><label class="btn sm pri" style="cursor:pointer">+ Добавить<input type="file" id="offFile" multiple accept=".csv,.txt,.las,.dat,.tsv,.prn,text/plain,text/csv" hidden></label></h2>
+        <p class="hint" style="margin-top:0">Инклинометрия каждой соседней скважины (MD, Inc, Azi). Устье задайте координатами X/Y (как в шапке отчёта) или смещением ΔN/ΔE от устья основной скважины.</p>
+        <div class="grid g2" style="margin:10px 0">
+          <label class="f"><span class="lt">Устье основной X (Easting) <span class="u">ft</span></span><input data-bind="wellXY.x" inputmode="decimal" placeholder="1605557.30"></label>
+          <label class="f"><span class="lt">Устье основной Y (Northing) <span class="u">ft</span></span><input data-bind="wellXY.y" inputmode="decimal" placeholder="407268.43"></label>
+        </div>
+        <div id="offList"></div>
+      </div>
+      <div class="panel">
         <h2>Окно цели и проекция</h2>
         <div class="grid g3">
           <label class="f"><span class="lt">TVD цели <span class="u">ft</span></span><input data-bind="tgt.tvd" inputmode="decimal" placeholder="напр. 11610"></label>
@@ -584,11 +593,11 @@ function demoWell(){return {
   plan:{td:'13500',rop:'120',stand:'93',conn:'6',extra:'10',start:''},
   survey:{name:'Пример',rows:demoSurvey(),vsAz:''}
 };}
-function blankWell(){return {wellName:'',bitDepth:'',ohDia:'',washout:'',casings:[],string:[{id:uid(),type:'bit',od:'',idd:'0',len:'1',auto:false},{id:uid(),type:'dp',od:'5',idd:'4.276',len:'',auto:true}],pump:{mode:'calc',galStk:'',spm:'',gpm:''},lag:{mode:'auto',manual:[]},plan:{td:'',rop:'',stand:'93',conn:'6',extra:'0',start:''},survey:{name:'',rows:[],vsAz:''},wplan:{name:'',rows:[]},tgt:{tvd:'',up:'10',down:'10',dip:'0',vs:'0'},ptbMode:'trend'};}
-const WELL_KEYS=['wellName','bitDepth','ohDia','washout','casings','string','pump','lag','plan','survey','wplan','tgt','ptbMode'];
+function blankWell(){return {wellName:'',bitDepth:'',ohDia:'',washout:'',casings:[],string:[{id:uid(),type:'bit',od:'',idd:'0',len:'1',auto:false},{id:uid(),type:'dp',od:'5',idd:'4.276',len:'',auto:true}],pump:{mode:'calc',galStk:'',spm:'',gpm:''},lag:{mode:'auto',manual:[]},plan:{td:'',rop:'',stand:'93',conn:'6',extra:'0',start:''},survey:{name:'',rows:[],vsAz:''},wplan:{name:'',rows:[]},tgt:{tvd:'',up:'10',down:'10',dip:'0',vs:'0'},ptbMode:'trend',offsets:[],wellXY:{x:'',y:''}};}
+const WELL_KEYS=['wellName','bitDepth','ohDia','washout','casings','string','pump','lag','plan','survey','wplan','tgt','ptbMode','offsets','wellXY'];
 let S=LS.get(K_STATE,null);
 if(!S||!S.casings){S=Object.assign(demoWell(),{rec:blankRec(),lang:'ru',focus:true});}
-S.rec=Object.assign(blankRec(),S.rec||{}); if(!S.lang)S.lang='ru'; if(!S.ui)S.ui='ru'; if(!S.wplan)S.wplan={name:'',rows:[]}; if(!S.tgt)S.tgt={tvd:'',up:'10',down:'10',dip:'0',vs:'0'}; if(!S.ptbMode)S.ptbMode='trend'; if(!S.survey)S.survey={name:'',rows:[],vsAz:''}; if(!S.plan)S.plan={td:'',rop:'',stand:'93',conn:'6',extra:'0',start:''}; if(S.focus==null)S.focus=true;
+S.rec=Object.assign(blankRec(),S.rec||{}); if(!S.lang)S.lang='ru'; if(!S.ui)S.ui='ru'; if(!S.offsets)S.offsets=[]; if(!S.wellXY)S.wellXY={x:'',y:''}; if(!S.wplan)S.wplan={name:'',rows:[]}; if(!S.tgt)S.tgt={tvd:'',up:'10',down:'10',dip:'0',vs:'0'}; if(!S.ptbMode)S.ptbMode='trend'; if(!S.survey)S.survey={name:'',rows:[],vsAz:''}; if(!S.plan)S.plan={td:'',rop:'',stand:'93',conn:'6',extra:'0',start:''}; if(S.focus==null)S.focus=true;
 let outDirty=false;
 let saveT=null; function save(){clearTimeout(saveT);saveT=setTimeout(()=>LS.set(K_STATE,S),250);}
 
@@ -699,7 +708,7 @@ function syncSegs(){
   $('#gpmInput').disabled=!direct; $('#spmBox').querySelector('input').disabled=direct;
   $('#gpmNote').textContent=direct?'ввод':'= Gal/Stk × SPM';
 }
-function renderAll(){renderCasings();renderComps();renderManual();renderLith();renderPresets();syncBinds();syncSegs();renderHistory();recompute();}
+function renderAll(){renderOffsets();renderCasings();renderComps();renderManual();renderLith();renderPresets();syncBinds();syncSegs();renderHistory();recompute();}
 
 /* ---------- recompute & outputs ---------- */
 let M=null;
@@ -707,6 +716,7 @@ function recompute(){
   M=compute();
   SURV=(S.survey&&S.survey.rows&&S.survey.rows.length>1)?surveyCalc(S.survey.rows,S.survey.vsAz):null;
   PLAN=(S.wplan&&S.wplan.rows&&S.wplan.rows.length>1)?surveyCalc(S.wplan.rows,SURV?SURV.vsAz:S.survey.vsAz):null;
+  OFFS=calcOffsets();
   M.comps.forEach(c=>{if(c.auto){const e=document.getElementById('al-'+c.ref.id);if(e)e.value=fmt(c.L,1);}});
   if(S.pump.mode==='calc'){const e=$('#gpmInput'); if(document.activeElement!==e)e.value=ok(M.gpm)?+M.gpm.toFixed(2):'';}
   else {const e=$('#spmBox input'); if(document.activeElement!==e)e.value=ok(M.spm)?+M.spm.toFixed(1):'';}
@@ -953,7 +963,7 @@ async function copyText(t){ try{await navigator.clipboard.writeText(t);toast('С
   toast(r?'Скопировано в буфер':'Не удалось скопировать — выделите текст вручную');return r;} }
 const armed=new Map();
 function confirm2(btn,key,label){ if(armed.get(key)){armed.delete(key);return true;} armed.set(key,true); const old=btn.textContent; btn.textContent=label||'Точно?'; setTimeout(()=>{armed.delete(key);if(btn.isConnected)btn.textContent=old;},3000); return false; }
-function findItem(listName,id){ const arr=listName==='casings'?S.casings:listName==='string'?S.string:listName==='lith'?S.rec.lith:S.lag.manual; return {arr,i:arr.findIndex(x=>x.id===id)}; }
+function findItem(listName,id){ const arr=listName==='casings'?S.casings:listName==='string'?S.string:listName==='lith'?S.rec.lith:listName==='off'?S.offsets:S.lag.manual; return {arr,i:arr.findIndex(x=>x.id===id)}; }
 function setHdr(){document.documentElement.style.setProperty('--hdr',$('#hdr').offsetHeight+'px');}
 
 /* ---------- events ---------- */
@@ -1011,12 +1021,12 @@ document.addEventListener('click',async e=>{
   const row=b.closest('[data-list]');
   if(row&&['del','up','down'].includes(a)){const {arr,i}=findItem(row.dataset.list,row.dataset.id);if(i<0)return;
     if(a==='del')arr.splice(i,1); else {const j=a==='up'?i-1:i+1; if(j<0||j>=arr.length)return; [arr[i],arr[j]]=[arr[j],arr[i]];}
-    if(row.dataset.list==='casings')renderCasings(); else if(row.dataset.list==='string')renderComps(); else if(row.dataset.list==='lith')renderLith();
+    if(row.dataset.list==='casings')renderCasings(); else if(row.dataset.list==='off')renderOffsets(); else if(row.dataset.list==='string')renderComps(); else if(row.dataset.list==='lith')renderLith();
     recompute(); return;}
   if(a==='savePreset'){const name=($('#presetName').value||S.wellName||'Без имени').trim();const P=LS.get(K_PRESETS,[]);const data={};WELL_KEYS.forEach(k=>data[k]=clone(S[k]));
     const ix=P.findIndex(p=>p.name===name); const item={name,ts:Date.now(),data}; if(ix>=0)P[ix]=item; else P.unshift(item);
     toast(LS.set(K_PRESETS,P)?(ix>=0?'Пресет обновлён':'Пресет сохранён'):'Хранилище браузера недоступно'); $('#presetName').value=''; renderPresets(); return;}
-  if(a==='loadPreset'){const P=LS.get(K_PRESETS,[]),p=P[+b.closest('[data-pi]').dataset.pi]; if(!p)return; WELL_KEYS.forEach(k=>{if(p.data[k]!==undefined)S[k]=clone(p.data[k]);}); if(!S.plan)S.plan=blankWell().plan; if(!S.survey)S.survey=blankWell().survey; if(!S.wplan)S.wplan={name:'',rows:[]}; if(!S.tgt)S.tgt={tvd:'',up:'10',down:'10',dip:'0',vs:'0'}; if(!S.ptbMode)S.ptbMode='trend'; renderAll(); toast('Загружено: '+p.name); return;}
+  if(a==='loadPreset'){const P=LS.get(K_PRESETS,[]),p=P[+b.closest('[data-pi]').dataset.pi]; if(!p)return; WELL_KEYS.forEach(k=>{if(p.data[k]!==undefined)S[k]=clone(p.data[k]);}); if(!S.plan)S.plan=blankWell().plan; if(!S.survey)S.survey=blankWell().survey; if(!S.offsets)S.offsets=[]; if(!S.wellXY)S.wellXY={x:'',y:''}; if(!S.wplan)S.wplan={name:'',rows:[]}; if(!S.tgt)S.tgt={tvd:'',up:'10',down:'10',dip:'0',vs:'0'}; if(!S.ptbMode)S.ptbMode='trend'; renderAll(); toast('Загружено: '+p.name); return;}
   if(a==='delPreset'){if(!confirm2(b,'dp'+b.closest('[data-pi]').dataset.pi,'Удалить?'))return;const P=LS.get(K_PRESETS,[]);P.splice(+b.closest('[data-pi]').dataset.pi,1);LS.set(K_PRESETS,P);renderPresets();return;}
   if(a==='newWell'){if(!confirm2(b,'nw','Очистить текущую?'))return;Object.assign(S,blankWell());renderAll();return;}
   if(a==='demo'){if(!confirm2(b,'demo','Заменить текущую?'))return;Object.assign(S,demoWell());renderAll();return;}
@@ -1038,7 +1048,7 @@ document.addEventListener('click',async e=>{
 
 /* ---------- survey & 3D ---------- */
 const RAD=Math.PI/180;
-let SURV=null, PLAN=null, survKey='', scr3=[], raf3=0;
+let SURV=null, PLAN=null, OFFS=[], survKey='', scr3=[], raf3=0;
 const V={view:'3d',yaw:-0.7,pitch:0.42,zoom:1,panX:0,panY:0,color:'tvd',thick:1,layers:{cas:true,oh:true,bha:true,lbl:true}};
 const Lb=t=>isEN()?tr(t):t;
 function surveyCalc(rows,vsIn){
@@ -1137,7 +1147,7 @@ function loadSurveyText(text,name){
 }
 function readSurveyFile(f){ if(!f)return; const fr=new FileReader(); fr.onload=()=>loadSurveyText(fr.result,f.name); fr.onerror=()=>survMsg('bad','⚠ Не удалось прочитать файл'); fr.readAsText(f); }
 function renderSurvey(){
-  const key=SURV?[S.survey.rows.length,S.survey.name,SURV.vsAz.toFixed(3),S.ui,M.bd,S.ptbMode,S.wplan.rows.length,JSON.stringify(S.tgt)].join('|'):'none|'+S.ui;
+  const key=SURV?[offKey(),S.survey.rows.length,S.survey.name,SURV.vsAz.toFixed(3),S.ui,M.bd,S.ptbMode,S.wplan.rows.length,JSON.stringify(S.tgt)].join('|'):'none|'+S.ui;
   if(key===survKey)return; survKey=key;
   if(!SURV){$('#survStats').innerHTML='<div class="empty">Нет данных. Загрузите файл или нажмите «Пример».</div>';$('#survBody').innerHTML='';return;}
   const c=(l,v,sub,hl)=>`<div class="c ${hl?'hl':''}"><small>${l}</small><b>${v}</b>${sub?`<i>${sub}</i>`:''}</div>`, L=SURV.last, bit=M.bd>0?survAt(M.bd):null;
@@ -1221,7 +1231,7 @@ function hover3(e){
   const cv=$('#cv3d'),tip=$('#tip3d'),r=cv.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;
   let best=null,bd=14; scr3.forEach(o=>{const d=Math.hypot(o.xy[0]-x,o.xy[1]-y);if(d<bd){bd=d;best=o;}});
   if(!best){tip.style.display='none';return;}
-  const p=best.p; tip.textContent=`MD   ${fmt(p.md,1)} ft\nInc  ${fmt(p.inc,2)}°\nAzi  ${fmt(p.azi,2)}°\nTVD  ${fmt(p.tvd,1)} ft\nN/S  ${fmt(p.n,1)}\nE/W  ${fmt(p.e,1)}\nVS   ${fmt(p.vs,1)}\nDLS  ${fmt(p.dls,2)}°/100`;
+  const p=best.p; tip.textContent=`${p.wname?p.wname+'\n':''}MD   ${fmt(p.md,1)} ft\nInc  ${fmt(p.inc,2)}°\nAzi  ${fmt(p.azi,2)}°\nTVD  ${fmt(p.tvd,1)} ft\nN/S  ${fmt(p.n,1)}\nE/W  ${fmt(p.e,1)}\nVS   ${fmt(p.vs,1)}\nDLS  ${fmt(p.dls,2)}°/100`;
   tip.style.display='block'; const tw=tip.offsetWidth,th=tip.offsetHeight;
   tip.style.left=Math.min(r.width-tw-6,x+14)+'px'; tip.style.top=Math.max(6,Math.min(r.height-th-6,y-th/2))+'px';
 }
@@ -1252,6 +1262,47 @@ function init3D(){
 
 
 
+
+/* ---------- offset wells ---------- */
+const OFF_COLORS=['#a78bfa','#fb7185','#fbbf24','#e879f9','#60a5fa','#f97316','#94a3b8','#2dd4bf'];
+function offKey(){ return S.offsets.map(o=>[o.id,o.name,o.color,o.show,o.rows.length,o.x,o.y,o.dn,o.de,o.dkb].join(',')).join(';')+'|'+S.wellXY.x+','+S.wellXY.y; }
+function offShift(o){ const X0=num(S.wellXY.x),Y0=num(S.wellXY.y),x=num(o.x),y=num(o.y);
+  if(ok(X0)&&ok(Y0)&&ok(x)&&ok(y))return {dn:y-Y0,de:x-X0,dz:num(o.dkb)||0,byXY:true};
+  return {dn:num(o.dn)||0,de:num(o.de)||0,dz:num(o.dkb)||0,byXY:false}; }
+function calcOffsets(){
+  const vsAz=SURV?SURV.vsAz:(num(S.survey.vsAz)||0);
+  return S.offsets.filter(o=>o.show&&o.rows&&o.rows.length>1).map(o=>{ const c=surveyCalc(o.rows,''), sh=offShift(o);
+    const tr=p=>{const n=p.n+sh.dn,e=p.e+sh.de;return {md:p.md,inc:p.inc,azi:p.azi,dls:p.dls,tvd:p.tvd-sh.dz,n,e,vs:n*Math.cos(vsAz*RAD)+e*Math.sin(vsAz*RAD),wname:o.name};};
+    const L=c.pts[c.pts.length-1].md, n=Math.min(1500,Math.max(20,Math.ceil(L/25))), samp=[]; for(let i=0;i<=n;i++)samp.push(tr(survAtD(c,L*i/n,'tangent')));
+    return {o,c,sh,pts:c.pts.map(tr),samp,at:md=>tr(survAtD(c,md,'tangent'))}; });
+}
+function closestApproach(of){
+  if(!SURV)return null; const L=SURV.last, end=Math.max(L.md,M.bd||0), n=Math.min(800,Math.ceil(end/25)); let best=null;
+  for(let i=0;i<=n;i++){ const p=survAt(end*i/n); for(const q of of.samp){ const d=(p.n-q.n)**2+(p.e-q.e)**2+(p.tvd-q.tvd)**2; if(!best||d<best.d)best={d,p,q}; } }
+  return best?{dist:Math.sqrt(best.d),mdMain:best.p.md,mdOff:best.q.md,tvd:best.p.tvd}:null;
+}
+function renderOffsets(){
+  const el=$('#offList'); if(!el)return;
+  el.innerHTML=S.offsets.length?S.offsets.map(o=>{const sh=offShift(o);return `<div class="card" data-list="off" data-id="${o.id}">
+    <div class="hd"><input type="color" data-k="color" value="${esc(o.color)}" style="width:42px;height:36px;padding:2px;flex:none" title="Цвет">
+      <input data-k="name" value="${esc(o.name)}" style="flex:1;min-width:120px;height:36px">
+      <label style="display:flex;gap:6px;align-items:center;font-size:13px;color:var(--mute)"><input type="checkbox" data-k="show" ${o.show?'checked':''}> показать</label>
+      <button class="btn icon sm danger" data-act="del" title="Удалить">✕</button></div>
+    <div class="grid g3">
+      <label class="f"><span class="lt">X устья <span class="u">ft</span></span><input data-k="x" value="${esc(o.x)}" inputmode="decimal"></label>
+      <label class="f"><span class="lt">Y устья <span class="u">ft</span></span><input data-k="y" value="${esc(o.y)}" inputmode="decimal"></label>
+      <label class="f"><span class="lt">KB выше основной <span class="u">ft</span></span><input data-k="dkb" value="${esc(o.dkb)}" inputmode="decimal"></label>
+      <label class="f"><span class="lt">или ΔN от устья <span class="u">ft</span></span><input data-k="dn" value="${esc(o.dn)}" inputmode="decimal"></label>
+      <label class="f"><span class="lt">ΔE от устья <span class="u">ft</span></span><input data-k="de" value="${esc(o.de)}" inputmode="decimal"></label>
+      <label class="f"><span class="lt">Замеров</span><input value="${o.rows.length} · ${fmt(o.rows[o.rows.length-1][0],0)}'" disabled></label>
+    </div></div>`;}).join(''):'<div class="empty">Соседних скважин нет. Нажмите «+ Добавить» и выберите файлы инклинометрии (можно несколько сразу).</div>';
+}
+function addOffsetFiles(files){
+  [...files].forEach(f=>{ const fr=new FileReader(); fr.onload=()=>{ try{ const r=parseSurvey(fr.result,$('#survMeters').checked);
+      S.offsets.push({id:uid(),name:f.name.replace(/\.[^.]+$/,''),color:OFF_COLORS[S.offsets.length%OFF_COLORS.length],rows:r.rows,x:'',y:'',dn:'0',de:'0',dkb:'0',show:true});
+      renderOffsets(); survKey=''; recompute(); toast('Добавлена скважина: '+f.name); }catch(err){ toast('⚠ '+f.name+': '+err.message); } }; fr.readAsText(f); });
+}
+
 /* ---------- DD panel ---------- */
 function loadPlanText(text,name){
   try{ const r=parseSurvey(text,$('#survMeters').checked); S.wplan={name,rows:r.rows};
@@ -1270,6 +1321,7 @@ function renderDDCards(){
   const tp=bit||L, tt=tgtAt(tp.vs);
   if(ok(tt)){ const up=num(S.tgt.up)||0,dn=num(S.tgt.down)||0,top=tt-up,bot=tt+dn, inW=tp.tvd>=top&&tp.tvd<=bot, d=tp.tvd-tt;
     h+=c(bit?'Долото и окно цели':'Последний замер и окно цели',inW?'✓ в окне':(tp.tvd<top?'▲ выше окна':'▼ ниже окна'),`${fmt(Math.abs(d),1)}' ${d<=0?'выше':'ниже'} цели (TVD цели ${fmt(tt,1)})<br>окно ${fmt(top,1)}–${fmt(bot,1)}`,inW?'ok2':'bad2'); }
+  OFFS.forEach(of=>{ const a=closestApproach(of); if(!a)return; h+=c(`<span style="color:${esc(of.o.color)}">●</span> ${esc(of.o.name)}`,fmt(a.dist,0)+"'",`мин. расстояние (центр–центр)<br>@ ${fmt(a.mdMain,0)}' MD осн. · ${fmt(a.tvd,0)}' TVD<br>${of.sh.byXY?'устье по X/Y':'устье по ΔN/ΔE'}`,a.dist<100?'bad2':a.dist<250?'':'ok2'); });
   el.innerHTML=h;
 }
 let rafDD=0; function schedDD(){ if(rafDD)return; rafDD=rAF(()=>{rafDD=0;drawDD('VS');drawDD('PV');}); }
@@ -1285,7 +1337,7 @@ function drawDD(kind){
   const A=SURV.pts, bd=M.bd, td=num(S.plan.td), L=SURV.last;
   const bit=bd>L.md?survAt(bd):null, tdp=td>Math.max(bd,L.md)?survAt(td):null;
   const PL=PLAN?PLAN.pts:[];
-  const all=[...A,...PL,...(bit?[bit]:[]),...(tdp?[tdp]:[]),{vs:0,tvd:0,n:0,e:0}];
+  const all=[...A,...PL,...(bit?[bit]:[]),...(tdp?[tdp]:[]),{vs:0,tvd:0,n:0,e:0},...OFFS.flatMap(of=>of.pts)];
   let x0=Math.min(...all.map(X)),x1=Math.max(...all.map(X)),y0=Math.min(...all.map(Yv)),y1=Math.max(...all.map(Yv));
   const tt0=ok(num(S.tgt.tvd));
   if(isVS&&tt0){const a=tgtAt(x0),b=tgtAt(x1),up=num(S.tgt.up)||0,dn=num(S.tgt.down)||0;y0=Math.min(y0,a-up,b-up);y1=Math.max(y1,a+dn,b+dn);}
@@ -1311,6 +1363,7 @@ function drawDD(kind){
   // closure line in plan view
   if(!isVS){const q=bit||L; g.beginPath();g.moveTo(px(0),py(0));g.lineTo(px(q.e),py(q.n));g.strokeStyle='rgba(255,255,255,.25)';g.setLineDash([3,4]);g.lineWidth=1;g.stroke();g.setLineDash([]);}
   // plan, actual, PTB, TD
+  OFFS.forEach(of=>{poly(of.samp,of.o.color,2.2); const h=of.pts[0]; g.fillStyle=of.o.color; if(!isVS)g.fillRect(px(X(h))-3.5,py(Yv(h))-3.5,7,7);});
   if(PL.length)poly(PL,'#f472b6',2,[8,5]);
   poly(A,'#38bdf8',2.6);
   g.fillStyle='#38bdf8'; A.forEach(p=>{g.beginPath();g.arc(px(X(p)),py(Yv(p)),1.7,0,7);g.fill();});
@@ -1328,6 +1381,7 @@ function drawDD(kind){
   // KOP/landing
   {let li=A.findIndex(p=>p.inc>=86); if(li>0){let k=li; while(k>0&&A[k-1].inc<A[k].inc+0.3&&A[k-1].inc>2.5)k--; [[A[Math.max(0,k-1)],'KOP'],[A[li],Lb('Посадка')]].forEach(([p,t])=>{const x=px(X(p)),y=py(Yv(p)); if(!inBox(x,y))return; g.save();g.translate(x,y);g.rotate(Math.PI/4);g.fillStyle='#38bdf8';g.fillRect(-4,-4,8,8);g.restore(); lab(x+9,y+14,`${t} ${fmt(p.md,0)}'`,'#7dd3fc');});}}
   if(bit){const x=px(X(bit)),y=py(Yv(bit)); g.beginPath();g.arc(x,y,5,0,7);g.fillStyle='#f5a524';g.fill(); lab(x+8,y-8,`PTB ${fmt(bit.md,0)}'`,'#f5a524');}
+  OFFS.forEach(of=>{const q=of.pts[of.pts.length-1],x=px(X(q)),y=py(Yv(q)); if(inBox(x,y))lab(x+6,y-6,of.o.name,of.o.color); if(!isVS){const h=of.pts[0],hx=px(X(h)),hy=py(Yv(h)); if(inBox(hx,hy))lab(hx+7,hy+13,of.o.name,of.o.color);}});
   if(tdp){const x=px(X(tdp)),y=py(Yv(tdp)); g.beginPath();g.arc(x,y,5,0,7);g.fillStyle='#4ade80';g.fill(); lab(x+8,y+16,`${Lb('План TD')} ${fmt(td,0)}'`,'#4ade80');}
   if(!isVS){const x=px(0),y=py(0); g.fillStyle='#fff';g.fillRect(x-4,y-4,8,8); lab(x+8,y+14,Lb('Устье'),'#e7eaef'); const q=bit||L; lab(px(q.e/2)+6,py(q.n/2),`Closure ${fmt(SURV.clos,0)}' @ ${fmt(SURV.cAz,1)}°`,'#9aa4b2');}
   // axes
@@ -1339,19 +1393,19 @@ function drawDD(kind){
   g.fillText(isVS?`VS, ft (az ${fmt(SURV.vsAz,2)}°)`:'E(+) / W(−), ft',m.l+pw/2,H-6);
   g.save();g.translate(13,m.t+ph/2);g.rotate(-Math.PI/2);g.fillText(isVS?'TVD, ft':'N(+) / S(−), ft',0,0);g.restore();
   // legend
-  const items=[['#38bdf8',Lb('Факт'),[]],...(PL.length?[['#f472b6',Lb('План'),[8,5]]]:[]),...(bit?[['#f5a524','PTB',[5,4]]]:[]),...(isVS&&tt0?[['#4ade80',Lb('Окно цели'),[]]]:[])];
+  const items=[['#38bdf8',(S.wellName||Lb('Факт')),[]],...OFFS.map(of=>[of.o.color,of.o.name,[]]),...(PL.length?[['#f472b6',Lb('План'),[8,5]]]:[]),...(bit?[['#f5a524','PTB',[5,4]]]:[]),...(isVS&&tt0?[['#4ade80',Lb('Окно цели'),[]]]:[])];
   g.font='11px '+FONT; let lx=m.l+pw-10, ly=m.t+16; g.textAlign='right';
   items.forEach(([c,t,d])=>{g.fillStyle='#cfd6e0';g.fillText(t,lx-30,ly+4);g.beginPath();g.moveTo(lx-24,ly);g.lineTo(lx,ly);g.strokeStyle=c;g.lineWidth=2.4;g.setLineDash(d);g.stroke();g.setLineDash([]);ly+=16;});
   if(isVS)$('#vsTitle').textContent=`az ${fmt(SURV.vsAz,2)}°`;
-  DDH[kind]={pts:A.map(p=>({p,x:px(X(p)),y:py(Yv(p))})).concat(bit?[{p:bit,x:px(X(bit)),y:py(Yv(bit)),ptb:true}]:[])};
+  DDH[kind]={pts:A.map(p=>({p,x:px(X(p)),y:py(Yv(p))})).concat(bit?[{p:bit,x:px(X(bit)),y:py(Yv(bit)),ptb:true}]:[]).concat(OFFS.flatMap(of=>of.pts.map(p=>({p,x:px(X(p)),y:py(Yv(p))}))))};
 }
 function ddHover(kind,e){
   const cv=$('#cv'+kind),tip=cv.parentElement.querySelector('.ddtip'),H=DDH[kind]; if(!H){tip.style.display='none';return;}
   const r=cv.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top; let best=null,bd=14;
   H.pts.forEach(o=>{const d=Math.hypot(o.x-x,o.y-y); if(d<bd){bd=d;best=o;}});
   if(!best){tip.style.display='none';return;}
-  const p=best.p; let t=`${best.ptb?'PTB  ':'MD   '}${fmt(p.md,1)} ft\nInc  ${fmt(p.inc,2)}°   Azi ${fmt(p.azi,2)}°\nTVD  ${fmt(p.tvd,1)}   VS ${fmt(p.vs,1)}\nN/S  ${fmt(p.n,1)}   E/W ${fmt(p.e,1)}\nDLS  ${fmt(p.dls,2)}°/100`;
-  if(PLAN){const a=toPlan(p); t+=`\n${Lb('До плана')} ${fmt(a.d3,1)}' · ${abTxt(a.ab)} · ${rlTxt(a.rl)}`;}
+  const p=best.p; let t=`${p.wname?p.wname+'\n':''}${best.ptb?'PTB  ':'MD   '}${fmt(p.md,1)} ft\nInc  ${fmt(p.inc,2)}°   Azi ${fmt(p.azi,2)}°\nTVD  ${fmt(p.tvd,1)}   VS ${fmt(p.vs,1)}\nN/S  ${fmt(p.n,1)}   E/W ${fmt(p.e,1)}\nDLS  ${fmt(p.dls,2)}°/100`;
+  if(PLAN&&!p.wname){const a=toPlan(p); t+=`\n${Lb('До плана')} ${fmt(a.d3,1)}' · ${abTxt(a.ab)} · ${rlTxt(a.rl)}`;}
   tip.textContent=t; tip.style.display='block'; const tw=tip.offsetWidth,th=tip.offsetHeight;
   tip.style.left=Math.min(r.width-tw-6,x+14)+'px'; tip.style.top=Math.max(6,Math.min(r.height-th-6,y-th-10))+'px';
 }
@@ -1446,18 +1500,18 @@ function glHover(e){
   if(e.buttons){return;} const el=G.renderer.domElement,r=el.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,tip=$('#tip3d');
   let best=null,bd=14; G.pts.forEach(o=>{const p=o.v.clone().project(G.cam); if(p.z>1)return; const sx=(p.x+1)/2*r.width,sy=(1-p.y)/2*r.height,d=Math.hypot(sx-x,sy-y); if(d<bd){bd=d;best=o;}});
   if(!best){tip.style.display='none';return;}
-  const p=best.p; tip.textContent=`MD   ${fmt(p.md,1)} ft\nInc  ${fmt(p.inc,2)}°\nAzi  ${fmt(p.azi,2)}°\nTVD  ${fmt(p.tvd,1)} ft\nN/S  ${fmt(p.n,1)}\nE/W  ${fmt(p.e,1)}\nVS   ${fmt(p.vs,1)}\nDLS  ${fmt(p.dls,2)}°/100`;
+  const p=best.p; tip.textContent=`${p.wname?p.wname+'\n':''}MD   ${fmt(p.md,1)} ft\nInc  ${fmt(p.inc,2)}°\nAzi  ${fmt(p.azi,2)}°\nTVD  ${fmt(p.tvd,1)} ft\nN/S  ${fmt(p.n,1)}\nE/W  ${fmt(p.e,1)}\nVS   ${fmt(p.vs,1)}\nDLS  ${fmt(p.dls,2)}°/100`;
   tip.style.display='block'; const tw=tip.offsetWidth,th=tip.offsetHeight; tip.style.left=Math.min(r.width-tw-6,x+16)+'px'; tip.style.top=Math.max(6,Math.min(r.height-th-6,y-th/2))+'px';
 }
 function glBuild(force){
   if(!G.ok||!M)return;
-  const key=JSON.stringify([S.survey.rows.length,S.survey.rows[S.survey.rows.length-1]||0,S.survey.name,S.survey.vsAz,S.casings,S.ohDia,S.washout,S.bitDepth,S.string,S.plan,S.rec.depth,S.rec.type,V.color,V.thick,V.layers.cas,V.layers.oh,V.layers.bha,S.ui,S.wellName,S.wplan.rows.length,S.wplan.name,S.tgt,S.ptbMode,M.plan&&M.plan.eta?Math.round(M.plan.eta/60000):0]);
+  const key=JSON.stringify([S.survey.rows.length,S.survey.rows[S.survey.rows.length-1]||0,S.survey.name,S.survey.vsAz,S.casings,S.ohDia,S.washout,S.bitDepth,S.string,S.plan,S.rec.depth,S.rec.type,V.color,V.thick,V.layers.cas,V.layers.oh,V.layers.bha,S.ui,S.wellName,S.wplan.rows.length,S.wplan.name,S.tgt,S.ptbMode,offKey(),M.plan&&M.plan.eta?Math.round(M.plan.eta/60000):0]);
   if(!force&&key===G.key)return; G.key=key;
   G.root.traverse(o=>{ if(o.geometry)o.geometry.dispose(); if(o.material)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose()); });
   G.root.clear(); G.labels=[]; G.lbl.innerHTML=''; G.pts=[];
   const bd=M.bd, td=num(S.plan.td), lastMd=SURV?SURV.last.md:0;
   const endMd=Math.max(bd,td>0?td:0,lastMd,...M.cas.map(c=>c.shoe),100);
-  let mnE=0,mxE=0,mnN=0,mxN=0,mxT=0; for(let i=0;i<=240;i++){const p=posAt(endMd*i/240); mnE=Math.min(mnE,p.e);mxE=Math.max(mxE,p.e);mnN=Math.min(mnN,p.n);mxN=Math.max(mxN,p.n);mxT=Math.max(mxT,p.tvd);}
+  let mnE=0,mxE=0,mnN=0,mxN=0,mxT=0; const ext=p=>{mnE=Math.min(mnE,p.e);mxE=Math.max(mxE,p.e);mnN=Math.min(mnN,p.n);mxN=Math.max(mxN,p.n);mxT=Math.max(mxT,p.tvd);}; for(let i=0;i<=240;i++)ext(posAt(endMd*i/240)); OFFS.forEach(of=>of.samp.forEach(ext));
   const size=Math.max(mxE-mnE,mxN-mnN,mxT,300);
   const maxOD=Math.max(8,M.ohD||0,...M.cas.map(c=>c.od));
   const R=size*0.019/(maxOD/2)*V.thick, minR=size*0.0012;
@@ -1501,6 +1555,17 @@ function glBuild(force){
     for(let i=0;i<=segs;i++){const col=new THREE.Color(grad(valAt(pathEnd*i/segs)/mx)); for(let j=0;j<=rs;j++)cols.push(col.r,col.g,col.b);}
     geo.setAttribute('color',new THREE.Float32BufferAttribute(cols,3)); G.root.add(new THREE.Mesh(geo,new THREE.MeshStandardMaterial({vertexColors:true,metalness:0.15,roughness:0.4}))); }
   if(SURV)SURV.pts.forEach(p=>G.pts.push({p,v:W3(p)}));
+  OFFS.forEach(of=>{ const col=new THREE.Color(of.o.color).getHex(), P3=of.samp.map(W3); if(P3.length<2)return;
+    G.root.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(P3,false,'centripetal'),Math.min(1200,P3.length*2),pathR*0.95,12,false),std(col,{emissive:col,emissiveIntensity:0.18,metalness:0.2,roughness:0.45})));
+    const h0=of.pts[0], hh=size*0.03, ww=hh*0.28, base=W3(h0);
+    const rg=[[-ww,0,-ww],[0,hh,0],[ww,0,-ww],[0,hh,0],[ww,0,ww],[0,hh,0],[-ww,0,ww],[0,hh,0]].flat().map((v,i)=>v+[base.x,base.y,base.z][i%3]);
+    G.root.add(new THREE.LineSegments(new THREE.BufferGeometry().setAttribute('position',new THREE.Float32BufferAttribute(rg,3)),new THREE.LineBasicMaterial({color:col})));
+    addLabel(new THREE.Vector3(base.x,base.y+hh*1.05,base.z),of.o.name,of.sh.byXY?'':`ΔN ${fmt(of.sh.dn,0)} · ΔE ${fmt(of.sh.de,0)} ft`,of.o.color);
+    const q=of.pts[of.pts.length-1]; addLabel(W3(q),`${of.o.name} TD ${fmt(q.md,0)}' MD`,`${fmt(q.tvd,0)}' TVD`,of.o.color);
+    of.pts.forEach(p=>G.pts.push({p,v:W3(p)}));
+    const a=closestApproach(of); if(a&&a.dist<1000){ const pa=W3(survAt(a.mdMain)); const qb=W3(of.at(a.mdOff));
+      G.root.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([pa,qb]),new THREE.LineDashedMaterial({color:0xf87171,dashSize:size*0.004,gapSize:size*0.003})).computeLineDistances());
+      addLabel(pa.clone().add(qb).multiplyScalar(0.5),`↔ ${fmt(a.dist,0)} ft`,`${of.o.name}`,'#f87171'); } });
   const dashed=(a,b,rad,col)=>{ if(!(b-a>1))return; const n=Math.max(4,Math.min(40,Math.round((b-a)/Math.max(size*0.012,20)))), L=(b-a)/n; const m=std(col,{emissive:col,emissiveIntensity:0.35,transparent:true,opacity:0.9}); for(let k=0;k<n;k++)tube(a+k*L,a+k*L+L*0.62,rad,m,10); };
   if(SURV&&bd>lastMd)dashed(lastMd,bd,pathR*0.9,0xe7eaef);
   // BHA + bit
@@ -1541,7 +1606,8 @@ function glBuild(force){
   G.hud.innerHTML=`<b>${esc(S.wellName||'Скважина')}</b>`+
     (bp?`<div class="o">Долото: ${fmt(bd,0)}' MD · ${fmt(bp.tvd,0)}' TVD</div>`:'')+
     (tp?`<div class="g">План TD: ${fmt(td,0)}' MD · ${fmt(tp.tvd,0)}' TVD</div>`+(td>bd?`<div class="g">Осталось: ${fmt(td-bd,0)} ft${M.plan&&M.plan.eta?' · '+M.plan.eta.toLocaleString(loc(),{weekday:'short',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):''}</div>`:''):'')+
-    (SURV?`<div class="m">Смещение: ${fmt(SURV.clos,0)} ft · азимут ${fmt(SURV.cAz,1)}°</div>`:`<div class="m">Без инклинометрии — ствол показан вертикальным</div>`);
+    (SURV?`<div class="m">Смещение: ${fmt(SURV.clos,0)} ft · азимут ${fmt(SURV.cAz,1)}°</div>`:`<div class="m">Без инклинометрии — ствол показан вертикальным</div>`)+
+    OFFS.map(of=>`<div style="color:${esc(of.o.color)}">● ${esc(of.o.name)} · TD ${fmt(of.pts[of.pts.length-1].md,0)}' MD</div>`).join('');
   const ttl=mode==='dls'?'DLS, °/100 ft':mode==='inc'?'Зенит, °':'TVD, ft';
   G.leg.innerHTML=`${ttl}<i style="background:linear-gradient(90deg,${[0,1/3,2/3,1].map(grad).join(',')})"></i><div><span>0</span><span>${fmt(mx,mode==='dls'?1:0)}</span></div>`;
   if(!G.labelsOn)G.lbl.classList.toggle('off',!V.layers.lbl);
@@ -1645,7 +1711,10 @@ const EN_DICT={
 "ОС":"OH","НУБТ":"NMDC","УБТ":"DC","ТБТ":"HWDP","РУС":"RSS","ВЗД":"Motor","Ясс":"Jar","КНБК":"BHA","нет":"none","Порядок:":"Steps:",
 "обсадные колонны":"casing strings","Рассчитать":"Calculate","КПД":"Efficiency","напр.":"e.g.","Копировать":"Copy","к долоту":"toward bit",
 "Язык интерфейса":"Interface language","На телефон":"On phone","Открыть на телефоне":"Open on your phone","Копировать ссылку":"Copy link","Закрыть":"Close",
-"Ссылка скопирована":"Link copied","На весь экран":"Full screen","Выйти":"Exit","Выйти из полноэкранного режима (Esc)":"Exit full screen (Esc)","Плановая траектория":"Well plan","Загрузить план (CSV / TXT / LAS)":"Upload plan (CSV / TXT / LAS)",
+"Ссылка скопирована":"Link copied","Соседние скважины":"Offset wells","Добавить":"Add","Инклинометрия каждой соседней скважины (MD, Inc, Azi). Устье задайте координатами X/Y (как в шапке отчёта) или смещением ΔN/ΔE от устья основной скважины.":"Survey of each offset well (MD, Inc, Azi). Set its surface location by X/Y coordinates (as in the report header) or by ΔN/ΔE offset from the main wellhead.",
+"Устье основной X (Easting)":"Main wellhead X (Easting)","Устье основной Y (Northing)":"Main wellhead Y (Northing)","X устья":"Surface X","Y устья":"Surface Y","KB выше основной":"KB above main","или ΔN от устья":"or ΔN from wellhead","ΔE от устья":"ΔE from wellhead",
+"показать":"show","Цвет":"Color","Соседних скважин нет. Нажмите «+ Добавить» и выберите файлы инклинометрии (можно несколько сразу).":"No offset wells. Press “+ Add” and choose survey files (several at once is fine).",
+"мин. расстояние (центр–центр)":"min. distance (center-to-center)","осн.":"main","устье по X/Y":"surface by X/Y","устье по ΔN/ΔE":"surface by ΔN/ΔE","Добавлена скважина:":"Well added:","На весь экран":"Full screen","Выйти":"Exit","Выйти из полноэкранного режима (Esc)":"Exit full screen (Esc)","Плановая траектория":"Well plan","Загрузить план (CSV / TXT / LAS)":"Upload plan (CSV / TXT / LAS)",
 "План от DD-компании в том же формате (MD, Inc, Azi). Будет показан на разрезе, плане и в 3D, и посчитано отклонение от плана.":"Directional plan in the same format (MD, Inc, Azi). It is shown on the section, plan and 3D views, and distance to plan is calculated.",
 "Окно цели и проекция":"Target window & projection","TVD цели":"Target TVD","Окно вверх":"Window up","Окно вниз":"Window down","Наклон пласта":"Formation dip","глубже":"deeper",
 "TVD цели задан на VS":"Target TVD defined at VS","Проекция на долото":"Projection to bit","По тренду (BUR/TR)":"By trend (BUR/TR)","По касательной":"Tangent","по касательной":"tangent",
@@ -1690,7 +1759,7 @@ let qrMade=false;
 function openPhone(){ $('#phoneModal').classList.add('on'); if(!qrMade){ try{ const q=qrcode(0,'M'); q.addData($('#appLink').textContent.trim()); q.make(); $('#qr').innerHTML=q.createSvgTag({cellSize:5,margin:0,scalable:true}); $('#qr svg').setAttribute('width','200'); $('#qr svg').setAttribute('height','200'); qrMade=true; }catch(e){ $('#qr').outerHTML='<p class="hint">QR-код недоступен — используйте ссылку ниже.</p>'; qrMade=true; } } }
 
 /* ---------- init ---------- */
-init3D(); initDD(); initGL(); applyUI(); setHdr();
+init3D(); initDD(); $('#offFile').addEventListener('change',e=>{addOffsetFiles(e.target.files);e.target.value='';}); initGL(); applyUI(); setHdr();
 window.addEventListener('resize',setHdr);
 setInterval(()=>{if(M){renderPlan();renderKPIs();}},30000);
 const h0=(location.hash||'').slice(1); if(['well','lag','rec','log','3d'].includes(h0))$(`#tabs [data-tab="${h0}"]`).click();
