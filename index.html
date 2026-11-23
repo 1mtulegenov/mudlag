@@ -192,6 +192,14 @@ details summary{cursor:pointer;color:var(--acc2);font-size:13px;margin:8px 0}
 .ddtip{position:absolute;pointer-events:none;background:rgba(20,25,32,.96);border:1px solid var(--line2);border-radius:8px;padding:6px 9px;font:11.5px/1.5 var(--mono);display:none;white-space:pre;color:var(--text)}
 .res .c.ok2 b{color:var(--ok)}.res .c.bad2 b{color:var(--bad)}
 #survBody tr.ptb td{color:var(--acc);font-style:italic}
+.ddh .sp{flex:1}
+.ddh .fsbtn{height:28px;padding:0 9px;font-size:14px}
+.fsable:fullscreen,.fsable.fsmode{position:fixed;inset:0;z-index:200;margin:0;border-radius:0;width:100vw;height:100vh;max-width:none;display:flex;flex-direction:column;background:var(--bg);padding:12px calc(12px + env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) calc(12px + env(safe-area-inset-left))}
+.fsable:fullscreen .cvwrap,.fsable.fsmode .cvwrap{flex:1;height:auto;min-height:0}
+.fsable:fullscreen .ddw,.fsable.fsmode .ddw{flex:1;height:auto;min-height:0}
+.fsable:fullscreen>.hint,.fsable.fsmode>.hint{display:none}
+.fsable:fullscreen .fsbtn,.fsable.fsmode .fsbtn{background:var(--acc);border-color:var(--acc);color:#1a1100}
+body.fslock{overflow:hidden}
 </style>
 </head>
 <body>
@@ -457,11 +465,11 @@ details summary{cursor:pointer;color:var(--acc2);font-size:13px;margin:8px 0}
       </div>
     </div>
     <div class="c3d-main">
-      <div class="panel">
+      <div class="panel fsable" id="p3d">
         <h2>3D траектория<span class="sp"></span>
           <span class="seg" id="viewSeg"><button data-view="3d">3D</button><button data-view="plan">План</button><button data-view="vs">Разрез</button></span>
           <select id="colorMode" style="width:auto;height:34px;font-size:13px"><option value="tvd">Цвет: TVD</option><option value="dls">Цвет: DLS</option><option value="inc">Цвет: зенит</option></select>
-          <button class="btn sm icon" data-act="zin" title="Приблизить">＋</button><button class="btn sm icon" data-act="zout" title="Отдалить">−</button><button class="btn sm" data-act="vreset">⤢ Вписать</button>
+          <button class="btn sm icon" data-act="zin" title="Приблизить">＋</button><button class="btn sm icon" data-act="zout" title="Отдалить">−</button><button class="btn sm" data-act="vreset">⤢ Вписать</button><button class="btn sm fsbtn" data-act="fs" data-fs="p3d" title="На весь экран">⛶ На весь экран</button>
         </h2>
         <div class="cvwrap"><canvas id="cv3d"></canvas><div id="tip3d"></div></div>
         <div class="tb3d">
@@ -479,8 +487,8 @@ details summary{cursor:pointer;color:var(--acc2);font-size:13px;margin:8px 0}
         <h2>DD-панель<span class="sp"></span><small>как в отчётах DD/MWD</small></h2>
         <div class="res" id="ddCards"></div>
         <div class="ddgrid">
-          <div class="ddc"><div class="ddh">Вертикальный разрез <small id="vsTitle"></small></div><div class="ddw"><canvas id="cvVS"></canvas><div class="ddtip"></div></div></div>
-          <div class="ddc"><div class="ddh">План (вид сверху)</div><div class="ddw"><canvas id="cvPV"></canvas><div class="ddtip"></div></div></div>
+          <div class="ddc fsable" id="ddVS"><div class="ddh">Вертикальный разрез <small id="vsTitle"></small><span class="sp"></span><button class="btn sm fsbtn" data-act="fs" data-fs="ddVS" title="На весь экран">⛶</button></div><div class="ddw"><canvas id="cvVS"></canvas><div class="ddtip"></div></div></div>
+          <div class="ddc fsable" id="ddPV"><div class="ddh">План (вид сверху)<span class="sp"></span><button class="btn sm fsbtn" data-act="fs" data-fs="ddPV" title="На весь экран">⛶</button></div><div class="ddw"><canvas id="cvPV"></canvas><div class="ddtip"></div></div></div>
         </div>
 </div>
     </div>
@@ -978,6 +986,7 @@ document.addEventListener('click',async e=>{
   const lg=e.target.closest('[data-lang]'); if(lg){S.lang=lg.dataset.lang;outDirty=false;syncSegs();renderHistory();recompute();return;}
   const b=e.target.closest('[data-act]'); if(!b||b.tagName==='SELECT')return;
   const a=b.dataset.act;
+  if(a==='fs'){toggleFS($('#'+b.dataset.fs));return;}
   if(a==='phone'){openPhone();return;}
   if(a==='survDemo'){S.survey={name:'Пример',rows:demoSurvey(),vsAz:''};survMsg('ok','Загружен пример: '+S.survey.rows.length+' замеров');syncBinds();setView('3d');recompute();return;}
   if(a==='survClear'){if(!S.survey.rows.length)return;if(!confirm2(b,'sc','Удалить?'))return;S.survey={name:'',rows:[],vsAz:''};survMsg('','');syncBinds();recompute();toast('Инклинометрия очищена');return;}
@@ -1351,6 +1360,21 @@ function initDD(){
   $('#planFile').addEventListener('change',e=>{const f=e.target.files[0]; if(f){const fr=new FileReader(); fr.onload=()=>loadPlanText(fr.result,f.name); fr.readAsText(f);} e.target.value='';});
 }
 
+
+/* ---------- fullscreen ---------- */
+function fsEl(){ return document.fullscreenElement||document.webkitFullscreenElement||$('.fsmode'); }
+function fsSync(){ const cur=fsEl(); $$('.fsbtn').forEach(b=>{const on=cur&&cur.id===b.dataset.fs; const full=b.textContent.length>2; b.textContent=on?(full?'✕ Выйти':'✕'):(full?'⛶ На весь экран':'⛶'); b.title=on?'Выйти из полноэкранного режима (Esc)':'На весь экран';});
+  document.body.classList.toggle('fslock',!!$('.fsmode')); setTimeout(()=>{glResize&&glResize(); sched3();},60); }
+function toggleFS(el){
+  if(!el)return; const cur=fsEl();
+  if(cur){ if(cur.classList.contains('fsmode'))cur.classList.remove('fsmode'); else (document.exitFullscreen||document.webkitExitFullscreen).call(document); if(cur===el){fsSync();return;} }
+  const req=el.requestFullscreen||el.webkitRequestFullscreen;
+  const fallback=()=>{el.classList.add('fsmode');fsSync();};
+  if(req){ try{ const r=req.call(el); if(r&&r.catch)r.then(fsSync).catch(fallback); else setTimeout(()=>{if(!fsEl())fallback();else fsSync();},150);}catch(_){fallback();} } else fallback();
+}
+document.addEventListener('fullscreenchange',fsSync); document.addEventListener('webkitfullscreenchange',fsSync);
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){const m=$('.fsmode'); if(m){m.classList.remove('fsmode');fsSync();} else if(document.fullscreenElement&&document.exitFullscreen){document.exitFullscreen().catch(()=>{});}} });
+
 /* ---------- WebGL 3D scene (Three.js) ---------- */
 const G={ok:false};
 function posAt(md){ if(SURV)return survAt(md); return {md,tvd:md,n:0,e:0,inc:0,azi:0}; }
@@ -1621,7 +1645,7 @@ const EN_DICT={
 "ОС":"OH","НУБТ":"NMDC","УБТ":"DC","ТБТ":"HWDP","РУС":"RSS","ВЗД":"Motor","Ясс":"Jar","КНБК":"BHA","нет":"none","Порядок:":"Steps:",
 "обсадные колонны":"casing strings","Рассчитать":"Calculate","КПД":"Efficiency","напр.":"e.g.","Копировать":"Copy","к долоту":"toward bit",
 "Язык интерфейса":"Interface language","На телефон":"On phone","Открыть на телефоне":"Open on your phone","Копировать ссылку":"Copy link","Закрыть":"Close",
-"Ссылка скопирована":"Link copied","Плановая траектория":"Well plan","Загрузить план (CSV / TXT / LAS)":"Upload plan (CSV / TXT / LAS)",
+"Ссылка скопирована":"Link copied","На весь экран":"Full screen","Выйти":"Exit","Выйти из полноэкранного режима (Esc)":"Exit full screen (Esc)","Плановая траектория":"Well plan","Загрузить план (CSV / TXT / LAS)":"Upload plan (CSV / TXT / LAS)",
 "План от DD-компании в том же формате (MD, Inc, Azi). Будет показан на разрезе, плане и в 3D, и посчитано отклонение от плана.":"Directional plan in the same format (MD, Inc, Azi). It is shown on the section, plan and 3D views, and distance to plan is calculated.",
 "Окно цели и проекция":"Target window & projection","TVD цели":"Target TVD","Окно вверх":"Window up","Окно вниз":"Window down","Наклон пласта":"Formation dip","глубже":"deeper",
 "TVD цели задан на VS":"Target TVD defined at VS","Проекция на долото":"Projection to bit","По тренду (BUR/TR)":"By trend (BUR/TR)","По касательной":"Tangent","по касательной":"tangent",
