@@ -150,6 +150,15 @@ details summary{cursor:pointer;color:var(--acc2);font-size:13px;margin:8px 0}
 .prog{position:relative;height:28px;background:#0e1217;border:1px solid var(--line2);border-radius:8px;overflow:hidden;margin-bottom:10px}
 .prog div{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#14532d,#22c55e)}
 .prog span{position:relative;display:block;text-align:center;line-height:26px;font-family:var(--mono);font-size:12.5px}
+.g3d{display:grid;grid-template-columns:minmax(320px,440px) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:1000px){.g3d{grid-template-columns:1fr}.c3d-main{order:-1}}
+.cvwrap{position:relative;height:clamp(380px,calc(100vh - var(--hdr) - 160px),860px);background:radial-gradient(ellipse at 50% 30%,#121821,#090c10);border:1px solid var(--line);border-radius:9px;overflow:hidden;touch-action:none}
+@media (max-width:1000px){.cvwrap{height:62vh}}
+#cv3d{width:100%;height:100%;display:block;cursor:grab;touch-action:none}
+#tip3d{position:absolute;pointer-events:none;background:rgba(20,25,32,.96);border:1px solid var(--line2);border-radius:8px;padding:7px 10px;font:12px/1.5 var(--mono);display:none;white-space:pre;color:var(--text);z-index:2}
+#survMsg .ok{color:var(--ok);font-size:13px;margin-top:8px}
+#survMsg .bad{color:var(--bad);font-size:13px;margin-top:8px}
+#dropZone.drag{border-color:var(--acc);box-shadow:0 0 0 2px rgba(245,165,36,.25) inset}
 </style>
 </head>
 <body>
@@ -165,6 +174,7 @@ details summary{cursor:pointer;color:var(--acc2);font-size:13px;margin:8px 0}
     <button data-tab="lag">② Насосы и лаг</button>
     <button data-tab="rec">③ Шоу и шлам</button>
     <button data-tab="log">④ Журнал</button>
+    <button data-tab="3d">⑤ 3D траектория</button>
   </nav>
 </div>
 
@@ -295,6 +305,7 @@ details summary{cursor:pointer;color:var(--acc2);font-size:13px;margin:8px 0}
           <label class="f"><span class="lt">Глубина, MD <span class="u">ft</span></span><input data-bind="rec.depth" inputmode="decimal"></label>
           <label class="f"><span class="lt">Время <span class="u"><a href="#" data-act="now" style="color:var(--acc2)">сейчас</a></span></span><input data-bind="rec.time" type="datetime-local"></label>
         </div>
+        <p class="hint" id="recTvd"></p>
       </div>
       <div class="panel">
         <h2>Газ</h2>
@@ -365,6 +376,49 @@ details summary{cursor:pointer;color:var(--acc2);font-size:13px;margin:8px 0}
     <div class="hist" id="histList"></div>
   </div>
 </section>
+
+<!-- ============ TAB 5: 3D ============ -->
+<section class="tab" id="tab-3d">
+  <div class="g3d">
+    <div class="c3d-side">
+      <div class="panel" id="dropZone">
+        <h2>Инклинометрия<span class="sp"></span><button class="btn sm" data-act="survDemo">Пример</button><button class="btn sm danger" data-act="survClear">Очистить</button></h2>
+        <label class="btn pri" style="width:100%;cursor:pointer">Загрузить файл (CSV / TXT / LAS)<input type="file" id="survFile" accept=".csv,.txt,.las,.dat,.tsv,.prn,text/plain,text/csv" hidden></label>
+        <p class="hint">Или перетащите файл сюда. Нужны столбцы MD, Inc, Azi — заголовки распознаются автоматически; без заголовков берутся первые три столбца.</p>
+        <label style="display:flex;gap:8px;align-items:center;margin:10px 0 4px;font-size:13.5px"><input type="checkbox" id="survMeters"> глубины в файле — в метрах</label>
+        <details><summary>Вставить данные вручную</summary>
+          <textarea id="survPaste" rows="6" placeholder="MD    Inc    Azi&#10;0     0      0&#10;5000  0.5    120&#10;5500  12.5   135"></textarea>
+          <button class="btn sm" data-act="survPaste" style="margin-top:8px">Применить</button>
+        </details>
+        <div id="survMsg"></div>
+      </div>
+      <div class="panel">
+        <h2>Сводка</h2>
+        <div class="res" id="survStats"></div>
+        <div class="grid g2" style="margin-top:12px">
+          <label class="f"><span class="lt">Азимут вертикального сечения (VS) <span class="u">°</span></span><input data-bind="survey.vsAz" inputmode="decimal" placeholder="авто"></label>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>Расчёт (минимальная кривизна)<span class="sp"></span><button class="btn sm" data-act="survCopy">Копировать CSV</button></h2>
+        <div class="tblw" style="max-height:420px;overflow:auto"><table>
+          <thead><tr><th>MD, ft</th><th>Inc, °</th><th>Azi, °</th><th>TVD, ft</th><th>N/S, ft</th><th>E/W, ft</th><th>VS, ft</th><th>DLS, °/100</th></tr></thead>
+          <tbody id="survBody"></tbody></table></div>
+      </div>
+    </div>
+    <div class="c3d-main">
+      <div class="panel sketchp">
+        <h2>3D траектория<span class="sp"></span>
+          <span class="seg" id="viewSeg"><button data-view="3d">3D</button><button data-view="plan">План</button><button data-view="vs">Разрез</button></span>
+          <select id="colorMode" style="width:auto;height:34px;font-size:13px"><option value="tvd">Цвет: TVD</option><option value="dls">Цвет: DLS</option><option value="inc">Цвет: зенит</option></select>
+          <button class="btn sm icon" data-act="zin" title="Приблизить">＋</button><button class="btn sm icon" data-act="zout" title="Отдалить">−</button><button class="btn sm" data-act="vreset">Сброс</button>
+        </h2>
+        <div class="cvwrap"><canvas id="cv3d"></canvas><div id="tip3d"></div></div>
+        <p class="hint">Вращение — перетаскивание, масштаб — колесо мыши или два пальца, сдвиг — Shift + перетаскивание или правая кнопка мыши. Двойной щелчок — сброс вида.</p>
+      </div>
+    </div>
+  </div>
+</section>
 </main>
 <footer class="credit">Создано: <b>Максат Тулегенов</b> · © 2026</footer>
 <div class="modal" id="phoneModal" data-act="closeModalBg"><div class="box">
@@ -428,6 +482,7 @@ const rtName=r=>isEN()?r[4]:r[1], ckName=k=>CASING_KIND[k][isEN()?1:0], cName=t=
 
 /* ---------- state ---------- */
 function blankRec(){return {type:'show',depth:'',time:'',gasUnit:'units',bg:'',peak:'',c1:'',c2:'',c3:'',c4:'',c5:'',lith:[{id:uid(),t:'ss',p:''}],desc:'',fluorPct:'',fluorColor:'none',cut:'none',cutColor:'none',notes:'',includeLag:true};}
+function demoSurvey(){const r=[];for(let md=0;md<=12500;md+=100){const inc=md>5000?Math.min(35,(md-5000)*2.5/100):0;r.push([md,+inc.toFixed(2),md>5000?135:0]);}return r;}
 function demoWell(){return {
   wellName:'Well-1',bitDepth:'12500',ohDia:'8-1/2',washout:'10',
   casings:[{id:uid(),kind:'conductor',od:'20',idd:'19.124',top:'0',shoe:'120'},
@@ -443,13 +498,14 @@ function demoWell(){return {
           {id:uid(),type:'dp',od:'5',idd:'4.276',len:'',auto:true}],
   pump:{mode:'calc',galStk:'4.2',spm:'100',gpm:''},
   lag:{mode:'auto',manual:[]},
-  plan:{td:'13500',rop:'120',stand:'93',conn:'6',extra:'10',start:''}
+  plan:{td:'13500',rop:'120',stand:'93',conn:'6',extra:'10',start:''},
+  survey:{name:'Пример',rows:demoSurvey(),vsAz:''}
 };}
-function blankWell(){return {wellName:'',bitDepth:'',ohDia:'',washout:'',casings:[],string:[{id:uid(),type:'bit',od:'',idd:'0',len:'1',auto:false},{id:uid(),type:'dp',od:'5',idd:'4.276',len:'',auto:true}],pump:{mode:'calc',galStk:'',spm:'',gpm:''},lag:{mode:'auto',manual:[]},plan:{td:'',rop:'',stand:'93',conn:'6',extra:'0',start:''}};}
-const WELL_KEYS=['wellName','bitDepth','ohDia','washout','casings','string','pump','lag','plan'];
+function blankWell(){return {wellName:'',bitDepth:'',ohDia:'',washout:'',casings:[],string:[{id:uid(),type:'bit',od:'',idd:'0',len:'1',auto:false},{id:uid(),type:'dp',od:'5',idd:'4.276',len:'',auto:true}],pump:{mode:'calc',galStk:'',spm:'',gpm:''},lag:{mode:'auto',manual:[]},plan:{td:'',rop:'',stand:'93',conn:'6',extra:'0',start:''},survey:{name:'',rows:[],vsAz:''}};}
+const WELL_KEYS=['wellName','bitDepth','ohDia','washout','casings','string','pump','lag','plan','survey'];
 let S=LS.get(K_STATE,null);
 if(!S||!S.casings){S=Object.assign(demoWell(),{rec:blankRec(),lang:'ru',focus:true});}
-S.rec=Object.assign(blankRec(),S.rec||{}); if(!S.lang)S.lang='ru'; if(!S.ui)S.ui='ru'; if(!S.plan)S.plan={td:'',rop:'',stand:'93',conn:'6',extra:'0',start:''}; if(S.focus==null)S.focus=true;
+S.rec=Object.assign(blankRec(),S.rec||{}); if(!S.lang)S.lang='ru'; if(!S.ui)S.ui='ru'; if(!S.survey)S.survey={name:'',rows:[],vsAz:''}; if(!S.plan)S.plan={td:'',rop:'',stand:'93',conn:'6',extra:'0',start:''}; if(S.focus==null)S.focus=true;
 let outDirty=false;
 let saveT=null; function save(){clearTimeout(saveT);saveT=setTimeout(()=>LS.set(K_STATE,S),250);}
 
@@ -566,12 +622,15 @@ function renderAll(){renderCasings();renderComps();renderManual();renderLith();r
 let M=null;
 function recompute(){
   M=compute();
+  SURV=(S.survey&&S.survey.rows&&S.survey.rows.length>1)?surveyCalc(S.survey.rows,S.survey.vsAz):null;
   M.comps.forEach(c=>{if(c.auto){const e=document.getElementById('al-'+c.ref.id);if(e)e.value=fmt(c.L,1);}});
   if(S.pump.mode==='calc'){const e=$('#gpmInput'); if(document.activeElement!==e)e.value=ok(M.gpm)?+M.gpm.toFixed(2):'';}
   else {const e=$('#spmBox input'); if(document.activeElement!==e)e.value=ok(M.spm)?+M.spm.toFixed(1):'';}
   renderPlan(); renderKPIs(); renderResults(); renderSecTable(); drawSketch(); renderStringWarn();
   if(!outDirty)$('#outText').value=genText(S.rec,snapshot(),S.lang);
   renderLithSum();
+  renderSurvey(); sched3();
+  {const dd=num(S.rec.depth),q=SURV&&ok(dd)?survAt(dd):null; $('#recTvd').textContent=q?`TVD ≈ ${fmt(q.tvd,0)} ft (по инклинометрии)`:'';}
   save();
 }
 function eta(){ if(!ok(M.lagMin))return '—'; const d=new Date(Date.now()+M.lagMin*60000); return d.toLocaleTimeString(loc(),{hour:'2-digit',minute:'2-digit'}); }
@@ -685,7 +744,7 @@ function drawSketch(){
   const labs=[];
   M.cas.forEach(c=>labs.push({y:Y(c.shoe),ax:X(c.od/2)+8,ay:Y(c.shoe),col:STEEL,t:`${fmtIn(c.od)}″ ${ckName(c.kind)}`,s:`башмак ${fmt(c.shoe,0)} ft · ID ${fmtIn(c.id)}″`}));
   if(M.ohD>0&&deep<bd){const ym=(Y(deep)+Y(bd))/2;labs.push({y:ym,ax:X(M.ohD/2)+2,ay:ym,col:OHC,t:`Открытый ствол ${fmtIn(M.ohD)}″`,s:`${fmt(deep,0)}–${fmt(bd,0)} ft${M.wo?' · +'+fmt(M.wo,1)+'%':''}`});}
-  labs.push({y:Y(bd),ax:X(M.ohD/2||1)+2,ay:Y(bd),col:'#f5a524',t:'Долото / забой',s:`${fmt(bd,0)} ft`});
+  labs.push({y:Y(bd),ax:X(M.ohD/2||1)+2,ay:Y(bd),col:'#f5a524',t:'Долото / забой',s:`${fmt(bd,0)} ft${SURV?' · TVD '+fmt(survAt(bd).tvd,0):''}`});
   if(td>bd)labs.push({y:Y(td),ax:X(maxR),ay:Y(td),col:'#4ade80',t:'План TD',s:`${fmt(td,0)} ft · осталось ${fmt(td-bd,0)} ft`});
   const rd=num(S.rec.depth);
   if(ok(rd)&&rd>0&&rd<=D){const y=Y(rd);o.push(`<line x1="${X(-maxR)}" x2="${X(maxR)}" y1="${y}" y2="${y}" stroke="#f87171" stroke-width="1.5" stroke-dasharray="5 3"/>`);
@@ -747,14 +806,14 @@ function renderPlan(){
 }
 
 /* ---------- record text ---------- */
-function snapshot(){return {well:S.wellName||'',gpm:M?M.gpm:NaN,lagMin:M?M.lagMin:null,lagStk:M?M.lagStk:null,vol:M?M.vol:NaN};}
+function snapshot(){const dd=num(S.rec.depth),q=SURV&&ok(dd)?survAt(dd):null;return {tvd:q?q.tvd:null,well:S.wellName||'',gpm:M?M.gpm:NaN,lagMin:M?M.lagMin:null,lagStk:M?M.lagStk:null,vol:M?M.vol:NaN};}
 function fmtTime(t,en){ const d=t?new Date(t):new Date(); if(isNaN(d))return t; const p=n=>String(n).padStart(2,'0');
   return en?`${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`:`${p(d.getDate())}.${p(d.getMonth()+1)}.${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}`; }
 function genText(r,snap,lang){
   const en=lang==='en', L=[], F=(x,d)=>fmt(x,d,lang);
   const rt=REC_TYPES.find(x=>x[0]===r.type)||REC_TYPES[0];
   L.push(`[${fmtTime(r.time,en)}] ${en?rt[2]:rt[3]}${snap.well?' · '+snap.well:''}`);
-  const d=num(r.depth); if(ok(d))L.push(en?`${F(d,0)}' MD`:`${F(d,0)} ft MD`);
+  const d=num(r.depth); if(ok(d))L.push(en?`${F(d,0)}' MD${ok(snap.tvd)?` / ${F(snap.tvd,0)}' TVD`:''}`:`${F(d,0)} ft MD${ok(snap.tvd)?` / ${F(snap.tvd,0)} ft TVD`:''}`);
   const u=r.gasUnit==='ppm'?'ppm':'units', bg=num(r.bg), pk=num(r.peak), g=[];
   if(ok(bg))g.push((en?'BG ':'фон ')+F(bg,1)+' '+u);
   if(ok(pk))g.push((en?'Peak ':'пик ')+F(pk,1)+' '+u);
@@ -835,14 +894,22 @@ document.addEventListener('change',e=>{
 });
 function triplex(){const D=num($('#tpLiner').value),Lh=num($('#tpStroke').value),ef=ok(num($('#tpEff').value))?num($('#tpEff').value):95;return ok(D)&&ok(Lh)?0.0102*D*D*Lh*ef/100:NaN;}
 document.addEventListener('click',async e=>{
-  const tb=e.target.closest('#tabs button'); if(tb){$$('#tabs button').forEach(b=>b.classList.toggle('on',b===tb));$$('.tab').forEach(s=>s.classList.toggle('on',s.id==='tab-'+tb.dataset.tab));try{history.replaceState(null,'','#'+tb.dataset.tab)}catch(_){} return;}
+  const tb=e.target.closest('#tabs button'); if(tb){$$('#tabs button').forEach(b=>b.classList.toggle('on',b===tb));$$('.tab').forEach(s=>s.classList.toggle('on',s.id==='tab-'+tb.dataset.tab));try{history.replaceState(null,'','#'+tb.dataset.tab)}catch(_){} if(tb.dataset.tab==='3d')sched3(); return;}
   const pb=e.target.closest('[data-pm]'); if(pb){ if(pb.dataset.pm==='direct'&&ok(M.gpm))S.pump.gpm=String(+M.gpm.toFixed(2)); S.pump.mode=pb.dataset.pm; syncBinds(); syncSegs(); recompute(); return;}
   const lb=e.target.closest('[data-lm]'); if(lb){S.lag.mode=lb.dataset.lm;renderManual();syncSegs();recompute();return;}
+  const vb=e.target.closest('[data-view]'); if(vb){setView(vb.dataset.view);return;}
   const ub=e.target.closest('[data-ui]'); if(ub){S.ui=ub.dataset.ui; S.lang=S.ui; outDirty=false; applyUI(); setHdr(); save(); return;}
   const lg=e.target.closest('[data-lang]'); if(lg){S.lang=lg.dataset.lang;outDirty=false;syncSegs();renderHistory();recompute();return;}
   const b=e.target.closest('[data-act]'); if(!b||b.tagName==='SELECT')return;
   const a=b.dataset.act;
   if(a==='phone'){openPhone();return;}
+  if(a==='survDemo'){S.survey={name:'Пример',rows:demoSurvey(),vsAz:''};survMsg('ok','Загружен пример: '+S.survey.rows.length+' замеров');syncBinds();setView('3d');recompute();return;}
+  if(a==='survClear'){if(!S.survey.rows.length)return;if(!confirm2(b,'sc','Удалить?'))return;S.survey={name:'',rows:[],vsAz:''};survMsg('','');syncBinds();recompute();toast('Инклинометрия очищена');return;}
+  if(a==='survPaste'){loadSurveyText($('#survPaste').value,'вставка');return;}
+  if(a==='survCopy'){if(!SURV){toast('Нет данных');return;}copyText(['MD,Inc,Azi,TVD,NS,EW,VS,DLS',...SURV.pts.map(p=>[p.md,p.inc,p.azi,p.tvd,p.n,p.e,p.vs,p.dls].map(v=>+v.toFixed(2)).join(','))].join('\n'));return;}
+  if(a==='zin'){V.zoom=Math.min(40,V.zoom*1.25);sched3();return;}
+  if(a==='zout'){V.zoom=Math.max(0.2,V.zoom/1.25);sched3();return;}
+  if(a==='vreset'){setView(V.view);return;}
   if(a==='closeModal'||(a==='closeModalBg'&&e.target===b)){$('#phoneModal').classList.remove('on');return;}
   if(a==='closeModalBg')return;
   if(a==='copyLink'){const ok2=await copyText($('#appLink').textContent.trim()); if(ok2)toast('Ссылка скопирована'); return;}
@@ -862,7 +929,7 @@ document.addEventListener('click',async e=>{
   if(a==='savePreset'){const name=($('#presetName').value||S.wellName||'Без имени').trim();const P=LS.get(K_PRESETS,[]);const data={};WELL_KEYS.forEach(k=>data[k]=clone(S[k]));
     const ix=P.findIndex(p=>p.name===name); const item={name,ts:Date.now(),data}; if(ix>=0)P[ix]=item; else P.unshift(item);
     toast(LS.set(K_PRESETS,P)?(ix>=0?'Пресет обновлён':'Пресет сохранён'):'Хранилище браузера недоступно'); $('#presetName').value=''; renderPresets(); return;}
-  if(a==='loadPreset'){const P=LS.get(K_PRESETS,[]),p=P[+b.closest('[data-pi]').dataset.pi]; if(!p)return; WELL_KEYS.forEach(k=>{if(p.data[k]!==undefined)S[k]=clone(p.data[k]);}); if(!S.plan)S.plan=blankWell().plan; renderAll(); toast('Загружено: '+p.name); return;}
+  if(a==='loadPreset'){const P=LS.get(K_PRESETS,[]),p=P[+b.closest('[data-pi]').dataset.pi]; if(!p)return; WELL_KEYS.forEach(k=>{if(p.data[k]!==undefined)S[k]=clone(p.data[k]);}); if(!S.plan)S.plan=blankWell().plan; if(!S.survey)S.survey=blankWell().survey; renderAll(); toast('Загружено: '+p.name); return;}
   if(a==='delPreset'){if(!confirm2(b,'dp'+b.closest('[data-pi]').dataset.pi,'Удалить?'))return;const P=LS.get(K_PRESETS,[]);P.splice(+b.closest('[data-pi]').dataset.pi,1);LS.set(K_PRESETS,P);renderPresets();return;}
   if(a==='newWell'){if(!confirm2(b,'nw','Очистить текущую?'))return;Object.assign(S,blankWell());renderAll();return;}
   if(a==='demo'){if(!confirm2(b,'demo','Заменить текущую?'))return;Object.assign(S,demoWell());renderAll();return;}
@@ -880,6 +947,189 @@ document.addEventListener('click',async e=>{
   if(a==='copyCsv'){if(!LS.get(K_HIST,[]).length){toast('Журнал пуст');return;}copyText(csv());return;}
   if(a==='clearHist'){if(!confirm2(b,'ch','Точно очистить всё?'))return;LS.set(K_HIST,[]);renderHistory();toast('Журнал очищен');return;}
 });
+
+
+/* ---------- survey & 3D ---------- */
+const RAD=Math.PI/180;
+let SURV=null, survKey='', scr3=[], raf3=0;
+const V={view:'3d',yaw:-0.7,pitch:0.42,zoom:1,panX:0,panY:0,color:'tvd'};
+const Lb=t=>isEN()?tr(t):t;
+function surveyCalc(rows,vsIn){
+  const pts=[]; let n=0,e=0,t=rows[0][0];
+  rows.forEach((r,i)=>{ const md=r[0],inc=r[1],azi=r[2]; let dls=0;
+    if(i>0){ const p=rows[i-1],I1=p[1]*RAD,I2=inc*RAD,A1=p[2]*RAD,A2=azi*RAD,dm=md-p[0];
+      let c=Math.cos(I2-I1)-Math.sin(I1)*Math.sin(I2)*(1-Math.cos(A2-A1)); c=Math.max(-1,Math.min(1,c));
+      const dl=Math.acos(c), rf=dl>1e-9?2/dl*Math.tan(dl/2):1;
+      n+=dm/2*(Math.sin(I1)*Math.cos(A1)+Math.sin(I2)*Math.cos(A2))*rf;
+      e+=dm/2*(Math.sin(I1)*Math.sin(A1)+Math.sin(I2)*Math.sin(A2))*rf;
+      t+=dm/2*(Math.cos(I1)+Math.cos(I2))*rf;
+      dls=dm>0?dl/RAD*100/dm:0; }
+    pts.push({md,inc,azi,tvd:t,n,e,dls}); });
+  const last=pts[pts.length-1], clos=Math.hypot(last.n,last.e), cAz=(Math.atan2(last.e,last.n)/RAD+360)%360;
+  const vsAz=ok(num(vsIn))?num(vsIn):cAz;
+  pts.forEach(p=>p.vs=p.n*Math.cos(vsAz*RAD)+p.e*Math.sin(vsAz*RAD));
+  const maxInc=pts.reduce((m,p)=>Math.max(m,p.inc),0), mD=pts.reduce((m,p)=>p.dls>m.dls?p:m,pts[0]);
+  return {pts,clos,cAz,vsAz,maxInc,maxDls:mD.dls,maxDlsMd:mD.md,last};
+}
+function survAt(md){
+  if(!SURV||!ok(md))return null; const P=SURV.pts, L=P[P.length-1];
+  if(md<=P[0].md)return Object.assign({},P[0],{md});
+  if(md>=L.md){const d=md-L.md,I=L.inc*RAD,A=L.azi*RAD;return {md,inc:L.inc,azi:L.azi,tvd:L.tvd+d*Math.cos(I),n:L.n+d*Math.sin(I)*Math.cos(A),e:L.e+d*Math.sin(I)*Math.sin(A),extra:d>0};}
+  let lo=0,hi=P.length-1; while(hi-lo>1){const m=(lo+hi)>>1; if(P[m].md<=md)lo=m; else hi=m;}
+  const a=P[lo],b=P[hi],t=(md-a.md)/((b.md-a.md)||1),f=k=>a[k]+(b[k]-a[k])*t;
+  return {md,inc:f('inc'),azi:b.azi,tvd:f('tvd'),n:f('n'),e:f('e')};
+}
+function parseSurvey(text,meters){
+  const lines=String(text||'').split(/\r?\n/), n2=t=>{const v=parseFloat(String(t??'').trim().replace(',','.'));return isFinite(v)?v:NaN;};
+  const hsplit=l=>(l.includes(';')?l.split(';'):l.includes('\t')?l.split('\t'):l.includes(',')?l.split(','):l.trim().split(/\s+/)).map(x=>x.trim());
+  const dsplit=l=>{ if(l.includes(';'))return l.split(';'); if(l.includes('\t'))return l.split('\t');
+    const ws=l.split(/\s+/); if(ws.length>=3&&ws.every(t=>/^[-+]?\d+([.,]\d+)?([eE][-+]?\d+)?$/.test(t)))return ws;
+    if(l.includes(','))return l.split(','); return ws; };
+  const find=toks=>{ const lc=toks.map(t=>String(t).trim().toLowerCase());
+    let md=lc.findIndex(t=>/(^|[^a-zа-я])md([^a-zа-я]|$)/.test(t));
+    if(md<0)md=lc.findIndex(t=>/dept|depth|measured|глуб/.test(t)&&!/tvd|vert|вертик/.test(t));
+    const inc=lc.findIndex(t=>/inc|incl|зенит|угол/.test(t));
+    const az=lc.findIndex(t=>/azi|azm|(^|[^a-z])az([^a-z]|$)|азим/.test(t));
+    return (md>=0&&inc>=0&&az>=0&&new Set([md,inc,az]).size===3)?{md,inc,az,names:[toks[md],toks[inc],toks[az]].map(x=>String(x).trim())}:null; };
+  let las=null, idx=null, rows=[], skipped=0;
+  for(const raw of lines){ const l=raw.trim(); if(!l)continue;
+    if(l[0]==='~'){ las=las||{curves:[]}; las.sec=(l[1]||'').toUpperCase(); if(las.sec==='A'&&!idx)idx=find(las.curves)||{md:0,inc:1,az:2,auto:true}; continue; }
+    if(las&&las.sec!=='A'){ if(las.sec==='C'&&l[0]!=='#'){const m=l.match(/^([^.\s]+)/); if(m)las.curves.push(m[1]);} continue; }
+    if(/^[#!\/]/.test(l))continue;
+    const toks=dsplit(l).map(x=>x.trim());
+    if(!idx){ const h=find(hsplit(l)); if(h){idx=h;continue;}
+      if(toks.length>=3&&toks.slice(0,3).every(t=>ok(n2(t))))idx={md:0,inc:1,az:2,auto:true}; else continue; }
+    const md=n2(toks[idx.md]),inc=n2(toks[idx.inc]),az=n2(toks[idx.az]);
+    if(!ok(md)||!ok(inc)||!ok(az)||[md,inc,az].includes(-999.25)||inc<0||inc>180||md<0){skipped++;continue;}
+    rows.push([meters?md*3.28084:md,inc,((az%360)+360)%360]);
+  }
+  rows.sort((a,b)=>a[0]-b[0]);
+  rows=rows.filter((r,i)=>i===rows.length-1||rows[i+1][0]!==r[0]);
+  if(rows.length<2)throw new Error('Не найдено как минимум 2 замера (MD, Inc, Azi).');
+  if(rows[0][0]>0)rows.unshift([0,0,0]);
+  return {rows,skipped,idx};
+}
+function survMsg(cls,t){$('#survMsg').innerHTML=t?`<p class="${cls}">${esc(t)}</p>`:'';}
+function loadSurveyText(text,name){
+  try{ const r=parseSurvey(text,$('#survMeters').checked);
+    S.survey={name,rows:r.rows,vsAz:S.survey&&S.survey.vsAz||''};
+    const cols=r.idx&&!r.idx.auto&&r.idx.names?r.idx.names.join(' / '):'первые три столбца';
+    survMsg('ok',`Загружено: ${name} · ${r.rows.length} замеров · столбцы: ${cols}${r.skipped?` · пропущено строк: ${r.skipped}`:''}`);
+    setView(V.view); recompute(); toast('Инклинометрия загружена');
+  }catch(err){ survMsg('bad','⚠ '+err.message); }
+}
+function readSurveyFile(f){ if(!f)return; const fr=new FileReader(); fr.onload=()=>loadSurveyText(fr.result,f.name); fr.onerror=()=>survMsg('bad','⚠ Не удалось прочитать файл'); fr.readAsText(f); }
+function renderSurvey(){
+  const key=SURV?[S.survey.rows.length,S.survey.name,SURV.vsAz.toFixed(3),S.ui,M.bd].join('|'):'none|'+S.ui;
+  if(key===survKey)return; survKey=key;
+  if(!SURV){$('#survStats').innerHTML='<div class="empty">Нет данных. Загрузите файл или нажмите «Пример».</div>';$('#survBody').innerHTML='';return;}
+  const c=(l,v,sub,hl)=>`<div class="c ${hl?'hl':''}"><small>${l}</small><b>${v}</b>${sub?`<i>${sub}</i>`:''}</div>`, L=SURV.last, bit=M.bd>0?survAt(M.bd):null;
+  $('#survStats').innerHTML=c('Замеров',fmt(SURV.pts.length,0),esc(S.survey.name||''))+
+    c('Последний замер',fmt(L.md,0),'ft MD · TVD '+fmt(L.tvd,0))+
+    c('Макс. зенитный угол',fmt(SURV.maxInc,1)+'°','')+
+    c('Макс. DLS',fmt(SURV.maxDls,2),'°/100 ft @ '+fmt(SURV.maxDlsMd,0)+' ft')+
+    c('Смещение от устья',fmt(SURV.clos,0),'ft · азимут '+fmt(SURV.cAz,1)+'°')+
+    c('Азимут VS',fmt(SURV.vsAz,2)+'°',ok(num(S.survey.vsAz))?'задан вручную':'авто = азимут смещения')+
+    (bit?c('Долото по инклинометрии',fmt(bit.tvd,0),'ft TVD при '+fmt(M.bd,0)+' ft MD'+(bit.extra?' (экстраполяция)':''),1):'');
+  const f=(x,d)=>fmt(x,d);
+  $('#survBody').innerHTML=SURV.pts.map(p=>`<tr><td class="mono">${f(p.md,1)}</td><td class="mono">${f(p.inc,2)}</td><td class="mono">${f(p.azi,2)}</td><td class="mono">${f(p.tvd,1)}</td><td class="mono">${f(p.n,1)}</td><td class="mono">${f(p.e,1)}</td><td class="mono">${f(p.vs,1)}</td><td class="mono">${f(p.dls,2)}</td></tr>`).join('');
+}
+function setView(v){ V.view=v; V.zoom=1; V.panX=0; V.panY=0;
+  if(v==='plan'){V.yaw=0;V.pitch=Math.PI/2;} else if(v==='vs'){V.yaw=((SURV?SURV.vsAz:90)-90)*RAD;V.pitch=0;} else {V.yaw=-0.7;V.pitch=0.42;}
+  $$('#viewSeg button').forEach(b=>b.classList.toggle('on',b.dataset.view===v)); sched3(); }
+const rAF=window.requestAnimationFrame?window.requestAnimationFrame.bind(window):(f=>setTimeout(f,16));
+function sched3(){ if(raf3)return; raf3=rAF(()=>{raf3=0;draw3D();}); }
+function grad(t){const st=[[45,212,191],[59,130,246],[168,85,247],[245,165,36]];t=Math.max(0,Math.min(1,t||0));const x=t*(st.length-1),i=Math.min(st.length-2,Math.floor(x)),f=x-i,a=st[i],b=st[i+1];return `rgb(${a.map((v,k)=>Math.round(v+(b[k]-v)*f)).join(',')})`;}
+function draw3D(){
+  const cv=$('#cv3d'); if(!cv||!cv.offsetParent)return;
+  const W=cv.clientWidth,H=cv.clientHeight,dpr=window.devicePixelRatio||1;
+  if(cv.width!==Math.round(W*dpr)||cv.height!==Math.round(H*dpr)){cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);}
+  const g=cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0); g.clearRect(0,0,W,H);
+  const FONT='"IBM Plex Sans",system-ui,sans-serif', MONO='"JetBrains Mono",ui-monospace,monospace';
+  if(!SURV){ g.fillStyle='#9aa4b2'; g.font='15px '+FONT; g.textAlign='center'; g.fillText(Lb('Загрузите файл инклинометрии или нажмите «Пример»'),W/2,H/2); scr3=[]; return; }
+  const P=SURV.pts, bd=M.bd, td=num(S.plan.td), lastMd=P[P.length-1].md;
+  const bit=bd>0?survAt(bd):null, tdp=td>0?survAt(td):null, all=[...P]; if(bit)all.push(bit); if(tdp)all.push(tdp);
+  let mnE=0,mxE=0,mnN=0,mxN=0,mxT=0; all.forEach(p=>{mnE=Math.min(mnE,p.e);mxE=Math.max(mxE,p.e);mnN=Math.min(mnN,p.n);mxN=Math.max(mxN,p.n);mxT=Math.max(mxT,p.tvd);});
+  const span=Math.max(mxE-mnE,mxN-mnN,mxT*0.3,200), gcE=(mnE+mxE)/2, gcN=(mnN+mxN)/2, step=niceStep(span*1.2,6), half=Math.ceil(span*0.6/step)*step;
+  const gE0=gcE-half,gE1=gcE+half,gN0=gcN-half,gN1=gcN+half, c0=[gcE,gcN,-mxT/2];
+  const cy=Math.cos(V.yaw),sy=Math.sin(V.yaw),cp=Math.cos(V.pitch),sp=Math.sin(V.pitch);
+  const raw=(e,n,z)=>{const x=e-c0[0],y=n-c0[1],zz=z-c0[2];const x1=x*cy-y*sy,y1=x*sy+y*cy;return [x1,-(zz*cp+y1*sp)];};
+  const key=[[gE0,gN0,0],[gE0,gN1,0],[gE1,gN0,0],[gE1,gN1,0],[0,0,-mxT],...all.map(p=>[p.e,p.n,-p.tvd])].map(q=>raw(...q));
+  const bx0=Math.min(...key.map(k=>k[0])),bx1=Math.max(...key.map(k=>k[0])),by0=Math.min(...key.map(k=>k[1])),by1=Math.max(...key.map(k=>k[1]));
+  const s=0.8*Math.min(W/Math.max(bx1-bx0,1),H/Math.max(by1-by0,1))*V.zoom, bcx=(bx0+bx1)/2, bcy=(by0+by1)/2;
+  const pr=(e,n,z)=>{const r=raw(e,n,z);return [W/2+V.panX+(r[0]-bcx)*s,H/2+V.panY+(r[1]-bcy)*s];};
+  const line=(a,b,col,w,dash)=>{g.beginPath();g.moveTo(a[0],a[1]);g.lineTo(b[0],b[1]);g.strokeStyle=col;g.lineWidth=w||1;g.setLineDash(dash||[]);g.stroke();g.setLineDash([]);};
+  const label=(x,y,t,col,al,font)=>{g.font=font||('600 12px '+FONT);g.textAlign=al||'left';g.lineWidth=3.5;g.strokeStyle='rgba(9,12,16,.92)';g.strokeText(t,x,y);g.fillStyle=col;g.fillText(t,x,y);};
+  // surface plane + grid
+  const C=[pr(gE0,gN0,0),pr(gE1,gN0,0),pr(gE1,gN1,0),pr(gE0,gN1,0)];
+  g.beginPath();C.forEach((q,i)=>i?g.lineTo(q[0],q[1]):g.moveTo(q[0],q[1]));g.closePath();g.fillStyle='rgba(138,115,80,.10)';g.fill();g.strokeStyle='rgba(224,168,74,.35)';g.lineWidth=1;g.stroke();
+  for(let v=Math.ceil(gE0/step)*step;v<=gE1+1e-6;v+=step){line(pr(v,gN0,0),pr(v,gN1,0),'rgba(255,255,255,.07)',1);const q=pr(v,gN0,0);if(V.pitch>1.2)label(q[0],q[1]+14,fmt(v,0),'#6b7684','center','10px '+MONO);}
+  for(let v=Math.ceil(gN0/step)*step;v<=gN1+1e-6;v+=step){line(pr(gE0,v,0),pr(gE1,v,0),'rgba(255,255,255,.07)',1);const q=pr(gE0,v,0);if(V.pitch>1.2)label(q[0]-6,q[1]+3,fmt(v,0),'#6b7684','right','10px '+MONO);}
+  if(V.pitch>0.15){const nq=pr(gcE,gN1+step*0.35,0),eq=pr(gE1+step*0.35,gcN,0),sq=pr(gcE,gN0-step*0.35,0),wq=pr(gE0-step*0.35,gcN,0);
+    label(nq[0],nq[1]+4,'N','#e7eaef','center','700 14px '+FONT);label(eq[0],eq[1]+4,'E','#9aa4b2','center','700 13px '+FONT);label(sq[0],sq[1]+4,'S','#6b7684','center','600 12px '+FONT);label(wq[0],wq[1]+4,'W','#6b7684','center','600 12px '+FONT);}
+  // depth axis at wellhead
+  const tst=niceStep(mxT,6); if(V.pitch<1.2){ line(pr(0,0,0),pr(0,0,-mxT*1.02),'rgba(255,255,255,.22)',1,[3,4]);
+  for(let d=tst;d<=mxT+1e-6;d+=tst){const q=pr(0,0,-d);line([q[0]-4,q[1]],[q[0]+4,q[1]],'rgba(255,255,255,.35)',1);label(q[0]-8,q[1]+3,fmt(d,0)+' TVD','#7d8796','right','10px '+MONO);} }
+  // shadow on surface + drop line
+  g.beginPath();P.forEach((p,i)=>{const q=pr(p.e,p.n,0);i?g.lineTo(q[0],q[1]):g.moveTo(q[0],q[1]);});g.strokeStyle='rgba(154,164,178,.4)';g.lineWidth=1.5;g.setLineDash([4,4]);g.stroke();g.setLineDash([]);
+  const deep=tdp&&td>Math.max(bd,lastMd)?tdp:(bit&&bd>lastMd?bit:P[P.length-1]);
+  line(pr(deep.e,deep.n,-deep.tvd),pr(deep.e,deep.n,0),'rgba(154,164,178,.3)',1,[2,4]);
+  // path coloured
+  const mode=V.color, mx=mode==='dls'?Math.max(SURV.maxDls,1):mode==='inc'?Math.max(SURV.maxInc,10):Math.max(mxT,1), val=p=>mode==='dls'?p.dls:mode==='inc'?p.inc:p.tvd;
+  scr3=[]; g.lineCap='round';
+  for(let i=1;i<P.length;i++){const a=pr(P[i-1].e,P[i-1].n,-P[i-1].tvd),b=pr(P[i].e,P[i].n,-P[i].tvd);line(a,b,grad(val(P[i])/mx),3.5);}
+  P.forEach(p=>scr3.push({p,xy:pr(p.e,p.n,-p.tvd)}));
+  // extrapolations
+  const Lp=P[P.length-1];
+  if(bit&&bd>lastMd){line(pr(Lp.e,Lp.n,-Lp.tvd),pr(bit.e,bit.n,-bit.tvd),'rgba(255,255,255,.65)',2.5,[6,5]);}
+  if(tdp&&td>Math.max(bd,lastMd)){const from=bit&&bd>lastMd?bit:Lp;line(pr(from.e,from.n,-from.tvd),pr(tdp.e,tdp.n,-tdp.tvd),'#4ade80',2.5,[6,5]);}
+  // markers
+  const placed=[]; const tag=(x,y,t,col,font)=>{g.font=font||('600 12px '+FONT);const w=g.measureText(t).width;let yy=y;for(let k=0;k<12;k++){const hit=placed.some(b=>x<b.x+b.w&&x+w>b.x&&yy-12<b.y&&yy>b.y-12);if(!hit)break;yy+=15;}placed.push({x,y:yy,w});if(yy!==y)line([x-2,y-4],[x-2,yy-4],'rgba(255,255,255,.25)',1);label(x,yy,t,col,'left',font);};
+  const dot=(p,col,r,sh)=>{const q=pr(p.e,p.n,-p.tvd);g.beginPath();if(sh==='d'){g.moveTo(q[0],q[1]-r);g.lineTo(q[0]+r,q[1]);g.lineTo(q[0],q[1]+r);g.lineTo(q[0]-r,q[1]);g.closePath();}else g.arc(q[0],q[1],r,0,7);g.fillStyle=col;g.fill();g.lineWidth=1.5;g.strokeStyle='#0a0d11';g.stroke();return q;};
+  {const q=pr(0,0,0);g.fillStyle='#e7eaef';g.fillRect(q[0]-4,q[1]-4,8,8);tag(q[0]+8,q[1]-8,(S.wellName||Lb('Устье')),'#e7eaef','700 13px '+FONT);}
+  M.cas.forEach(c=>{const p=survAt(c.shoe);if(!p)return;const q=dot(p,'#e2e8f0',5,'d');tag(q[0]+9,q[1]+4,`${fmtIn(c.od)}″ @ ${fmt(c.shoe,0)}' MD`,'#cfd6e0');});
+  const rd=num(S.rec.depth); if(ok(rd)&&rd>0){const p=survAt(rd);const q=dot(p,'#f87171',5);tag(q[0]+9,q[1]+4,`★ ${fmt(rd,0)}' MD · ${fmt(p.tvd,0)}' TVD`,'#f87171');}
+  if(bit){const q=dot(bit,'#f5a524',6.5);tag(q[0]+10,q[1]+4,`${Lb('Долото')} ${fmt(bd,0)}' MD · ${fmt(bit.tvd,0)}' TVD`,'#f5a524');}
+  if(tdp&&td>bd){const q=dot(tdp,'#4ade80',6);tag(q[0]+10,q[1]+4,`${Lb('План TD')} ${fmt(td,0)}' MD · ${fmt(tdp.tvd,0)}' TVD`,'#4ade80');}
+  // legend
+  const lx=14,ly=H-22,lw=150; const gr=g.createLinearGradient(lx,0,lx+lw,0);[0,1/3,2/3,1].forEach(t=>gr.addColorStop(t,grad(t)));g.fillStyle=gr;g.fillRect(lx,ly,lw,7);
+  const ttl=mode==='dls'?'DLS, °/100 ft':mode==='inc'?Lb('Зенит')+', °':'TVD, ft';
+  label(lx,ly-6,ttl,'#9aa4b2','left','11px '+FONT);label(lx,ly+19,'0','#7d8796','left','10px '+MONO);label(lx+lw,ly+19,fmt(mx,mode==='dls'?1:0),'#7d8796','right','10px '+MONO);
+  const vn={'3d':'3D','plan':Lb('План (вид сверху)'),'vs':Lb('Разрез по VS')+' '+fmt(SURV.vsAz,2)+'°'}[V.view]||'';
+  label(W-12,22,vn,'#9aa4b2','right','600 12px '+FONT);
+}
+function hover3(e){
+  const cv=$('#cv3d'),tip=$('#tip3d'),r=cv.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;
+  let best=null,bd=14; scr3.forEach(o=>{const d=Math.hypot(o.xy[0]-x,o.xy[1]-y);if(d<bd){bd=d;best=o;}});
+  if(!best){tip.style.display='none';return;}
+  const p=best.p; tip.textContent=`MD   ${fmt(p.md,1)} ft\nInc  ${fmt(p.inc,2)}°\nAzi  ${fmt(p.azi,2)}°\nTVD  ${fmt(p.tvd,1)} ft\nN/S  ${fmt(p.n,1)}\nE/W  ${fmt(p.e,1)}\nVS   ${fmt(p.vs,1)}\nDLS  ${fmt(p.dls,2)}°/100`;
+  tip.style.display='block'; const tw=tip.offsetWidth,th=tip.offsetHeight;
+  tip.style.left=Math.min(r.width-tw-6,x+14)+'px'; tip.style.top=Math.max(6,Math.min(r.height-th-6,y-th/2))+'px';
+}
+function init3D(){
+  const cv=$('#cv3d'), ptr=new Map();
+  cv.addEventListener('pointerdown',e=>{try{cv.setPointerCapture(e.pointerId);}catch(_){} ptr.set(e.pointerId,{x:e.clientX,y:e.clientY,b:e.button});cv.style.cursor='grabbing';$('#tip3d').style.display='none';});
+  cv.addEventListener('pointermove',e=>{const pp=ptr.get(e.pointerId); if(!pp){hover3(e);return;}
+    const dx=e.clientX-pp.x,dy=e.clientY-pp.y;
+    if(ptr.size===1){ if(e.shiftKey||pp.b===2){V.panX+=dx;V.panY+=dy;} else {V.yaw-=dx*0.008;V.pitch=Math.max(0,Math.min(Math.PI/2,V.pitch+dy*0.008));} }
+    else { const o=[...ptr.entries()].find(([id])=>id!==e.pointerId)[1], d0=Math.hypot(pp.x-o.x,pp.y-o.y), d1=Math.hypot(e.clientX-o.x,e.clientY-o.y); if(d0>0)V.zoom=Math.max(0.2,Math.min(40,V.zoom*d1/d0)); V.panX+=dx/2;V.panY+=dy/2; }
+    pp.x=e.clientX;pp.y=e.clientY; sched3(); });
+  const up=e=>{ptr.delete(e.pointerId);if(!ptr.size)cv.style.cursor='grab';};
+  cv.addEventListener('pointerup',up); cv.addEventListener('pointercancel',up);
+  cv.addEventListener('pointerleave',()=>{if(!ptr.size)$('#tip3d').style.display='none';});
+  cv.addEventListener('wheel',e=>{e.preventDefault();V.zoom=Math.max(0.2,Math.min(40,V.zoom*Math.exp(-e.deltaY*0.0015)));sched3();},{passive:false});
+  cv.addEventListener('contextmenu',e=>e.preventDefault());
+  cv.addEventListener('dblclick',()=>setView(V.view));
+  $('#colorMode').addEventListener('change',e=>{V.color=e.target.value;sched3();});
+  $('#survFile').addEventListener('change',e=>{readSurveyFile(e.target.files[0]);e.target.value='';});
+  const dz=$('#dropZone');
+  ['dragenter','dragover'].forEach(t=>dz.addEventListener(t,e=>{e.preventDefault();dz.classList.add('drag');}));
+  ['dragleave','drop'].forEach(t=>dz.addEventListener(t,e=>{e.preventDefault();dz.classList.remove('drag');}));
+  dz.addEventListener('drop',e=>{const f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0];readSurveyFile(f);});
+  window.addEventListener('resize',sched3);
+  try{new ResizeObserver(sched3).observe($('.cvwrap'));}catch(_){}
+  $$('#viewSeg button').forEach(b=>b.classList.toggle('on',b.dataset.view===V.view));
+}
 
 /* ---------- i18n ---------- */
 const EN_DICT={
@@ -977,7 +1227,18 @@ const EN_DICT={
 "ОС":"OH","НУБТ":"NMDC","УБТ":"DC","ТБТ":"HWDP","РУС":"RSS","ВЗД":"Motor","Ясс":"Jar","КНБК":"BHA","нет":"none","Порядок:":"Steps:",
 "обсадные колонны":"casing strings","Рассчитать":"Calculate","КПД":"Efficiency","напр.":"e.g.","Копировать":"Copy","к долоту":"toward bit",
 "Язык интерфейса":"Interface language","На телефон":"On phone","Открыть на телефоне":"Open on your phone","Копировать ссылку":"Copy link","Закрыть":"Close",
-"Ссылка скопирована":"Link copied","Создано:":"Created by","Газ":"Gas","Максат Тулегенов":"Maxat Tulegenov",
+"Ссылка скопирована":"Link copied","Забой→устье":"Bottoms up","3D траектория":"3D trajectory","Инклинометрия":"Directional survey","Пример":"Example","Загрузить файл (CSV / TXT / LAS)":"Upload file (CSV / TXT / LAS)",
+"Или перетащите файл сюда. Нужны столбцы MD, Inc, Azi — заголовки распознаются автоматически; без заголовков берутся первые три столбца.":"Or drop a file here. Columns MD, Inc, Azi are needed — headers are detected automatically; without headers the first three columns are used.",
+"глубины в файле — в метрах":"depths in the file are in meters","Вставить данные вручную":"Paste data manually","Сводка":"Summary",
+"Азимут вертикального сечения (VS)":"Vertical section azimuth (VS)","Расчёт (минимальная кривизна)":"Calculation (minimum curvature)","Разрез по VS":"Vertical section at","Разрез":"Section",
+"План (вид сверху)":"Plan (top view)","Цвет: TVD":"Color: TVD","Цвет: DLS":"Color: DLS","Цвет: зенит":"Color: inclination","Зенит":"Inclination","Сброс":"Reset","Приблизить":"Zoom in","Отдалить":"Zoom out",
+"Вращение — перетаскивание, масштаб — колесо мыши или два пальца, сдвиг — Shift + перетаскивание или правая кнопка мыши. Двойной щелчок — сброс вида.":"Drag to rotate, mouse wheel or two fingers to zoom, Shift + drag or right mouse button to pan. Double-click resets the view.",
+"Загрузите файл инклинометрии или нажмите «Пример»":"Upload a survey file or press “Example”","Нет данных. Загрузите файл или нажмите «Пример».":"No data. Upload a file or press “Example”.",
+"Замеров":"Stations","замеров":"stations","Последний замер":"Last station","Макс. зенитный угол":"Max inclination","Макс. DLS":"Max DLS","Смещение от устья":"Closure distance","азимут":"azimuth",
+"Азимут VS":"VS azimuth","задан вручную":"set manually","авто = азимут смещения":"auto = closure azimuth","Долото по инклинометрии":"Bit on survey","при":"at","экстраполяция":"extrapolated",
+"по инклинометрии":"from survey","Загружено:":"Loaded:","столбцы:":"columns:","первые три столбца":"first three columns","пропущено строк:":"rows skipped:","Загружен пример:":"Example loaded:",
+"Не найдено как минимум 2 замера (MD, Inc, Azi).":"At least 2 stations (MD, Inc, Azi) were not found.","Не удалось прочитать файл":"Could not read the file","Инклинометрия загружена":"Survey loaded",
+"Инклинометрия очищена":"Survey cleared","Нет данных":"No data","вставка":"pasted","Создано:":"Created by","Газ":"Gas","Максат Тулегенов":"Maxat Tulegenov",
 "Отсканируйте QR-код камерой телефона, чтобы открыть приложение.":"Scan the QR code with your phone camera to open the app.",
 "Как приложение: iPhone (Safari) — «Поделиться» → «На экран Домой»; Android (Chrome) — «⋮» → «Добавить на главный экран».":"To use it like an app: iPhone (Safari) — Share → Add to Home Screen; Android (Chrome) — ⋮ → Add to Home screen.",
 "Пресеты и журнал хранятся отдельно на каждом устройстве. Для переноса журнала используйте «Копировать CSV».":"Presets and the log are stored separately on each device. Use “Copy CSV” to move the log.",
@@ -1000,10 +1261,10 @@ let qrMade=false;
 function openPhone(){ $('#phoneModal').classList.add('on'); if(!qrMade){ try{ const q=qrcode(0,'M'); q.addData($('#appLink').textContent.trim()); q.make(); $('#qr').innerHTML=q.createSvgTag({cellSize:5,margin:0,scalable:true}); $('#qr svg').setAttribute('width','200'); $('#qr svg').setAttribute('height','200'); qrMade=true; }catch(e){ $('#qr').outerHTML='<p class="hint">QR-код недоступен — используйте ссылку ниже.</p>'; qrMade=true; } } }
 
 /* ---------- init ---------- */
-applyUI(); setHdr();
+init3D(); applyUI(); setHdr();
 window.addEventListener('resize',setHdr);
 setInterval(()=>{if(M){renderPlan();renderKPIs();}},30000);
-const h0=(location.hash||'').slice(1); if(['well','lag','rec','log'].includes(h0))$(`#tabs [data-tab=${h0}]`).click();
+const h0=(location.hash||'').slice(1); if(['well','lag','rec','log','3d'].includes(h0))$(`#tabs [data-tab="${h0}"]`).click();
 </script>
 <script>
 if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
