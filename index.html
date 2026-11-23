@@ -442,6 +442,7 @@ body.fslock{overflow:hidden}
       <div class="panel">
         <h2>Соседние скважины<span class="sp"></span><label class="btn sm pri" style="cursor:pointer">+ Добавить<input type="file" id="offFile" multiple accept=".csv,.txt,.las,.dat,.tsv,.prn,text/plain,text/csv" hidden></label></h2>
         <p class="hint" style="margin-top:0">Инклинометрия каждой соседней скважины (MD, Inc, Azi). Устье задайте координатами X/Y (как в шапке отчёта) или смещением ΔN/ΔE от устья основной скважины.</p>
+        <p class="hint">🖐 Без координат: перетащите цветную «шайбу» на устье прямо в 3D (точнее — в виде «План»). Шаг 10 ft, с Shift — по линиям сетки.</p>
         <div class="grid g2" style="margin:10px 0">
           <label class="f"><span class="lt">Устье основной X (Easting) <span class="u">ft</span></span><input data-bind="wellXY.x" inputmode="decimal" placeholder="1605557.30"></label>
           <label class="f"><span class="lt">Устье основной Y (Northing) <span class="u">ft</span></span><input data-bind="wellXY.y" inputmode="decimal" placeholder="407268.43"></label>
@@ -1299,7 +1300,7 @@ function renderOffsets(){
 }
 function addOffsetFiles(files){
   [...files].forEach(f=>{ const fr=new FileReader(); fr.onload=()=>{ try{ const r=parseSurvey(fr.result,$('#survMeters').checked);
-      S.offsets.push({id:uid(),name:f.name.replace(/\.[^.]+$/,''),color:OFF_COLORS[S.offsets.length%OFF_COLORS.length],rows:r.rows,x:'',y:'',dn:'0',de:'0',dkb:'0',show:true});
+      S.offsets.push({id:uid(),name:f.name.replace(/\.[^.]+$/,''),color:OFF_COLORS[S.offsets.length%OFF_COLORS.length],rows:r.rows,x:'',y:'',dn:'0',de:String(30*(S.offsets.length+1)),dkb:'0',show:true});
       renderOffsets(); survKey=''; recompute(); toast('Добавлена скважина: '+f.name); }catch(err){ toast('⚠ '+f.name+': '+err.message); } }; fr.readAsText(f); });
 }
 
@@ -1462,7 +1463,28 @@ function initGL(){
   try{ new ResizeObserver(glResize).observe(wrap); }catch(_){ window.addEventListener('resize',glResize); }
   $$('[data-layer]').forEach(cb=>cb.addEventListener('change',()=>{V.layers[cb.dataset.layer]=cb.checked; if(cb.dataset.layer==='lbl')G.lbl.classList.toggle('off',!cb.checked); else glBuild();}));
   $('#thick3d').addEventListener('input',e=>{V.thick=+e.target.value; glBuild();});
-  glResize(); return true;
+  glDragInit(); glResize(); return true;
+}
+
+function glDragInit(){
+  const el=G.renderer.domElement, rc=new THREE.Raycaster(), plane=new THREE.Plane(new THREE.Vector3(0,1,0),0), ndc=new THREE.Vector2(), hp=new THREE.Vector3();
+  const setRay=e=>{const r=el.getBoundingClientRect(); ndc.set((e.clientX-r.left)/r.width*2-1,-((e.clientY-r.top)/r.height)*2+1); rc.setFromCamera(ndc,G.cam);};
+  el.addEventListener('pointerdown',e=>{ if(e.button!==0||!G.handles||!G.handles.length)return; setRay(e); const hit=rc.intersectObjects(G.handles,false)[0]; if(!hit)return;
+    e.stopImmediatePropagation(); e.preventDefault(); G.ctl.enabled=false; G.anim=null; try{el.setPointerCapture(e.pointerId);}catch(_){}
+    const grp=hit.object.parent; if(!rc.ray.intersectPlane(plane,hp))hp.copy(grp.position);
+    G.drag={grp,of:hit.object.userData.of,off:new THREE.Vector3(grp.position.x-hp.x,0,grp.position.z-hp.z)};
+    G.root.traverse(o=>{if(o.userData&&o.userData.ac===G.drag.of.o.id)o.visible=false;}); G.labels.forEach(L=>{if(L.ac===G.drag.of.o.id)L.d.style.visibility='hidden';});
+    el.style.cursor='move'; },{capture:true});
+  el.addEventListener('pointermove',e=>{
+    if(!G.drag){ if(!e.buttons&&G.handles&&G.handles.length){setRay(e); el.style.cursor=rc.intersectObjects(G.handles,false).length?'move':'';} return; }
+    e.stopImmediatePropagation(); setRay(e); if(!rc.ray.intersectPlane(plane,hp))return;
+    const snap=e.shiftKey?(G.gridMinor||100):10, x=Math.round((hp.x+G.drag.off.x)/snap)*snap, z=Math.round((hp.z+G.drag.off.z)/snap)*snap;
+    G.drag.grp.position.x=x; G.drag.grp.position.z=z;
+    const tip=$('#tip3d'), r=el.getBoundingClientRect(); tip.textContent=`${G.drag.of.o.name}\nΔN ${fmt(z?-z:0,0)} ft\nΔE ${fmt(x,0)} ft\n${Lb(e.shiftKey?'шаг: сетка':'шаг: 10 ft · Shift — по сетке')}`;
+    tip.style.display='block'; tip.style.left=Math.min(r.width-180,e.clientX-r.left+18)+'px'; tip.style.top=Math.max(6,e.clientY-r.top-70)+'px'; },{capture:true});
+  const end=()=>{ if(!G.drag)return; const {grp,of}=G.drag; G.drag=null; G.ctl.enabled=true; el.style.cursor=''; $('#tip3d').style.display='none';
+    const z=grp.position.z; of.o.dn=String(z?-z:0); of.o.de=String(grp.position.x); of.o.x=''; of.o.y=''; renderOffsets(); survKey=''; recompute(); toast(`${of.o.name}: ΔN ${fmt(z?-z:0,0)} · ΔE ${fmt(grp.position.x,0)} ft`); };
+  el.addEventListener('pointerup',end,{capture:true}); el.addEventListener('pointercancel',end,{capture:true});
 }
 function glResize(){ if(!G.ok)return; const w=$('.cvwrap'),W=w.clientWidth,H=w.clientHeight; if(!W||!H)return;
   G.renderer.setSize(W,H,false); G.renderer.domElement.style.width=W+'px'; G.renderer.domElement.style.height=H+'px'; G.cam.aspect=W/H; G.cam.updateProjectionMatrix(); }
@@ -1487,10 +1509,10 @@ function glView(v,instant){
   else G.anim={t0:performance.now(),dur:750,p0:G.cam.position.clone(),p1,q0:G.ctl.target.clone(),q1:G.center.clone()};
   glStart();
 }
-function addLabel(v,t,sub,col,cls){ const d=document.createElement('div'); d.className='l3'+(cls?' '+cls:''); if(col)d.style.color=col; d.innerHTML=`${cls==='tick'||cls==='cmp'?esc(t):'<b>'+esc(t)+'</b>'}${sub?`<span>${esc(sub)}</span>`:''}`; G.lbl.appendChild(d); G.labels.push({v:v.clone(),d,cls}); }
+function addLabel(v,t,sub,col,cls,grp,ac){ const d=document.createElement('div'); d.className='l3'+(cls?' '+cls:''); if(col)d.style.color=col; d.innerHTML=`${cls==='tick'||cls==='cmp'?esc(t):'<b>'+esc(t)+'</b>'}${sub?`<span>${esc(sub)}</span>`:''}`; G.lbl.appendChild(d); G.labels.push({v:v.clone(),d,cls,grp,ac}); }
 function glLabels(){
   const el=G.renderer.domElement,W=el.clientWidth,H=el.clientHeight,items=[],top=G.ctl.getPolarAngle()<0.45;
-  G.labels.forEach(L=>{ if(top&&L.cls==='tick'){L.d.style.display='none';return;}const p=L.v.clone().project(G.cam); if(p.z>1||p.z<-1||Math.abs(p.x)>1.2||Math.abs(p.y)>1.2){L.d.style.display='none';return;} items.push({L,x:(p.x+1)/2*W,y:(1-p.y)/2*H});});
+  G.labels.forEach(L=>{ if(top&&L.cls==='tick'){L.d.style.display='none';return;}const p=(L.grp?L.v.clone().add(L.grp.position):L.v.clone()).project(G.cam); if(p.z>1||p.z<-1||Math.abs(p.x)>1.2||Math.abs(p.y)>1.2){L.d.style.display='none';return;} items.push({L,x:(p.x+1)/2*W,y:(1-p.y)/2*H});});
   const placed=[];
   items.sort((a,b)=>a.y-b.y).forEach(it=>{const d=it.L.d; d.style.display='block'; let y=it.y;
     if(!it.L.cls){ const w=d.offsetWidth||120,h=d.offsetHeight||28,hitAt=yy=>placed.some(b=>it.x<b.x+b.w&&it.x+w>b.x&&yy<b.y+b.h&&yy+h>b.y); for(let k=0;k<16;k++){const off=(k%2?1:-1)*Math.ceil(k/2)*h*0.55, yy=Math.max(4,Math.min(H-h-4,it.y+off)); if(!hitAt(yy)){y=yy;break;}} placed.push({x:it.x,y,w,h}); }
@@ -1555,17 +1577,21 @@ function glBuild(force){
     for(let i=0;i<=segs;i++){const col=new THREE.Color(grad(valAt(pathEnd*i/segs)/mx)); for(let j=0;j<=rs;j++)cols.push(col.r,col.g,col.b);}
     geo.setAttribute('color',new THREE.Float32BufferAttribute(cols,3)); G.root.add(new THREE.Mesh(geo,new THREE.MeshStandardMaterial({vertexColors:true,metalness:0.15,roughness:0.4}))); }
   if(SURV)SURV.pts.forEach(p=>G.pts.push({p,v:W3(p)}));
-  OFFS.forEach(of=>{ const col=new THREE.Color(of.o.color).getHex(), P3=of.samp.map(W3); if(P3.length<2)return;
-    G.root.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(P3,false,'centripetal'),Math.min(1200,P3.length*2),pathR*0.95,12,false),std(col,{emissive:col,emissiveIntensity:0.18,metalness:0.2,roughness:0.45})));
-    const h0=of.pts[0], hh=size*0.03, ww=hh*0.28, base=W3(h0);
-    const rg=[[-ww,0,-ww],[0,hh,0],[ww,0,-ww],[0,hh,0],[ww,0,ww],[0,hh,0],[-ww,0,ww],[0,hh,0]].flat().map((v,i)=>v+[base.x,base.y,base.z][i%3]);
-    G.root.add(new THREE.LineSegments(new THREE.BufferGeometry().setAttribute('position',new THREE.Float32BufferAttribute(rg,3)),new THREE.LineBasicMaterial({color:col})));
-    addLabel(new THREE.Vector3(base.x,base.y+hh*1.05,base.z),of.o.name,of.sh.byXY?'':`ΔN ${fmt(of.sh.dn,0)} · ΔE ${fmt(of.sh.de,0)} ft`,of.o.color);
-    const q=of.pts[of.pts.length-1]; addLabel(W3(q),`${of.o.name} TD ${fmt(q.md,0)}' MD`,`${fmt(q.tvd,0)}' TVD`,of.o.color);
+  G.handles=[]; G.gridMinor=step/5;
+  OFFS.forEach(of=>{ const col=new THREE.Color(of.o.color).getHex(), sv=new THREE.Vector3(of.sh.de,of.sh.dz,-of.sh.dn), grp=new THREE.Group(); grp.position.copy(sv); G.root.add(grp);
+    const P3=of.samp.map(p=>W3(p).sub(sv)); if(P3.length<2)return;
+    grp.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(P3,false,'centripetal'),Math.min(1200,P3.length*2),pathR*0.95,12,false),std(col,{emissive:col,emissiveIntensity:0.18,metalness:0.2,roughness:0.45})));
+    const hh=size*0.03, ww=hh*0.28, rg=[[-ww,0,-ww],[0,hh,0],[ww,0,-ww],[0,hh,0],[ww,0,ww],[0,hh,0],[-ww,0,ww],[0,hh,0]].flat();
+    grp.add(new THREE.LineSegments(new THREE.BufferGeometry().setAttribute('position',new THREE.Float32BufferAttribute(rg,3)),new THREE.LineBasicMaterial({color:col})));
+    const hr=size*0.013, handle=new THREE.Mesh(new THREE.CylinderGeometry(hr,hr,hr*0.22,40),std(col,{emissive:col,emissiveIntensity:0.45,transparent:true,opacity:0.8}));
+    handle.position.y=hr*0.12; handle.userData.of=of; grp.add(handle); G.handles.push(handle);
+    const ring=new THREE.Mesh(new THREE.TorusGeometry(hr*1.25,hr*0.07,8,48),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.6})); ring.rotation.x=Math.PI/2; ring.position.y=hr*0.12; grp.add(ring);
+    addLabel(new THREE.Vector3(0,hh*1.05,0),of.o.name,`ΔN ${fmt(of.sh.dn,0)} · ΔE ${fmt(of.sh.de,0)} ft`,of.o.color,null,grp);
+    const q=of.pts[of.pts.length-1]; addLabel(W3(q).sub(sv),`${of.o.name} TD ${fmt(q.md,0)}' MD`,`${fmt(q.tvd,0)}' TVD`,of.o.color,null,grp);
     of.pts.forEach(p=>G.pts.push({p,v:W3(p)}));
-    const a=closestApproach(of); if(a&&a.dist<1000){ const pa=W3(survAt(a.mdMain)); const qb=W3(of.at(a.mdOff));
-      G.root.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([pa,qb]),new THREE.LineDashedMaterial({color:0xf87171,dashSize:size*0.004,gapSize:size*0.003})).computeLineDistances());
-      addLabel(pa.clone().add(qb).multiplyScalar(0.5),`↔ ${fmt(a.dist,0)} ft`,`${of.o.name}`,'#f87171'); } });
+    const a=closestApproach(of); if(a&&a.dist<1000){ const pa=W3(survAt(a.mdMain)), qb=W3(of.at(a.mdOff));
+      const ln=new THREE.Line(new THREE.BufferGeometry().setFromPoints([pa,qb]),new THREE.LineDashedMaterial({color:0xf87171,dashSize:size*0.004,gapSize:size*0.003})); ln.computeLineDistances(); ln.userData.ac=of.o.id; G.root.add(ln);
+      addLabel(pa.clone().add(qb).multiplyScalar(0.5),`↔ ${fmt(a.dist,0)} ft`,`${of.o.name}`,'#f87171',null,null,of.o.id); } });
   const dashed=(a,b,rad,col)=>{ if(!(b-a>1))return; const n=Math.max(4,Math.min(40,Math.round((b-a)/Math.max(size*0.012,20)))), L=(b-a)/n; const m=std(col,{emissive:col,emissiveIntensity:0.35,transparent:true,opacity:0.9}); for(let k=0;k<n;k++)tube(a+k*L,a+k*L+L*0.62,rad,m,10); };
   if(SURV&&bd>lastMd)dashed(lastMd,bd,pathR*0.9,0xe7eaef);
   // BHA + bit
@@ -1711,7 +1737,7 @@ const EN_DICT={
 "ОС":"OH","НУБТ":"NMDC","УБТ":"DC","ТБТ":"HWDP","РУС":"RSS","ВЗД":"Motor","Ясс":"Jar","КНБК":"BHA","нет":"none","Порядок:":"Steps:",
 "обсадные колонны":"casing strings","Рассчитать":"Calculate","КПД":"Efficiency","напр.":"e.g.","Копировать":"Copy","к долоту":"toward bit",
 "Язык интерфейса":"Interface language","На телефон":"On phone","Открыть на телефоне":"Open on your phone","Копировать ссылку":"Copy link","Закрыть":"Close",
-"Ссылка скопирована":"Link copied","Соседние скважины":"Offset wells","Добавить":"Add","Инклинометрия каждой соседней скважины (MD, Inc, Azi). Устье задайте координатами X/Y (как в шапке отчёта) или смещением ΔN/ΔE от устья основной скважины.":"Survey of each offset well (MD, Inc, Azi). Set its surface location by X/Y coordinates (as in the report header) or by ΔN/ΔE offset from the main wellhead.",
+"Ссылка скопирована":"Link copied","🖐 Без координат: перетащите цветную «шайбу» на устье прямо в 3D (точнее — в виде «План»). Шаг 10 ft, с Shift — по линиям сетки.":"🖐 No coordinates needed: drag the coloured puck at the wellhead right in 3D (most precise in Plan view). 10 ft step, hold Shift to snap to grid lines.","шаг: сетка":"step: grid","шаг: 10 ft · Shift — по сетке":"step: 10 ft · Shift — grid","Соседние скважины":"Offset wells","Добавить":"Add","Инклинометрия каждой соседней скважины (MD, Inc, Azi). Устье задайте координатами X/Y (как в шапке отчёта) или смещением ΔN/ΔE от устья основной скважины.":"Survey of each offset well (MD, Inc, Azi). Set its surface location by X/Y coordinates (as in the report header) or by ΔN/ΔE offset from the main wellhead.",
 "Устье основной X (Easting)":"Main wellhead X (Easting)","Устье основной Y (Northing)":"Main wellhead Y (Northing)","X устья":"Surface X","Y устья":"Surface Y","KB выше основной":"KB above main","или ΔN от устья":"or ΔN from wellhead","ΔE от устья":"ΔE from wellhead",
 "показать":"show","Цвет":"Color","Соседних скважин нет. Нажмите «+ Добавить» и выберите файлы инклинометрии (можно несколько сразу).":"No offset wells. Press “+ Add” and choose survey files (several at once is fine).",
 "мин. расстояние (центр–центр)":"min. distance (center-to-center)","осн.":"main","устье по X/Y":"surface by X/Y","устье по ΔN/ΔE":"surface by ΔN/ΔE","Добавлена скважина:":"Well added:","На весь экран":"Full screen","Выйти":"Exit","Выйти из полноэкранного режима (Esc)":"Exit full screen (Esc)","Плановая траектория":"Well plan","Загрузить план (CSV / TXT / LAS)":"Upload plan (CSV / TXT / LAS)",
